@@ -235,7 +235,15 @@ add_bullet('AI vs 人工编码准确率对比趋势')
 add_bullet('高频质控缺陷类型分布（12类问题）')
 add_bullet('医保收入分析（实际收入、优化预估、优化空间，含12个月趋势图）')
 
-doc.add_heading('3.5 智能编码流水线（核心演示页）', level=3)
+doc.add_heading('3.5 系统管理', level=3)
+add_para('管理员专属的数据管理功能：')
+add_bullet('数据预览：实时显示各表记录数（患者/病历/编码/质控），统计卡片展示')
+add_bullet('数据重置：支持 dry-run 预览模式（confirm=false），需输入 RESET 二次确认后执行，按外键安全顺序删除')
+add_bullet('数据导出：支持编码结果、患者摘要、质控结果三种导出类型，可选 JSON 或 CSV 格式')
+add_bullet('SQLite自增计数器重置：删除数据后自动重置自增ID，保证下次种子数据ID一致性')
+add_bullet('权限控制：仅管理员角色可见，前后端双重鉴权')
+
+doc.add_heading('3.6 智能编码流水线（核心演示页）', level=3)
 add_para('这是面向比赛路演的一站式可视化页面。一条流水线串联全部流程：')
 
 add_code_block('''[粘贴病历] -> [NLP智能编码] -> [质控检查] -> [DRG分组] -> [费用测算]
@@ -250,6 +258,10 @@ add_bullet('自动触发全流程分析：打字完成后自动依次走完编�
 add_bullet('速度可调：快/中/慢三档，适应不同演示节奏')
 add_bullet('完成后confetti五彩纸屑庆祝动画')
 add_bullet('支持一键重播，可快速切换病例')
+add_bullet('流水线结果自动持久化到数据库，Dashboard实时反映')
+add_bullet('LLM在线状态指示器：侧边栏实时显示Ollama连接状态（在线/离线）')
+add_bullet('文件上传支持 .txt / .docx / .pdf 三种格式')
+add_bullet('QC采纳/忽略操作持久化到后端数据库，刷新不丢失')
 
 # ── 4. 技术架构 ──
 doc.add_heading('四、技术架构', level=2)
@@ -339,27 +351,33 @@ doc.add_heading('五、当前开发进度', level=2)
 doc.add_heading('5.1 已完成', level=3)
 
 add_para('后端（backend/src/）：', bold=True)
-add_bullet('FastAPI应用骨架，CORS配置，lifespan事件管理')
-add_bullet('8张数据表模型（SQLAlchemy 2.0 async）')
-add_bullet('5组API路由：auth（认证）、coding（编码）、drg（分组）、qc（质控）、dashboard（看板）')
+add_bullet('FastAPI应用骨架，CORS配置，lifespan事件管理（含自动种子数据 + LLM预热）')
+add_bullet('8张数据表模型（SQLAlchemy 2.0 async）+ 17个单元测试全部通过')
+add_bullet('7组API路由：auth、coding、drg、qc、dashboard、admin（管理）、pipeline（保存）')
 add_bullet('NLP引擎：SOAP段落拆分 + 正则医学实体识别（诊断名、手术名、部位、药物）')
-add_bullet('ICD编码器：4层推荐策略（DB→本地映射→语义向量→LLM），180+诊断映射，60+手术映射')
+add_bullet('ICD编码器：4层推荐策略，300+诊断映射（JSON数据源统一），113手术映射')
 add_bullet('DRG分组器：26个MDC大类判定 + CC/MCC合并症逻辑 + 分组接口 + 费用计算')
-add_bullet('质控引擎：15条规则框架，7条完整实现（4条LLM驱动 + 3条规则实现），异步执行')
-add_bullet('LLM引擎：OllamaBackend + RuleBasedBackend双后端，自动检测切换')
-add_bullet('Prompt模板：ICD编码推荐 + 4条QC规则Prompt + DRG优化Prompt')
+add_bullet('质控引擎：规则引擎 + LLM语义双模，15条规则，异步执行')
+add_bullet('LLM引擎：OllamaBackend + RuleBasedBackend双后端，自动检测切换 + 健康检查端点')
 add_bullet('向量搜索引擎：TF-IDF + char n-gram(1-3) + 余弦相似度语义检索')
-add_bullet('Dashboard API：6个端点全部动态化')
+add_bullet('Dashboard API：6个端点全部动态化，基于真实数据库查询')
+add_bullet('Admin端点：数据重置（dry-run + 确认）+ 三种数据导出（JSON/CSV）')
+add_bullet('Pipeline保存端点：流水线结果持久化到数据库，QC采纳/忽略端点实现数据库更新')
+add_bullet('文件解析：支持 .txt / .docx / .pdf 三种格式自动解析')
 
 add_para('前端（frontend/src/）：', bold=True)
 add_bullet('Vite + React 18 + TypeScript项目骨架，自定义主题')
-add_bullet('6个页面：LoginPage / PipelinePage / CodingPage / DRGPage / QCPage / DashboardPage')
-add_bullet('AppLayout布局（渐变侧边栏 + 品牌Logo + 用户菜单 + AI版本徽章）')
+add_bullet('8个页面：Login / Pipeline / Coding / DRG / QC / Dashboard / Guide / Admin')
+add_bullet('NotFoundPage：404通配路由，友好提示页')
+add_bullet('AppLayout布局（渐变侧边栏 + LLM状态指示器 + API文档链接 + 品牌Logo + 用户菜单）')
+add_bullet('AdminRoute角色守卫：非管理员访问 /admin 自动重定向')
 add_bullet('LoginPage：深色渐变背景 + 浮动医疗图标 + 特征标签 + 团队页脚')
-add_bullet('PipelinePage（核心）：4步流水线 + AnimatedCounter金额动画')
-add_bullet('PipelinePage演示模式：3个样本病例 + typewriter打字机 + 自动播放 + confetti庆祝')
+add_bullet('PipelinePage（核心）：4步流水线 + 文件上传(.txt/.docx/.pdf) + AnimatedCounter + 演示模式')
+add_bullet('DRGPage：患者年龄/性别输入控件，支持自由填写')
 add_bullet('DashboardPage：6个ECharts图表 + 日期范围筛选 + 动态数据')
-add_bullet('Zustand认证管理 + Axios拦截器 + JWT流程')
+add_bullet('AdminPage：数据预览统计 + 重置确认 + JSON/CSV导出下载 + Blob错误处理')
+add_bullet('GuidePage：新手使用指南，大白话介绍系统使用方法')
+add_bullet('Zustand认证管理 + Axios拦截器 + JWT流程 + pipelineAPI自动保存')
 
 add_para('基础设施：', bold=True)
 add_bullet('Docker Compose配置（PostgreSQL + Redis + Backend + Frontend）')
@@ -369,14 +387,12 @@ add_bullet('Ollama已安装，qwen2.5:7b模型已下载')
 doc.add_heading('5.2 待完成（按优先级）', level=3)
 
 add_table_simple(['优先级', '任务', '预计耗时'], [
-    ['P0', '导入完整ICD-10临床版 + ICD-9-CM-3编码库', '1天'],
     ['P0', 'DRG完整分组匹配（628 ADRG -> 1236 DRG）', '2天'],
     ['P1', '质控规则扩充（从15条到50+条）', '3天'],
-    ['P1', 'DOCX/PDF病历文件上传解析', '1天'],
-    ['P1', '大屏演示分辨率适配', '0.5天'],
-    ['P2', '质控规则进一步扩充（50条到100+条）', '5天'],
-    ['P2', '编码准确率系统测试（100+份真实病历）', '2天'],
+    ['P1', '编码准确率系统测试（100+份真实病历）', '2天'],
     ['P2', 'PostgreSQL迁移（替代SQLite）', '1天'],
+    ['P2', '大屏演示分辨率适配', '0.5天'],
+    ['P2', '电商化SaaS订阅后台（多租户、计费）', '5天'],
     ['P3', '医院HIS/电子病历系统对接接口', '待定'],
     ['P3', '医院试点合作', '待定'],
 ])
@@ -474,11 +490,13 @@ add_table_simple(['角色', '成员', '职责'], [
 doc.add_heading('十、下一步计划', level=2)
 
 add_table_simple(['时间', '里程碑'], [
-    ['近期（本周）', '导入完整ICD编码库 -> DRG完整分组匹配 -> Ollama LLM推理上线验证'],
-    ['2周内', '质控规则扩充到50+条 -> 编码准确率系统测试 -> 修复漏洞'],
-    ['1个月内', '完善Demo演示效果 -> 开始制作路演PPT和商业计划书'],
-    ['2个月内', '联系1-2家医院试点 -> 收集真实试用数据 -> 迭代优化'],
-    ['3-4个月', '校赛 -> 省赛 -> 根据评委反馈迭代 -> 备战国赛'],
+    ['已完成', '核心功能开发：ICD编码 + DRG分组 + 质控引擎 + Pipeline + Dashboard + Admin管理 + 数据导出'],
+    ['已完成', '产品打磨：ICD数据源统一(300+诊断/113手术)、Dashboard自动种子、Pipeline持久化、文件上传(.docx/.pdf)'],
+    ['已完成', '竞赛基础：Git仓库初始化、README、项目介绍文档、Swagger API文档链接'],
+    ['本周', 'DRG完整分组匹配 -> 商业计划书定稿 -> 路演PPT制作'],
+    ['2周内', '质控规则扩充到50+条 -> 编码准确率系统测试 -> 演示脚本打磨'],
+    ['1个月内', '联系1-2家医院试点 -> 收集真实试用数据 -> 迭代优化'],
+    ['2-3个月', '校赛 -> 省赛 -> 根据评委反馈迭代 -> 备战国赛'],
 ])
 
 # ── Footer ──
@@ -503,7 +521,7 @@ run._element.rPr.rFonts.set(qn('w:eastAsia'), '微软雅黑')
 
 footer3 = doc.add_paragraph()
 footer3.alignment = WD_ALIGN_PARAGRAPH.CENTER
-run = footer3.add_run('更新时间：2026-05-23')
+run = footer3.add_run('更新时间：2026-05-24')
 run.font.size = Pt(9)
 run.font.color.rgb = RGBColor(0x99, 0x99, 0x99)
 run.font.name = '微软雅黑'
