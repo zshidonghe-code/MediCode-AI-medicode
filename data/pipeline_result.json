@@ -1,0 +1,171 @@
+{
+  "coding": {
+    "record_id": 1,
+    "primary_diagnosis": {
+      "code": "I25.100",
+      "name": "冠状动脉粥样硬化性心脏病",
+      "category": "诊断",
+      "is_primary": true,
+      "confidence": 0.95
+    },
+    "secondary_diagnoses": [
+      {
+        "code": "I10.x00",
+        "name": "原发性高血压",
+        "category": "诊断",
+        "is_primary": false,
+        "confidence": 0.95
+      },
+      {
+        "code": "E11.900",
+        "name": "2型糖尿病",
+        "category": "诊断",
+        "is_primary": false,
+        "confidence": 0.95
+      },
+      {
+        "code": "I50.900",
+        "name": "心力衰竭",
+        "category": "诊断",
+        "is_primary": false,
+        "confidence": 0.95
+      },
+      {
+        "code": "E78.500",
+        "name": "高脂血症",
+        "category": "诊断",
+        "is_primary": false,
+        "confidence": 0.95
+      },
+      {
+        "code": "I15.900",
+        "name": "继发性高血压",
+        "category": "诊断",
+        "is_primary": false,
+        "confidence": 0.7
+      },
+      {
+        "code": "E10.900",
+        "name": "1型糖尿病",
+        "category": "诊断",
+        "is_primary": false,
+        "confidence": 0.7
+      },
+      {
+        "code": "I20.900",
+        "name": "心绞痛",
+        "category": "诊断",
+        "is_primary": false,
+        "confidence": 0.95
+      },
+      {
+        "code": "I20.000",
+        "name": "不稳定型心绞痛",
+        "category": "诊断",
+        "is_primary": false,
+        "confidence": 0.7
+      }
+    ],
+    "procedures": [
+      {
+        "code": "36.0700",
+        "name": "冠状动脉药物洗脱支架植入",
+        "category": "手术操作",
+        "is_primary": false,
+        "confidence": 0.95
+      }
+    ],
+    "suggestions": [
+      {
+        "code": "I25.100",
+        "name": "冠状动脉粥样硬化性心脏病",
+        "category": "诊断",
+        "is_primary": true,
+        "confidence": 0.95
+      },
+      {
+        "code": "I10.x00",
+        "name": "原发性高血压",
+        "category": "诊断",
+        "is_primary": false,
+        "confidence": 0.95
+      },
+      {
+        "code": "E11.900",
+        "name": "2型糖尿病",
+        "category": "诊断",
+        "is_primary": false,
+        "confidence": 0.95
+      },
+      {
+        "code": "I50.900",
+        "name": "心力衰竭",
+        "category": "诊断",
+        "is_primary": false,
+        "confidence": 0.95
+      },
+      {
+        "code": "E78.500",
+        "name": "高脂血症",
+        "category": "诊断",
+        "is_primary": false,
+        "confidence": 0.95
+      }
+    ],
+    "total_confidence": 0.87,
+    "processing_time_ms": 38
+  },
+  "qc": {
+    "record_id": 2,
+    "total_issues": 3,
+    "critical_count": 1,
+    "major_count": 2,
+    "minor_count": 0,
+    "info_count": 0,
+    "issues": [
+      {
+        "rule_id": "QC-002",
+        "rule_name": "出院小结完整性-入院情况",
+        "rule_type": "completeness",
+        "severity": "major",
+        "line_snippet": "",
+        "suggestion": "出院小结必须包含入院情况描述",
+        "line_number": null
+      },
+      {
+        "rule_id": "QC-005",
+        "rule_name": "手术记录完整性-手术日期",
+        "rule_type": "completeness",
+        "severity": "major",
+        "line_snippet": "",
+        "suggestion": "手术记录必须包含手术日期",
+        "line_number": null
+      },
+      {
+        "rule_id": "QC-006",
+        "rule_name": "手术记录完整性-手术名称",
+        "rule_type": "completeness",
+        "severity": "critical",
+        "line_snippet": "",
+        "suggestion": "手术记录必须包含手术名称且与编码一致",
+        "line_number": null
+      }
+    ],
+    "qc_score": 80.0,
+    "processing_time_ms": 0
+  },
+  "drg": {
+    "mdc": "MDCE",
+    "mdc_name": "循环系统疾病及功能障碍",
+    "adrg": "FC1",
+    "adrg_name": "PCI手术",
+    "drg_code": "FC11",
+    "drg_name": "PCI手术",
+    "is_surgical": true,
+    "weight": 4.42,
+    "rate": 12000.0,
+    "estimated_payment": 53040.0,
+    "cc_flag": "MCC",
+    "patient_complexity": "高复杂度"
+  }
+}

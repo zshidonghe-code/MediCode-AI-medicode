@@ -1,0 +1,962 @@
+[
+  {
+    "code": "01.0900",
+    "name": "颅内血肿清除术",
+    "category": "神经外科手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": [
+      "脑血肿清除术"
+    ]
+  },
+  {
+    "code": "01.2400",
+    "name": "开颅探查术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "KLTSS",
+    "aliases": [
+      "开颅手术"
+    ]
+  },
+  {
+    "code": "01.3100",
+    "name": "脑膜切开术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "NMQKS",
+    "aliases": []
+  },
+  {
+    "code": "02.3400",
+    "name": "脑室腹腔分流术",
+    "category": "神经外科手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "03.0900",
+    "name": "椎板切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "ZBQCS",
+    "aliases": []
+  },
+  {
+    "code": "03.9400",
+    "name": "椎间盘切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "ZJPQCS",
+    "aliases": []
+  },
+  {
+    "code": "06.3900",
+    "name": "甲状腺部分切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "JZXBFQCS",
+    "aliases": [
+      "甲状腺切除术"
+    ]
+  },
+  {
+    "code": "06.4000",
+    "name": "甲状腺全切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "JZXQQCS",
+    "aliases": [
+      "甲状腺全切术"
+    ]
+  },
+  {
+    "code": "13.4000",
+    "name": "白内障摘除术",
+    "category": "眼科手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": [
+      "白内障手术"
+    ]
+  },
+  {
+    "code": "13.4100",
+    "name": "白内障超声乳化吸出术",
+    "category": "眼科手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": [
+      "白内障超声乳化术"
+    ]
+  },
+  {
+    "code": "19.4000",
+    "name": "鼓膜成形术",
+    "category": "耳鼻喉手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": [
+      "鼓膜修补术"
+    ]
+  },
+  {
+    "code": "21.3100",
+    "name": "鼻息肉切除术",
+    "category": "耳鼻喉手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "21.5000",
+    "name": "鼻中隔矫正术",
+    "category": "耳鼻喉手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "28.2000",
+    "name": "扁桃体切除术",
+    "category": "耳鼻喉手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "31.2000",
+    "name": "气管切开术",
+    "category": "胸科手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "32.2000",
+    "name": "胸腔镜肺叶切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "XQJFQQCS",
+    "aliases": []
+  },
+  {
+    "code": "32.4900",
+    "name": "肺叶切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "FYQCS",
+    "aliases": []
+  },
+  {
+    "code": "32.5000",
+    "name": "全肺切除术",
+    "category": "胸科手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": [
+      "肺切除术"
+    ]
+  },
+  {
+    "code": "34.0400",
+    "name": "胸腔闭式引流术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "XQBSYLS",
+    "aliases": []
+  },
+  {
+    "code": "34.2000",
+    "name": "胸腔镜手术",
+    "category": "胸科手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "35.2000",
+    "name": "心脏瓣膜置换术",
+    "category": "心血管手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "35.2200",
+    "name": "主动脉瓣置换术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "ZDMZHHS",
+    "aliases": []
+  },
+  {
+    "code": "35.2300",
+    "name": "二尖瓣置换术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "EJBZHS",
+    "aliases": []
+  },
+  {
+    "code": "36.0700",
+    "name": "冠状动脉药物洗脱支架植入",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "GZDZYWXTZJZR",
+    "aliases": [
+      "冠状动脉支架植入术",
+      "PCI",
+      "PCI术",
+      "经皮冠状动脉介入治疗"
+    ]
+  },
+  {
+    "code": "36.1000",
+    "name": "冠状动脉搭桥术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "GZDZDQS",
+    "aliases": [
+      "冠脉搭桥术"
+    ]
+  },
+  {
+    "code": "37.2200",
+    "name": "心导管检查术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "XDGJCS",
+    "aliases": []
+  },
+  {
+    "code": "37.3400",
+    "name": "心脏射频消融术",
+    "category": "心血管手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": [
+      "射频消融术"
+    ]
+  },
+  {
+    "code": "37.8000",
+    "name": "永久性心脏起搏器植入术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "QBQZRS",
+    "aliases": [
+      "永久性心脏起搏器植入术",
+      "起搏器植入术"
+    ]
+  },
+  {
+    "code": "38.7000",
+    "name": "下腔静脉滤器植入术",
+    "category": "血管手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "38.8100",
+    "name": "颅内动脉瘤夹闭术",
+    "category": "神经外科手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "38.9300",
+    "name": "中心静脉置管术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "ZXJMZGS",
+    "aliases": []
+  },
+  {
+    "code": "39.2700",
+    "name": "动静脉造瘘术",
+    "category": "血管手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "39.4900",
+    "name": "血管修补术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "XGXBS",
+    "aliases": []
+  },
+  {
+    "code": "39.5900",
+    "name": "外周动脉支架植入术",
+    "category": "血管手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": [
+      "下肢动脉支架植入术"
+    ]
+  },
+  {
+    "code": "39.9500",
+    "name": "血液透析",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "XYTX",
+    "aliases": []
+  },
+  {
+    "code": "41.5000",
+    "name": "脾切除术",
+    "category": "普外手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "42.4100",
+    "name": "食管部分切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "SGBFQCS",
+    "aliases": []
+  },
+  {
+    "code": "43.8900",
+    "name": "胃部分切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "WBFQCS",
+    "aliases": [
+      "胃大部切除术",
+      "胃切除术"
+    ]
+  },
+  {
+    "code": "44.3800",
+    "name": "胃镜下胃造口术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "WJXWZKS",
+    "aliases": []
+  },
+  {
+    "code": "45.6000",
+    "name": "肠切除术",
+    "category": "普外手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "45.6200",
+    "name": "小肠部分切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "XCBFQCS",
+    "aliases": []
+  },
+  {
+    "code": "45.7000",
+    "name": "结直肠切除术",
+    "category": "普外手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "45.7300",
+    "name": "右半结肠切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "YBJCQCS",
+    "aliases": []
+  },
+  {
+    "code": "45.7600",
+    "name": "乙状结肠切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "YZJCQCS",
+    "aliases": []
+  },
+  {
+    "code": "46.1000",
+    "name": "结肠造口术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "JCZKS",
+    "aliases": []
+  },
+  {
+    "code": "47.0100",
+    "name": "腹腔镜阑尾切除术",
+    "category": "普外手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "47.0900",
+    "name": "阑尾切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "LWQCS",
+    "aliases": [
+      "阑尾炎手术"
+    ]
+  },
+  {
+    "code": "48.6900",
+    "name": "直肠切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "ZCQCS",
+    "aliases": []
+  },
+  {
+    "code": "49.4600",
+    "name": "痔疮切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "ZCQCS",
+    "aliases": [
+      "痔切除术"
+    ]
+  },
+  {
+    "code": "50.2200",
+    "name": "肝部分切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "GBFQCS",
+    "aliases": []
+  },
+  {
+    "code": "51.0400",
+    "name": "胆囊造口术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "DNZKS",
+    "aliases": []
+  },
+  {
+    "code": "51.2200",
+    "name": "胆囊切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "DNQCS",
+    "aliases": []
+  },
+  {
+    "code": "51.2300",
+    "name": "腹腔镜胆囊切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "FQJDNQCS",
+    "aliases": []
+  },
+  {
+    "code": "53.0000",
+    "name": "腹股沟疝修补术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "FGGSXBS",
+    "aliases": [
+      "疝修补术"
+    ]
+  },
+  {
+    "code": "54.1100",
+    "name": "开腹探查术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "KFTSS",
+    "aliases": []
+  },
+  {
+    "code": "55.0100",
+    "name": "肾造口术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "SZKS",
+    "aliases": []
+  },
+  {
+    "code": "55.0400",
+    "name": "经皮肾镜碎石取石术",
+    "category": "泌尿手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": [
+      "经皮肾镜碎石术"
+    ]
+  },
+  {
+    "code": "55.5000",
+    "name": "肾切除术",
+    "category": "泌尿手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "55.5100",
+    "name": "肾切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "SQCS",
+    "aliases": []
+  },
+  {
+    "code": "56.0000",
+    "name": "输尿管镜碎石术",
+    "category": "泌尿手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "57.1900",
+    "name": "膀胱镜检查术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "PGJQCS",
+    "aliases": []
+  },
+  {
+    "code": "57.3200",
+    "name": "膀胱结石碎石术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "PGJSYLS",
+    "aliases": []
+  },
+  {
+    "code": "57.4900",
+    "name": "经尿道膀胱肿瘤切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "PGXBS",
+    "aliases": [
+      "经尿道膀胱肿瘤切除术",
+      "膀胱肿瘤电切术"
+    ]
+  },
+  {
+    "code": "58.4900",
+    "name": "尿道修补术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "NDXBS",
+    "aliases": []
+  },
+  {
+    "code": "59.9500",
+    "name": "输尿管支架植入术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "SNGZJZRS",
+    "aliases": []
+  },
+  {
+    "code": "60.2000",
+    "name": "前列腺切除术",
+    "category": "泌尿手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "60.2100",
+    "name": "前列腺穿刺活检",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "QLXCCJH",
+    "aliases": []
+  },
+  {
+    "code": "60.2900",
+    "name": "经尿道前列腺切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "JNDQLXQCS",
+    "aliases": [
+      "经尿道前列腺电切术"
+    ]
+  },
+  {
+    "code": "64.0000",
+    "name": "包皮环切术",
+    "category": "泌尿手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "65.3000",
+    "name": "卵巢切除术",
+    "category": "妇产科手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "65.6100",
+    "name": "卵巢切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "LCQCS",
+    "aliases": []
+  },
+  {
+    "code": "66.2000",
+    "name": "输卵管结扎术",
+    "category": "妇产科手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "68.2900",
+    "name": "子宫肌瘤切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "ZGJLQCS",
+    "aliases": []
+  },
+  {
+    "code": "68.4000",
+    "name": "子宫切除术",
+    "category": "妇产科手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "68.4900",
+    "name": "子宫切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "ZGQCS",
+    "aliases": []
+  },
+  {
+    "code": "69.0100",
+    "name": "人工流产术",
+    "category": "妇产科手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "73.5900",
+    "name": "顺产接生",
+    "category": "妇产科手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "74.0000",
+    "name": "剖宫产术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "PGCS",
+    "aliases": []
+  },
+  {
+    "code": "74.9900",
+    "name": "剖宫产术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "PGCS",
+    "aliases": [
+      "剖宫产"
+    ]
+  },
+  {
+    "code": "78.5900",
+    "name": "骨折内固定术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "GZNGDS",
+    "aliases": []
+  },
+  {
+    "code": "79.1500",
+    "name": "骨折闭合复位术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "GZBHQWS",
+    "aliases": []
+  },
+  {
+    "code": "79.3000",
+    "name": "骨折内固定术",
+    "category": "骨科手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": [
+      "骨折切开复位内固定术"
+    ]
+  },
+  {
+    "code": "79.3600",
+    "name": "骨折切开复位内固定术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "GZQKFWNGDS",
+    "aliases": []
+  },
+  {
+    "code": "80.2000",
+    "name": "关节镜手术",
+    "category": "骨科手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "80.2600",
+    "name": "膝关节镜检查",
+    "category": "骨科手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": [
+      "膝关节镜"
+    ]
+  },
+  {
+    "code": "80.5100",
+    "name": "椎间盘切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "ZJPQCS",
+    "aliases": []
+  },
+  {
+    "code": "80.6000",
+    "name": "半月板切除术",
+    "category": "骨科手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "81.0000",
+    "name": "脊柱融合术",
+    "category": "骨科手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "81.5100",
+    "name": "全髋关节置换术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "QKGZHHS",
+    "aliases": [
+      "全髋关节置换"
+    ]
+  },
+  {
+    "code": "81.5400",
+    "name": "全膝关节置换术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "QXGZHHS",
+    "aliases": [
+      "全膝关节置换"
+    ]
+  },
+  {
+    "code": "81.8400",
+    "name": "关节镜手术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "GJJSS",
+    "aliases": []
+  },
+  {
+    "code": "84.1000",
+    "name": "截肢术",
+    "category": "骨科手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "85.2000",
+    "name": "乳腺区段切除术",
+    "category": "普外手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "85.2100",
+    "name": "乳腺部分切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "RXBFQCS",
+    "aliases": []
+  },
+  {
+    "code": "85.4000",
+    "name": "乳腺切除术",
+    "category": "普外手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "85.4300",
+    "name": "乳腺全切除术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "RXQQCS",
+    "aliases": []
+  },
+  {
+    "code": "86.0400",
+    "name": "皮肤切开引流术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "PFQKYLS",
+    "aliases": []
+  },
+  {
+    "code": "86.2200",
+    "name": "清创术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "QCS",
+    "aliases": []
+  },
+  {
+    "code": "88.4100",
+    "name": "脑血管造影术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "NXGZYS",
+    "aliases": []
+  },
+  {
+    "code": "88.5500",
+    "name": "冠状动脉造影",
+    "category": "心血管手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  },
+  {
+    "code": "88.7200",
+    "name": "心脏超声检查",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "XZCSQC",
+    "aliases": []
+  },
+  {
+    "code": "88.7600",
+    "name": "腹部超声检查",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "FBCSQC",
+    "aliases": []
+  },
+  {
+    "code": "89.1400",
+    "name": "脑电图检查",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "NDTJC",
+    "aliases": []
+  },
+  {
+    "code": "89.5200",
+    "name": "心电图检查",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "XDTJC",
+    "aliases": []
+  },
+  {
+    "code": "89.6500",
+    "name": "血气分析",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "XQFX",
+    "aliases": []
+  },
+  {
+    "code": "93.9000",
+    "name": "气管插管术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "QGCGS",
+    "aliases": []
+  },
+  {
+    "code": "96.0400",
+    "name": "气管切开术",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "QGQKS",
+    "aliases": []
+  },
+  {
+    "code": "96.7000",
+    "name": "呼吸机治疗",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "HXJZL",
+    "aliases": []
+  },
+  {
+    "code": "99.0400",
+    "name": "输血",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "SX",
+    "aliases": []
+  },
+  {
+    "code": "99.1500",
+    "name": "静脉输液",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "JMSY",
+    "aliases": []
+  },
+  {
+    "code": "99.2500",
+    "name": "化疗药物输注",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "HLYWSZ",
+    "aliases": []
+  },
+  {
+    "code": "99.2900",
+    "name": "药物注射",
+    "category": "手术操作",
+    "version": "ICD9_CM3",
+    "py": "YWZS",
+    "aliases": []
+  },
+  {
+    "code": "99.6200",
+    "name": "心脏电复律",
+    "category": "心血管手术",
+    "version": "ICD9_CM3",
+    "py": "",
+    "aliases": []
+  }
+]

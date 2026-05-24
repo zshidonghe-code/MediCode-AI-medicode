@@ -1,0 +1,759 @@
+"""CHS-DRG 1.2 分组器
+
+基于国家医保局CHS-DRG 1.2版分组方案实现
+
+分组流程：
+1. MDC大类判定 (26个主要诊断大类)
+2. 手术/非手术分组判别
+3. ADRG匹配 (628个核心DRG组)
+4. CC/MCC判断 (合并症/并发症)
+5. 最终DRG落组 (ADRG + 1/3/5后缀)
+
+参考: 国家医保局《CHS-DRG 1.2版分组方案》
+"""
+
+from dataclasses import dataclass, field
+
+
+@dataclass
+class DRGResult:
+    mdc: str
+    mdc_name: str
+    adrg: str
+    adrg_name: str
+    drg_code: str
+    drg_name: str
+    is_surgical: bool
+    weight: float
+    rate: float
+    estimated_payment: float
+    cc_flag: str
+    patient_complexity: str
+
+
+# ICD-10 code prefix → MDC mapping (expanded CHS-DRG 1.2)
+ICD_TO_MDC: dict[str, str] = {
+    # MDCA 神经系统
+    "G00": "MDCA", "G04": "MDCA", "G06": "MDCA", "G08": "MDCA",
+    "G10": "MDCA", "G12": "MDCA", "G20": "MDCA", "G24": "MDCA",
+    "G30": "MDCA", "G35": "MDCA", "G40": "MDCA", "G45": "MDCA",
+    "G50": "MDCA", "G54": "MDCA", "G60": "MDCA", "G70": "MDCA",
+    "G80": "MDCA", "G90": "MDCA", "G91": "MDCA", "G93": "MDCA",
+    "C70": "MDCA", "C71": "MDCA", "C72": "MDCA",
+    "Q00": "MDCA", "Q01": "MDCA", "Q03": "MDCA", "Q05": "MDCA",
+    # MDCB 眼科
+    "H00": "MDCB", "H10": "MDCB", "H15": "MDCB", "H20": "MDCB",
+    "H25": "MDCB", "H30": "MDCB", "H33": "MDCB", "H35": "MDCB",
+    "H40": "MDCB", "H43": "MDCB", "H46": "MDCB", "H50": "MDCB",
+    "C69": "MDCB",
+    # MDCC 耳鼻喉
+    "H60": "MDCC", "H65": "MDCC", "H66": "MDCC", "H70": "MDCC",
+    "H74": "MDCC", "H80": "MDCC", "H81": "MDCC", "H90": "MDCC",
+    "H91": "MDCC", "H93": "MDCC", "H95": "MDCC",
+    "J30": "MDCD", "J31": "MDCD", "J32": "MDCD", "J35": "MDCD",
+    # MDCD 呼吸系统
+    "J00": "MDCD", "J01": "MDCD", "J02": "MDCD", "J04": "MDCD",
+    "J05": "MDCD", "J06": "MDCD", "J09": "MDCD", "J12": "MDCD",
+    "J15": "MDCD", "J18": "MDCD", "J20": "MDCD", "J22": "MDCD",
+    "J40": "MDCD", "J41": "MDCD", "J43": "MDCD", "J44": "MDCD",
+    "J45": "MDCD", "J47": "MDCD", "J60": "MDCD", "J67": "MDCD",
+    "J70": "MDCD", "J80": "MDCD", "J81": "MDCD", "J84": "MDCD",
+    "J85": "MDCD", "J90": "MDCD", "J93": "MDCD", "J96": "MDCD",
+    "J98": "MDCD", "R04": "MDCD", "R05": "MDCD", "R06": "MDCD",
+    "R09": "MDCD",
+    "C33": "MDCD", "C34": "MDCD", "C38": "MDCD", "C39": "MDCD",
+    # MDCE 循环系统
+    "I00": "MDCE", "I01": "MDCE", "I05": "MDCE", "I08": "MDCE",
+    "I10": "MDCE", "I11": "MDCE", "I13": "MDCE", "I15": "MDCE",
+    "I20": "MDCE", "I21": "MDCE", "I24": "MDCE", "I25": "MDCE",
+    "I26": "MDCE", "I27": "MDCE", "I28": "MDCE",
+    "I30": "MDCE", "I34": "MDCE", "I35": "MDCE", "I37": "MDCE", "I38": "MDCE",
+    "I40": "MDCE", "I42": "MDCE", "I44": "MDCE", "I46": "MDCE",
+    "I47": "MDCE", "I48": "MDCE", "I49": "MDCE", "I50": "MDCE",
+    "I60": "MDCE", "I61": "MDCE", "I63": "MDCE", "I65": "MDCE",
+    "I67": "MDCE", "I69": "MDCE", "I70": "MDCE", "I71": "MDCE",
+    "I74": "MDCE", "I77": "MDCE", "I78": "MDCE", "I80": "MDCE",
+    "I83": "MDCE", "I87": "MDCE", "I89": "MDCE", "I95": "MDCE",
+    "R00": "MDCE", "R01": "MDCE", "R03": "MDCE", "R07": "MDCE",
+    "Z95": "MDCE",
+    # MDCF 消化系统
+    "K00": "MDCF", "K04": "MDCF", "K12": "MDCF", "K20": "MDCF",
+    "K21": "MDCF", "K22": "MDCF", "K25": "MDCF", "K27": "MDCF",
+    "K29": "MDCF", "K31": "MDCF", "K35": "MDCF", "K38": "MDCF",
+    "K40": "MDCF", "K42": "MDCF", "K44": "MDCF", "K46": "MDCF",
+    "K50": "MDCF", "K52": "MDCF", "K55": "MDCF", "K56": "MDCF",
+    "K57": "MDCF", "K58": "MDCF", "K59": "MDCF", "K60": "MDCF",
+    "K62": "MDCF", "K63": "MDCF", "K64": "MDCF", "K65": "MDCF",
+    "R10": "MDCF", "R11": "MDCF", "R13": "MDCF",
+    "C15": "MDCF", "C16": "MDCF", "C17": "MDCF", "C18": "MDCF",
+    "C19": "MDCF", "C20": "MDCF",
+    # MDCG 肝胆胰
+    "K70": "MDCG", "K71": "MDCG", "K72": "MDCG", "K73": "MDCG",
+    "K74": "MDCG", "K75": "MDCG", "K76": "MDCG", "K77": "MDCG",
+    "K80": "MDCG", "K81": "MDCG", "K82": "MDCG", "K83": "MDCG",
+    "K85": "MDCG", "K86": "MDCG", "K87": "MDCG",
+    "B15": "MDCG", "B16": "MDCG", "B17": "MDCG", "B18": "MDCG", "B19": "MDCG",
+    "C22": "MDCG", "C23": "MDCG", "C24": "MDCG", "C25": "MDCG",
+    "R16": "MDCG", "R17": "MDCG", "R18": "MDCG",
+    # MDCH 骨骼肌肉
+    "M00": "MDCH", "M02": "MDCH", "M05": "MDCH", "M06": "MDCH",
+    "M10": "MDCH", "M12": "MDCH", "M15": "MDCH", "M17": "MDCH",
+    "M19": "MDCH", "M20": "MDCH", "M22": "MDCH", "M24": "MDCH",
+    "M25": "MDCH", "M30": "MDCH", "M32": "MDCH", "M34": "MDCH",
+    "M35": "MDCH", "M40": "MDCH", "M42": "MDCH", "M45": "MDCH",
+    "M47": "MDCH", "M48": "MDCH", "M50": "MDCH", "M51": "MDCH",
+    "M53": "MDCH", "M54": "MDCH", "M60": "MDCH", "M62": "MDCH",
+    "M65": "MDCH", "M70": "MDCH", "M72": "MDCH", "M75": "MDCH",
+    "M77": "MDCH", "M79": "MDCH", "M80": "MDCH", "M81": "MDCH",
+    "M84": "MDCH", "M87": "MDCH", "M89": "MDCH", "M91": "MDCH",
+    "M94": "MDCH", "M96": "MDCH",
+    "C40": "MDCH", "C41": "MDCH", "C49": "MDCH",
+    "S00": "MDCH", "S10": "MDCH", "S20": "MDCH", "S30": "MDCH",
+    "S40": "MDCH", "S42": "MDCH", "S43": "MDCH", "S46": "MDCH",
+    "S50": "MDCH", "S52": "MDCH", "S53": "MDCH", "S56": "MDCH",
+    "S60": "MDCH", "S62": "MDCH", "S63": "MDCH", "S66": "MDCH",
+    "S70": "MDCH", "S72": "MDCH", "S73": "MDCH", "S76": "MDCH",
+    "S80": "MDCH", "S82": "MDCH", "S83": "MDCH", "S86": "MDCH",
+    "S90": "MDCH", "S92": "MDCH", "S93": "MDCH", "S96": "MDCH",
+    "T00": "MDCH", "T02": "MDCH", "T08": "MDCH", "T10": "MDCH",
+    "T12": "MDCH", "T14": "MDCH",
+    # MDCI 皮肤
+    "L00": "MDCI", "L01": "MDCI", "L02": "MDCI", "L03": "MDCI",
+    "L05": "MDCI", "L08": "MDCI", "L10": "MDCI", "L12": "MDCI",
+    "L20": "MDCI", "L22": "MDCI", "L26": "MDCI", "L28": "MDCI",
+    "L30": "MDCI", "L40": "MDCI", "L42": "MDCI", "L44": "MDCI",
+    "L50": "MDCI", "L53": "MDCI", "L55": "MDCI", "L60": "MDCI",
+    "L65": "MDCI", "L70": "MDCI", "L73": "MDCI", "L80": "MDCI",
+    "L85": "MDCI", "L90": "MDCI", "L92": "MDCI", "L95": "MDCI",
+    "N60": "MDCI", "N61": "MDCI", "N62": "MDCI", "N63": "MDCI",
+    "N64": "MDCI",
+    "C43": "MDCI", "C44": "MDCI", "C50": "MDCI",
+    # MDCJ 内分泌
+    "E00": "MDCJ", "E01": "MDCJ", "E02": "MDCJ", "E03": "MDCJ",
+    "E04": "MDCJ", "E05": "MDCJ", "E06": "MDCJ", "E07": "MDCJ",
+    "E10": "MDCJ", "E11": "MDCJ", "E12": "MDCJ", "E13": "MDCJ",
+    "E15": "MDCJ", "E16": "MDCJ", "E20": "MDCJ", "E22": "MDCJ",
+    "E24": "MDCJ", "E27": "MDCJ", "E28": "MDCJ", "E30": "MDCJ",
+    "E34": "MDCJ", "E40": "MDCJ", "E44": "MDCJ", "E46": "MDCJ",
+    "E50": "MDCJ", "E55": "MDCJ", "E58": "MDCJ", "E63": "MDCJ",
+    "E65": "MDCJ", "E66": "MDCJ", "E68": "MDCJ", "E70": "MDCJ",
+    "E72": "MDCJ", "E74": "MDCJ", "E78": "MDCJ", "E79": "MDCJ",
+    "E83": "MDCJ", "E84": "MDCJ", "E86": "MDCJ", "E87": "MDCJ",
+    "E88": "MDCJ", "E89": "MDCJ",
+    "C73": "MDCJ", "C74": "MDCJ", "C75": "MDCJ",
+    # MDCK 泌尿
+    "N00": "MDCK", "N01": "MDCK", "N03": "MDCK", "N04": "MDCK",
+    "N05": "MDCK", "N06": "MDCK", "N07": "MDCK", "N08": "MDCK",
+    "N10": "MDCK", "N11": "MDCK", "N12": "MDCK", "N13": "MDCK",
+    "N14": "MDCK", "N15": "MDCK", "N17": "MDCK", "N18": "MDCK",
+    "N19": "MDCK", "R31": "MDCK", "R32": "MDCK", "R39": "MDCK",
+    "C64": "MDCK", "C65": "MDCK", "C66": "MDCK", "C67": "MDCK", "C68": "MDCK",
+    # MDCL 男性
+    "N40": "MDCL", "N41": "MDCL", "N42": "MDCL", "N43": "MDCL",
+    "N44": "MDCL", "N45": "MDCL", "N46": "MDCL", "N47": "MDCL",
+    "N48": "MDCL", "N49": "MDCL", "N50": "MDCL",
+    "C60": "MDCL", "C61": "MDCL", "C62": "MDCL", "C63": "MDCL",
+    # MDCM 女性
+    "N70": "MDCM", "N71": "MDCM", "N72": "MDCM", "N73": "MDCM",
+    "N75": "MDCM", "N76": "MDCM", "N80": "MDCM", "N81": "MDCM",
+    "N82": "MDCM", "N83": "MDCM", "N84": "MDCM", "N85": "MDCM",
+    "N87": "MDCM", "N90": "MDCM", "N91": "MDCM", "N92": "MDCM",
+    "N94": "MDCM", "N95": "MDCM", "N97": "MDCM",
+    "C51": "MDCM", "C53": "MDCM", "C54": "MDCM", "C55": "MDCM",
+    "C56": "MDCM", "C57": "MDCM",
+    "D25": "MDCM", "D26": "MDCM", "D27": "MDCM", "D28": "MDCM",
+    # MDCN 产科
+    "O00": "MDCN", "O01": "MDCN", "O03": "MDCN", "O10": "MDCN",
+    "O13": "MDCN", "O14": "MDCN", "O15": "MDCN", "O16": "MDCN",
+    "O20": "MDCN", "O21": "MDCN", "O23": "MDCN", "O24": "MDCN",
+    "O25": "MDCN", "O26": "MDCN", "O30": "MDCN", "O32": "MDCN",
+    "O34": "MDCN", "O35": "MDCN", "O36": "MDCN", "O40": "MDCN",
+    "O42": "MDCN", "O44": "MDCN", "O46": "MDCN", "O47": "MDCN",
+    "O48": "MDCN", "O60": "MDCN", "O61": "MDCN", "O62": "MDCN",
+    "O64": "MDCN", "O66": "MDCN", "O68": "MDCN", "O70": "MDCN",
+    "O71": "MDCN", "O72": "MDCN", "O80": "MDCN", "O82": "MDCN",
+    "O85": "MDCN", "O86": "MDCN", "O88": "MDCN", "O90": "MDCN",
+    "O92": "MDCN", "O98": "MDCN", "O99": "MDCN",
+    "Z34": "MDCN", "Z37": "MDCN", "Z38": "MDCN", "Z39": "MDCN",
+    # MDCO 新生儿
+    "P00": "MDCO", "P03": "MDCO", "P05": "MDCO", "P07": "MDCO",
+    "P10": "MDCO", "P12": "MDCO", "P14": "MDCO", "P20": "MDCO",
+    "P22": "MDCO", "P24": "MDCO", "P25": "MDCO", "P27": "MDCO",
+    "P28": "MDCO", "P29": "MDCO", "P35": "MDCO", "P36": "MDCO",
+    "P37": "MDCO", "P38": "MDCO", "P39": "MDCO", "P50": "MDCO",
+    "P52": "MDCO", "P54": "MDCO", "P55": "MDCO", "P57": "MDCO",
+    "P59": "MDCO", "P60": "MDCO", "P61": "MDCO", "P70": "MDCO",
+    "P72": "MDCO", "P74": "MDCO", "P76": "MDCO", "P77": "MDCO",
+    "P78": "MDCO", "P80": "MDCO", "P83": "MDCO", "P90": "MDCO",
+    "P92": "MDCO", "P94": "MDCO", "P96": "MDCO",
+    # MDCP 血液
+    "D00": "MDCP", "D04": "MDCP", "D10": "MDCP", "D12": "MDCP",
+    "D15": "MDCP", "D17": "MDCP", "D18": "MDCP", "D20": "MDCP",
+    "D22": "MDCP", "D36": "MDCP", "D37": "MDCP", "D44": "MDCP",
+    "D45": "MDCP", "D46": "MDCP", "D47": "MDCP", "D48": "MDCP",
+    "D50": "MDCP", "D51": "MDCP", "D52": "MDCP", "D53": "MDCP",
+    "D55": "MDCP", "D56": "MDCP", "D57": "MDCP", "D58": "MDCP",
+    "D59": "MDCP", "D60": "MDCP", "D61": "MDCP", "D62": "MDCP",
+    "D63": "MDCP", "D64": "MDCP", "D65": "MDCP", "D66": "MDCP",
+    "D67": "MDCP", "D68": "MDCP", "D69": "MDCP", "D70": "MDCP",
+    "D71": "MDCP", "D72": "MDCP", "D73": "MDCP", "D75": "MDCP",
+    "D76": "MDCP", "D80": "MDCP", "D83": "MDCP", "D84": "MDCP",
+    "D86": "MDCP", "D89": "MDCP",
+    "C81": "MDCP", "C82": "MDCP", "C83": "MDCP", "C85": "MDCP",
+    "C88": "MDCP", "C90": "MDCP", "C91": "MDCP", "C92": "MDCP",
+    "C93": "MDCP", "C95": "MDCP", "C96": "MDCP",
+    # MDCQ 感染
+    "A00": "MDCQ", "A01": "MDCQ", "A02": "MDCQ", "A03": "MDCQ",
+    "A04": "MDCQ", "A05": "MDCQ", "A06": "MDCQ", "A07": "MDCQ",
+    "A08": "MDCQ", "A09": "MDCQ", "A15": "MDCQ", "A16": "MDCQ",
+    "A17": "MDCQ", "A18": "MDCQ", "A19": "MDCQ", "A20": "MDCQ",
+    "A22": "MDCQ", "A23": "MDCQ", "A26": "MDCQ", "A27": "MDCQ",
+    "A28": "MDCQ", "A30": "MDCQ", "A32": "MDCQ", "A35": "MDCQ",
+    "A36": "MDCQ", "A37": "MDCQ", "A38": "MDCQ", "A39": "MDCQ",
+    "A40": "MDCQ", "A41": "MDCQ", "A42": "MDCQ", "A46": "MDCQ",
+    "A48": "MDCQ", "A49": "MDCQ", "A50": "MDCQ", "A54": "MDCQ",
+    "B00": "MDCQ", "B01": "MDCQ", "B02": "MDCQ", "B03": "MDCQ",
+    "B05": "MDCQ", "B06": "MDCQ", "B07": "MDCQ", "B08": "MDCQ",
+    "B25": "MDCQ", "B26": "MDCQ", "B27": "MDCQ",
+    "B30": "MDCQ", "B34": "MDCQ", "B35": "MDCQ", "B37": "MDCQ",
+    "B38": "MDCQ", "B39": "MDCQ", "B45": "MDCQ", "B49": "MDCQ",
+    "B50": "MDCQ", "B55": "MDCQ", "B58": "MDCQ", "B59": "MDCQ",
+    "B65": "MDCQ", "B67": "MDCQ", "B69": "MDCQ", "B75": "MDCQ",
+    "B77": "MDCQ", "B80": "MDCQ", "B90": "MDCQ", "B95": "MDCQ",
+    "R50": "MDCQ",
+    # MDCR 精神
+    "F00": "MDCR", "F01": "MDCR", "F03": "MDCR", "F04": "MDCR",
+    "F05": "MDCR", "F06": "MDCR", "F07": "MDCR", "F09": "MDCR",
+    "F10": "MDCR", "F11": "MDCR", "F12": "MDCR", "F13": "MDCR",
+    "F14": "MDCR", "F15": "MDCR", "F16": "MDCR", "F17": "MDCR",
+    "F18": "MDCR", "F19": "MDCR", "F20": "MDCR", "F22": "MDCR",
+    "F23": "MDCR", "F24": "MDCR", "F25": "MDCR", "F28": "MDCR",
+    "F30": "MDCR", "F31": "MDCR", "F32": "MDCR", "F33": "MDCR",
+    "F34": "MDCR", "F38": "MDCR", "F40": "MDCR", "F41": "MDCR",
+    "F42": "MDCR", "F43": "MDCR", "F44": "MDCR", "F45": "MDCR",
+    "F48": "MDCR", "F50": "MDCR", "F51": "MDCR", "F53": "MDCR",
+    "F60": "MDCR", "F63": "MDCR", "F70": "MDCR", "F80": "MDCR",
+    "F84": "MDCR", "F90": "MDCR", "F91": "MDCR", "F95": "MDCR",
+    # MDCS 症状/体征/其他 (only codes NOT already mapped to a specific MDC)
+    "R02": "MDCS", "R20": "MDCS", "R22": "MDCS", "R25": "MDCS",
+    "R29": "MDCS", "R33": "MDCS", "R40": "MDCS",
+    "R52": "MDCS", "R53": "MDCS", "R55": "MDCS", "R56": "MDCS",
+    "R58": "MDCS", "R59": "MDCS", "R62": "MDCS", "R63": "MDCS", "R68": "MDCS",
+    "R70": "MDCS", "R73": "MDCS", "R74": "MDCS", "R76": "MDCS", "R79": "MDCS",
+    "R80": "MDCS", "R82": "MDCS", "R90": "MDCS", "R91": "MDCS",
+    "R93": "MDCS", "R94": "MDCS",
+    "Z00": "MDCV", "Z03": "MDCV", "Z04": "MDCV", "Z08": "MDCV",
+    "Z09": "MDCV", "Z12": "MDCV", "Z30": "MDCV", "Z43": "MDCV",
+    "Z45": "MDCV", "Z47": "MDCV", "Z48": "MDCV", "Z49": "MDCV",
+    "Z51": "MDCV", "Z54": "MDCV", "Z93": "MDCV", "Z95": "MDCV",
+    # MDCT 损伤/中毒
+    "S00": "MDCT", "S10": "MDCT", "S20": "MDCT", "S30": "MDCT",
+    "S40": "MDCT", "S50": "MDCT", "S60": "MDCT", "S70": "MDCT",
+    "S80": "MDCT", "S90": "MDCT",
+    "T00": "MDCT", "T02": "MDCT", "T08": "MDCT", "T14": "MDCT",
+    "T15": "MDCT", "T17": "MDCT", "T20": "MDCT", "T24": "MDCT",
+    "T28": "MDCT", "T30": "MDCT", "T34": "MDCT", "T36": "MDCT",
+    "T39": "MDCT", "T40": "MDCT", "T42": "MDCT", "T43": "MDCT",
+    "T46": "MDCT", "T50": "MDCT", "T51": "MDCT", "T52": "MDCT",
+    "T54": "MDCT", "T56": "MDCT", "T58": "MDCT", "T60": "MDCT",
+    "T62": "MDCT", "T63": "MDCT", "T65": "MDCT", "T66": "MDCT",
+    "T67": "MDCT", "T69": "MDCT", "T71": "MDCT", "T75": "MDCT",
+    "T78": "MDCT", "T79": "MDCT",
+    # MDCU 烧伤
+    "T20": "MDCU", "T21": "MDCU", "T22": "MDCU", "T23": "MDCU",
+    "T24": "MDCU", "T25": "MDCU", "T26": "MDCU", "T27": "MDCU",
+    "T28": "MDCU", "T29": "MDCU", "T30": "MDCU", "T31": "MDCU", "T32": "MDCU",
+    # MDCY HIV
+    "B20": "MDCY", "B21": "MDCY", "B22": "MDCY", "B23": "MDCY", "B24": "MDCY",
+}
+
+MDC_NAMES: dict[str, str] = {
+    "MDCA": "神经系统疾病及功能障碍",
+    "MDCB": "眼疾病及功能障碍",
+    "MDCC": "耳、鼻、口、咽疾病及功能障碍",
+    "MDCD": "呼吸系统疾病及功能障碍",
+    "MDCE": "循环系统疾病及功能障碍",
+    "MDCF": "消化系统疾病及功能障碍",
+    "MDCG": "肝、胆、胰疾病及功能障碍",
+    "MDCH": "肌肉骨骼疾病及功能障碍",
+    "MDCI": "皮肤、皮下组织及乳腺疾病及功能障碍",
+    "MDCJ": "内分泌、营养、代谢疾病及功能障碍",
+    "MDCK": "肾脏及泌尿系统疾病及功能障碍",
+    "MDCL": "男性生殖系统疾病及功能障碍",
+    "MDCM": "女性生殖系统疾病及功能障碍",
+    "MDCN": "妊娠、分娩及产褥期",
+    "MDCO": "新生儿及其他围产期",
+    "MDCP": "血液、造血器官及免疫疾病及功能障碍",
+    "MDCQ": "感染及寄生虫病",
+    "MDCR": "精神疾病及功能障碍",
+    "MDCT": "损伤、中毒及药物毒性效应",
+    "MDCU": "烧伤",
+    "MDCV": "影响健康状态及其他卫生服务",
+    "MDCY": "HIV感染",
+    "MDCZ": "多发严重创伤及未分组",
+}
+
+# MCC诊断码（严重合并症/并发症）- CHS-DRG 1.2 扩展版
+MCC_CODES: set[str] = {
+    # 心血管
+    "I21", "I22", "I23", "I46", "I50", "I60", "I61", "I63", "I64",
+    "I71.0", "I71.1", "I71.2", "I71.3", "I71.5",
+    # 呼吸
+    "J80", "J81", "J96", "J95", "J98.0",
+    # 消化/肝胆
+    "K72.0", "K72.1", "K72.9", "K76.6", "K76.7",
+    # 泌尿
+    "N17.0", "N17.1", "N17.2", "N17.8", "N17.9", "N18.5", "N19",
+    "N99.0",
+    # 感染
+    "A40", "A41", "R57.2", "R65.0", "R65.1",
+    # 神经
+    "G93.0", "G93.1", "G93.4",
+    # 血液
+    "D65", "D66", "D67", "D68", "D69.0", "D69.5",
+    # 肿瘤
+    "C77", "C78", "C79",
+    # 创伤
+    "T79.0", "T79.1", "T79.2", "T79.4", "T79.5",
+    # 其他严重状态
+    "I26.0", "I26.9",  # 肺栓塞
+    "E87.2",  # 重度酸中毒
+    "E11.6", "E10.6",  # 糖尿病酮症酸中毒
+    "K85.0", "K85.1", "K85.2", "K85.8",  # 重症胰腺炎
+    "J15.0", "J15.1", "J15.2", "J15.6", "J15.7",  # 重症肺炎(细菌性)
+    "M32.0", "M32.1",  # SLE
+    "L10.0", "L10.1",  # 天疱疮
+    "G61.0",  # 格林巴利
+    "I33.0", "I33.9",  # 感染性心内膜炎
+    "I40.0",  # 急性心肌炎
+    "B20", "B21", "B22", "B23", "B24",  # HIV
+    "C34", "C25", "C15", "C16", "C18", "C22",  # 恶性肿瘤晚期
+    "K70.4",  # 肝衰竭
+}
+
+# CC诊断码（一般合并症/并发症）- CHS-DRG 1.2 扩展版
+CC_CODES: set[str] = {
+    # 心血管
+    "I10", "I11", "I12", "I13", "I15",
+    "I48", "I49.0", "I49.3", "I49.5",
+    "I25.1", "I25.2",
+    "I34.0", "I35.0", "I38",
+    "I42", "I43",
+    "I70", "I71.4", "I71.8",
+    "I27.2",
+    # 呼吸
+    "J44", "J45", "J46", "J47",
+    "J84", "J90",
+    # 消化
+    "K25", "K26", "K27",
+    "K50", "K51",
+    "K70.0", "K70.1", "K70.2", "K70.3",
+    "K71", "K72.8",
+    "K73", "K74", "K75",
+    "K80.0", "K80.1", "K80.2", "K80.3", "K80.4",
+    "K81", "K82", "K83",
+    "K85.9", "K86",
+    # 泌尿
+    "N18.0", "N18.1", "N18.2", "N18.3", "N18.4", "N18.8", "N18.9",
+    "N03", "N04", "N05",
+    "N10", "N11", "N12", "N13",
+    # 内分泌
+    "E11.0", "E11.1", "E11.2", "E11.3", "E11.4", "E11.5", "E11.7",
+    "E10.2", "E10.3", "E10.4", "E10.5",
+    "E66", "E87.0", "E87.1", "E87.5", "E87.6", "E87.8",
+    # 神经
+    "G20", "G21",
+    "G35", "G36", "G37",
+    "G40", "G41",
+    "G45",
+    "G70", "G71", "G72", "G73",
+    # 骨骼肌肉
+    "M05", "M06", "M45",
+    "M80", "M81",
+    "M32", "M33", "M34", "M35",
+    # 血液
+    "D50", "D51", "D52", "D53",
+    "D61", "D62", "D63", "D64",
+    "D69.2", "D69.3", "D69.4", "D69.6",
+    "D70",
+    # 感染
+    "A15", "A16", "A17", "A18", "A19",
+    "B01", "B02", "B18", "B19",
+    # 肿瘤
+    "C50", "C53", "C54", "C55", "C61", "C64", "C67", "C73",
+    "C81", "C82", "C83", "C85", "C90", "C91", "C92",
+    # 其他
+    "E05", "E06",
+    "D55", "D56", "D57", "D58", "D59",
+    "R57.0", "R57.1",
+    "Z43", "Z45", "Z47", "Z48", "Z49", "Z93", "Z95",
+}
+
+# ADRG定义: (adrg_code, name, is_surgical, trigger_codes, rw_weight)
+# trigger_codes: 手术组匹配procedure code前缀; 内科组匹配diagnosis code前缀
+ADRG_DEFS: list[tuple[str, str, bool, list[str], float]] = [
+    # === MDCA 神经系统 ===
+    ("AA1", "神经系统重大手术，伴MCC/CC", True, ["01.0", "01.2", "01.3"], 4.20),
+    ("AB1", "开颅手术", True, ["01.24", "01.31", "03.0"], 3.50),
+    ("AC1", "脊柱融合术", True, ["81.0", "81.3"], 3.80),
+    ("AD1", "椎间盘手术", True, ["03.94", "80.51"], 2.10),
+    ("AG1", "脑血管介入手术", True, ["88.41", "39.7"], 3.20),
+    ("AH1", "周围神经手术", True, ["04.0", "04.3"], 1.50),
+    ("BR1", "脑卒中", False, ["I60", "I61", "I63", "I64"], 1.60),
+    ("BS1", "颅内感染", False, ["G00", "G03", "G04"], 1.30),
+    ("BT1", "癫痫", False, ["G40", "G41"], 0.80),
+    ("BU1", "帕金森病", False, ["G20", "G21"], 0.90),
+    ("BV1", "其他神经系统疾病", False, ["G10", "G30", "G35", "G45", "G70"], 1.10),
+
+    # === MDCB 眼科 ===
+    ("CA1", "眼内手术", True, ["13.0", "13.4", "14.0"], 1.20),
+    ("CB1", "白内障手术", True, ["13.2", "13.4"], 0.85),
+    ("CC1", "青光眼手术", True, ["12.5", "12.6"], 0.90),
+    ("CD1", "其他眼科手术", True, ["08.0", "09.0", "10.0"], 1.00),
+    ("CR1", "白内障", False, ["H25", "H26"], 0.55),
+    ("CS1", "青光眼", False, ["H40"], 0.60),
+    ("CT1", "其他眼科疾病", False, ["H00", "H10", "H30"], 0.50),
+
+    # === MDCC 耳鼻喉 ===
+    ("DA1", "头颈部大手术", True, ["30.0", "30.2", "30.3"], 2.80),
+    ("DB1", "耳部手术", True, ["18.0", "19.0", "20.0"], 1.30),
+    ("DC1", "鼻部手术", True, ["21.0", "21.3", "22.0"], 1.10),
+    ("DD1", "咽喉手术", True, ["28.0", "28.2", "28.6", "29.0"], 1.40),
+    ("DR1", "中耳炎", False, ["H65", "H66"], 0.50),
+    ("DS1", "眩晕", False, ["H81", "H82", "R42"], 0.45),
+
+    # === MDCD 呼吸系统 ===
+    ("EA1", "肺叶切除术", True, ["32.2", "32.3", "32.4", "32.5", "32.6"], 3.60),
+    ("EB1", "胸腔镜手术", True, ["34.0", "34.2", "34.3"], 2.40),
+    ("EC1", "胸壁手术", True, ["34.4", "34.5", "34.7"], 2.00),
+    ("ED1", "气管切开术", True, ["31.2", "31.1", "96.04"], 1.60),
+    ("ER1", "肺炎", False, ["J12", "J13", "J14", "J15", "J16", "J17", "J18"], 0.95),
+    ("ES1", "COPD", False, ["J40", "J41", "J42", "J43", "J44", "J47"], 0.90),
+    ("ET1", "哮喘", False, ["J45", "J46"], 0.55),
+    ("EU1", "呼吸系统感染", False, ["J00", "J01", "J02", "J03", "J04", "J05", "J06", "J20", "J21", "J22"], 0.50),
+    ("EV1", "呼吸衰竭", False, ["J80", "J81", "J90", "J93", "J96"], 1.40),
+
+    # === MDCE 循环系统 ===
+    ("FA1", "冠脉搭桥术", True, ["36.1", "36.2"], 5.50),
+    ("FB1", "心脏瓣膜手术", True, ["35.0", "35.1", "35.2", "35.3"], 5.80),
+    ("FC1", "PCI手术", True, ["36.06", "36.07", "36.09"], 3.40),
+    ("FD1", "起搏器植入术", True, ["37.7", "37.8", "37.9"], 3.20),
+    ("FE1", "外周血管手术", True, ["38.0", "38.1", "38.3", "38.4", "38.6", "39.2", "39.4", "39.5"], 2.60),
+    ("FF1", "心脏电生理手术", True, ["37.3", "37.5"], 3.00),
+    ("FR1", "急性心肌梗死", False, ["I21", "I22", "I23"], 1.80),
+    ("FS1", "心力衰竭", False, ["I50", "I42", "I43"], 1.20),
+    ("FT1", "高血压", False, ["I10", "I11", "I12", "I13", "I15"], 0.65),
+    ("FU1", "冠心病", False, ["I20", "I24", "I25"], 0.85),
+    ("FV1", "心律失常", False, ["I44", "I45", "I46", "I47", "I48", "I49"], 0.80),
+    ("FW1", "瓣膜病", False, ["I34", "I35", "I36", "I37", "I38"], 0.95),
+    ("FX1", "脑血管疾病", False, ["I65", "I66", "I67", "I68", "I69"], 1.00),
+
+    # === MDCF 消化系统 ===
+    ("GA1", "食管胃手术", True, ["42.4", "43.0", "43.4", "43.8", "44.0"], 3.40),
+    ("GB1", "肠道手术", True, ["45.0", "45.3", "45.6", "45.7", "46.1", "46.2"], 3.20),
+    ("GC1", "阑尾切除术", True, ["47.0", "47.1", "47.2"], 1.00),
+    ("GD1", "疝气手术", True, ["53.0", "53.1", "53.2"], 0.95),
+    ("GE1", "腹部探查术", True, ["54.0", "54.1", "54.2"], 1.50),
+    ("GR1", "胃炎/溃疡", False, ["K25", "K26", "K27", "K28", "K29", "K30", "K31"], 0.70),
+    ("GS1", "肠炎/肠梗阻", False, ["K50", "K51", "K52", "K55", "K56", "K57", "K58", "K59", "K63"], 0.75),
+    ("GT1", "食管疾病", False, ["K20", "K21", "K22", "K23"], 0.65),
+
+    # === MDCG 肝胆胰 ===
+    ("HA1", "肝切除术", True, ["50.2", "50.3", "50.4"], 3.80),
+    ("HB1", "胆囊切除术", True, ["51.0", "51.2", "51.3", "51.4"], 1.80),
+    ("HC1", "胰腺手术", True, ["52.0", "52.2", "52.5", "52.7"], 3.60),
+    ("HD1", "胆道手术", True, ["51.5", "51.6", "51.7", "51.8", "51.9"], 2.60),
+    ("HR1", "肝炎", False, ["K70", "K71", "K73", "K74", "K75", "K76", "K77"], 1.00),
+    ("HS1", "胆道疾病", False, ["K80", "K81", "K82", "K83", "K87"], 0.85),
+    ("HT1", "胰腺炎", False, ["K85", "K86"], 1.10),
+
+    # === MDCH 骨骼 ===
+    ("IA1", "髋关节置换术", True, ["81.51", "81.52", "81.53"], 4.50),
+    ("IB1", "膝关节置换术", True, ["81.54", "81.55"], 4.30),
+    ("IC1", "关节镜手术", True, ["80.2", "80.3", "80.4", "80.6", "80.7", "80.8", "81.8"], 1.50),
+    ("ID1", "骨折内固定术", True, ["78.5", "79.1", "79.2", "79.3"], 2.20),
+    ("IE1", "脊柱手术", True, ["77.0", "77.1", "77.2", "77.3", "78.0", "81.0"], 2.80),
+    ("IF1", "软组织手术", True, ["83.0", "83.1", "83.2", "83.4", "83.7", "83.8"], 1.20),
+    ("IR1", "骨折非手术", False, ["S02", "S12", "S22", "S32", "S42", "S52", "S62", "S72", "S82", "S92"], 0.80),
+    ("IS1", "关节炎", False, ["M00", "M02", "M05", "M06", "M10", "M11", "M12", "M13", "M15", "M16", "M17", "M18", "M19", "M45"], 0.75),
+    ("IT1", "骨病", False, ["M20", "M21", "M22", "M23", "M24", "M25", "M40", "M41", "M42", "M43", "M48", "M50", "M51", "M53", "M54", "M70", "M71", "M72", "M75", "M76", "M77", "M79", "M80", "M81"], 0.85),
+
+    # === MDCI 皮肤 ===
+    ("JA1", "乳腺全切术", True, ["85.4", "85.3"], 2.20),
+    ("JB1", "乳腺区段切术", True, ["85.2", "85.1"], 1.30),
+    ("JC1", "皮肤清创术", True, ["86.0", "86.2", "86.3", "86.4"], 1.10),
+    ("JR1", "乳腺良性疾病", False, ["N60", "N61", "N62", "N63", "N64"], 0.50),
+    ("JS1", "皮肤感染", False, ["L00", "L01", "L02", "L03", "L04", "L05", "L08"], 0.55),
+    ("JT1", "皮炎/荨麻疹", False, ["L20", "L21", "L22", "L23", "L24", "L25", "L26", "L27", "L28", "L29", "L30", "L40", "L41", "L42", "L43", "L44", "L45", "L50", "L51", "L52", "L53", "L54"], 0.40),
+
+    # === MDCJ 内分泌 ===
+    ("KA1", "甲状腺手术", True, ["06.0", "06.2", "06.3", "06.4", "06.5", "06.7", "06.8", "06.9"], 1.50),
+    ("KB1", "肾上腺手术", True, ["07.2", "07.3", "07.4"], 2.50),
+    ("KR1", "糖尿病", False, ["E10", "E11", "E12", "E13", "E14"], 0.75),
+    ("KS1", "甲状腺疾病", False, ["E00", "E01", "E02", "E03", "E04", "E05", "E06", "E07"], 0.65),
+    ("KT1", "脂代谢异常", False, ["E66", "E68", "E78"], 0.50),
+
+    # === MDCK 泌尿 ===
+    ("LA1", "肾切除术", True, ["55.0", "55.3", "55.4", "55.5"], 3.00),
+    ("LB1", "经尿道手术", True, ["57.3", "60.2", "60.3"], 1.10),
+    ("LC1", "膀胱手术", True, ["57.4", "57.6", "57.7", "57.8"], 2.00),
+    ("LD1", "尿路结石手术", True, ["55.0", "56.0", "57.3", "59.0", "59.9"], 1.30),
+    ("LR1", "慢性肾病", False, ["N18", "N19", "N17", "N10", "N11", "N12", "N13", "N14", "N15", "N16"], 0.90),
+    ("LS1", "尿路感染/结石", False, ["N20", "N21", "N30", "N34", "N39", "N40", "N41", "N42"], 0.55),
+
+    # === MDCL 男性 ===
+    ("MA1", "前列腺手术", True, ["60.2", "60.3", "60.4", "60.5", "60.6"], 1.60),
+    ("MR1", "前列腺增生", False, ["N40"], 0.60),
+
+    # === MDCM 女性 ===
+    ("NA1", "子宫切除术", True, ["68.3", "68.4", "68.5", "68.6"], 2.00),
+    ("NB1", "卵巢手术", True, ["65.0", "65.2", "65.3", "65.4", "65.5", "65.6"], 1.60),
+    ("NC1", "子宫肌瘤切除术", True, ["68.2", "68.1", "68.0"], 1.20),
+    ("NR1", "妇科炎症", False, ["N70", "N71", "N72", "N73", "N74", "N75", "N76", "N77"], 0.50),
+
+    # === MDCN 产科 ===
+    ("OA1", "剖宫产", True, ["74.0", "74.1", "74.2", "74.9"], 1.05),
+    ("OR1", "正常分娩", False, ["O80", "O81", "O82", "O83", "O84"], 0.60),
+
+    # === MDCO 新生儿 ===
+    ("PA1", "新生儿手术", True, ["38.0", "39.0", "44.0"], 2.50),
+    ("PR1", "新生儿疾病", False, ["P00", "P05", "P07", "P10", "P20", "P21", "P22"], 0.80),
+
+    # === MDCP 血液 ===
+    ("QA1", "血液系统手术", True, ["40.0", "41.0", "41.2", "41.4", "41.5", "41.9"], 2.20),
+    ("QR1", "贫血", False, ["D50", "D51", "D52", "D53", "D55", "D56", "D57", "D58", "D59", "D60", "D61", "D62", "D63", "D64"], 0.60),
+
+    # === MDCQ 感染 ===
+    ("RA1", "感染手术", True, ["40.0", "40.1", "40.2"], 2.00),
+    ("RR1", "传染病", False, ["A00", "A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09", "A15", "A16", "A17", "A18", "A19", "A20", "A21", "A22", "A23", "A24", "A25", "A26", "A27", "A28", "A30", "A31", "A32", "A33", "A34", "A35", "A36", "A37", "A38", "A39", "A40", "A41", "A42", "A43", "A44", "A46", "A48", "A49", "B00", "B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B09", "B15", "B16", "B17", "B18", "B25", "B26", "B27", "B34", "B35", "B36", "B37", "B38", "B39", "B40", "B41", "B42", "B43", "B44", "B45", "B46", "B47", "B48", "B49", "B50", "B51", "B52", "B53", "B54", "B55", "B56", "B57", "B58", "B59", "B60", "B90"], 0.85),
+
+    # === MDCR 精神 ===
+    ("RR2", "精神疾病", False, ["F00", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F09", "F10", "F11", "F12", "F13", "F14", "F15", "F16", "F17", "F18", "F19", "F20", "F21", "F22", "F23", "F24", "F25", "F28", "F29", "F30", "F31", "F32", "F33", "F34", "F38", "F39", "F40", "F41", "F42", "F43", "F44", "F45", "F48", "F50", "F51", "F52", "F53", "F54", "F55", "F59", "F60", "F61", "F62", "F63", "F64", "F65", "F66", "F68", "F69", "F70", "F71", "F72", "F73", "F78", "F79", "F80", "F81", "F82", "F83", "F84", "F88", "F89", "F90", "F91", "F92", "F93", "F94", "F95", "F98"], 0.70),
+
+    # === MDCT 损伤 ===
+    ("TA1", "创伤手术", True, ["76.0", "76.1", "76.2", "76.3", "76.4", "76.5", "76.6", "76.7", "76.9", "77.0"], 1.80),
+    ("TR1", "外伤/中毒", False, ["S00", "S09", "S10", "S20", "S30", "S40", "S50", "S60", "S70", "S80", "S90", "T00", "T01", "T02", "T03", "T04", "T05", "T06", "T07", "T08", "T09", "T10", "T11", "T12", "T13", "T14", "T15", "T16", "T17", "T18", "T19", "T36", "T37", "T38", "T39", "T40", "T41", "T42", "T43", "T44", "T45", "T46", "T47", "T48", "T49", "T50"], 0.70),
+
+    # === MDCS 症状/体征/其他 ===
+    ("SR1", "症状/体征", False, ["R00", "R10", "R20", "R50", "R60", "R70", "R90"], 0.45),
+
+    # === MDCV 影响健康状态/康复 ===
+    ("VR1", "康复治疗", False, ["Z50", "Z54"], 0.60),
+    ("VS1", "随诊检查", False, ["Z00", "Z01", "Z02", "Z03", "Z08", "Z09"], 0.35),
+
+    # === MDCZ 多部位严重创伤 ===
+    ("ZB1", "多部位严重创伤手术", True, ["77.6", "78.1", "79.3", "84.1"], 5.20),
+    ("ZR1", "多部位严重创伤", False, ["T02", "T04", "T05", "T06", "T07"], 2.80),
+
+    # === Additional MDCE groups ===
+    ("FX1", "脑血管疾病", False, ["I65", "I66", "I67", "I69"], 1.00),
+    ("FY1", "外周血管疾病", False, ["I70", "I71", "I72", "I73", "I74", "I77"], 0.95),
+    ("FZ1", "其他循环系统疾病", False, ["I80", "I82", "I83", "I87", "I89", "I95", "I99", "R00", "R01", "R03", "R07"], 0.70),
+
+    # === Additional MDCF groups ===
+    ("GF1", "腹部疝手术", True, ["53.0", "53.1", "53.2", "53.3", "53.4", "53.5"], 0.95),
+    ("GU1", "消化道出血", False, ["K92", "K25.0", "K25.2", "K25.4", "K25.6", "K26.0", "K26.2", "K26.4", "K26.6"], 1.00),
+    ("GV1", "其他消化系统疾病", False, ["K30", "K31", "K38", "K90", "K92"], 0.65),
+
+    # === Additional MDCH groups ===
+    ("IG1", "手部手术", True, ["82.0", "82.2", "82.3", "82.4", "82.5", "82.6"], 1.00),
+    ("IH1", "足部手术", True, ["77.0", "77.1", "77.2", "77.5", "77.8", "78.0"], 1.10),
+    ("IU1", "肌肉/肌腱疾病", False, ["M60", "M61", "M62", "M63", "M65", "M66", "M67"], 0.60),
+    ("IV1", "骨骼其他疾病", False, ["M84", "M85", "M86", "M87", "M88", "M89", "M90", "M91", "M92", "M93", "M94", "M95", "M96", "M99"], 0.75),
+
+    # === Additional MDCD groups ===
+    ("EW1", "胸膜疾病", False, ["J90", "J91", "J92", "J93", "J94"], 1.00),
+    ("EX1", "间质性肺病", False, ["J60", "J61", "J62", "J63", "J64", "J65", "J66", "J67", "J68", "J69", "J70", "J84"], 1.20),
+    ("EY1", "肺栓塞", False, ["I26"], 1.50),
+    ("EZ1", "其他呼吸系统疾病", False, ["J95", "J98", "J99", "R04", "R05", "R06", "R09"], 0.55),
+
+    # === Additional MDCA groups ===
+    ("AJ1", "脑血管介入", True, ["39.7", "00.61", "00.62", "00.63", "00.64", "00.65"], 3.20),
+    ("AK1", "脊髓/神经根手术", True, ["03.0", "03.1", "03.2", "03.3", "03.4", "03.5", "03.6", "03.7", "03.8", "03.9"], 2.60),
+    ("BW1", "脑炎/脑膜炎", False, ["G00", "G03", "G04", "G05", "G06", "G07", "G08", "G09"], 1.40),
+    ("BX1", "多发性硬化/共济失调", False, ["G11", "G12", "G13", "G14", "G35", "G36", "G37"], 1.20),
+    ("BY1", "肌肉/神经接头疾病", False, ["G70", "G71", "G72", "G73"], 1.10),
+    ("BZ1", "其他神经系统疾病", False, ["G24", "G25", "G26", "G50", "G51", "G52", "G53", "G54", "G60", "G61", "G62", "G63", "G64", "G80", "G81", "G82", "G83", "G90", "G91", "G93", "G95", "G96", "G97", "G98", "G99"], 0.95),
+
+    # === Additional MDCI groups ===
+    ("JD1", "乳腺重建手术", True, ["85.7", "85.8", "85.9"], 2.50),
+    ("JU1", "结缔组织病", False, ["M30", "M31", "M32", "M33", "M34", "M35", "M36", "L93", "L94", "L95"], 0.95),
+    ("JV1", "其他皮肤/乳腺疾病", False, ["L60", "L65", "L70", "L80", "L85", "L90", "L92", "L98", "N60", "N61", "N62", "N63", "N64"], 0.45),
+
+    # === Additional MDCJ groups ===
+    ("KC1", "垂体手术", True, ["07.1", "07.5", "07.6", "07.7"], 2.80),
+    ("KU1", "电解质紊乱", False, ["E86", "E87"], 0.55),
+    ("KV1", "其他内分泌疾病", False, ["E15", "E16", "E20", "E21", "E22", "E23", "E24", "E25", "E26", "E27", "E28", "E29", "E30", "E31", "E34", "E40", "E41", "E42", "E43", "E44", "E45", "E46", "E50", "E51", "E52", "E53", "E54", "E55", "E56", "E58", "E63", "E64", "E65", "E68", "E88", "E89"], 0.60),
+
+    # === Additional MDCQ groups ===
+    ("RB1", "感染/败血症", False, ["A00", "A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09", "A40", "A41", "A46", "A48", "A49"], 1.30),
+    ("RC1", "结核病", False, ["A15", "A16", "A17", "A18", "A19"], 1.10),
+    ("RD1", "病毒性感染", False, ["B00", "B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B09", "B25", "B26", "B27", "B30", "B34"], 0.65),
+    ("RE1", "寄生虫病", False, ["B50", "B51", "B52", "B53", "B54", "B55", "B56", "B57", "B58", "B59", "B60", "B64", "B65", "B66", "B67", "B68", "B69", "B70", "B71", "B72", "B73", "B74", "B75", "B76", "B77", "B78", "B79", "B80", "B81", "B82", "B83"], 0.55),
+
+    # === Additional MDCK groups ===
+    ("LE1", "泌尿系肿瘤手术", True, ["57.4", "57.5", "57.6", "57.7", "57.8", "59.0"], 2.20),
+    ("LU1", "肾炎/肾病", False, ["N00", "N01", "N02", "N03", "N04", "N05", "N06", "N07", "N08"], 0.80),
+    ("LV1", "其他泌尿系统疾病", False, ["N25", "N26", "N27", "N28", "N29", "N30", "N31", "N32", "N33", "N34", "N35", "N36", "N37", "N39", "R31", "R32", "R33", "R34", "R35", "R36", "R39"], 0.55),
+
+    # === Additional MDCN groups ===
+    ("OB1", "产科手术（除剖宫产）", True, ["69.0", "69.5", "75.0", "75.3", "75.5", "75.6"], 0.90),
+    ("OC1", "高危妊娠", False, ["O10", "O11", "O12", "O13", "O14", "O15", "O16", "O20", "O21", "O22", "O23", "O24", "O25", "O26", "O28", "O29", "O30", "O31", "O32", "O33", "O34", "O35", "O36", "O40", "O41", "O42", "O43", "O44", "O45", "O46", "O47", "O48"], 0.75),
+    ("OD1", "产后/流产", False, ["O00", "O01", "O02", "O03", "O04", "O05", "O06", "O07", "O08", "O85", "O86", "O87", "O88", "O89", "O90", "O91", "O92", "O95", "O96", "O97", "O98", "O99"], 0.55),
+
+    # === Additional MDCP groups ===
+    ("QB1", "淋巴/造血系统手术", True, ["40.1", "40.2", "40.3", "40.4", "40.5", "41.2", "41.3", "41.4", "41.5", "41.9"], 2.00),
+    ("QS1", "白细胞/血小板疾病", False, ["D70", "D71", "D72", "D73", "D74", "D75", "D76", "D77", "D69.1", "D69.3", "D69.4", "D69.5", "D69.6"], 0.65),
+    ("QT1", "免疫缺陷", False, ["D80", "D81", "D82", "D83", "D84", "D86", "D89"], 0.70),
+
+    # === Additional MDCR groups ===
+    ("RS1", "器质性精神障碍", False, ["F00", "F01", "F02", "F03", "F04", "F05", "F06", "F07", "F09"], 0.75),
+    ("RT1", "物质使用障碍", False, ["F10", "F11", "F12", "F13", "F14", "F15", "F16", "F17", "F18", "F19"], 0.55),
+    ("RU1", "心境障碍", False, ["F30", "F31", "F32", "F33", "F34", "F38", "F39"], 0.60),
+    ("RV1", "焦虑/应激障碍", False, ["F40", "F41", "F42", "F43", "F44", "F45", "F48"], 0.50),
+
+    # === Additional MDCU groups ===
+    ("UA1", "烧伤手术", True, ["86.0", "86.2", "86.3", "86.4", "86.6", "86.7"], 2.50),
+    ("UR1", "烧伤", False, ["T20", "T21", "T22", "T23", "T24", "T25", "T26", "T27", "T28", "T29", "T30", "T31", "T32"], 1.50),
+]
+
+
+class DRGGrouper:
+    """CHS-DRG 1.2 分组器"""
+
+    def _get_icd_prefix(self, code: str, n: int) -> str:
+        """Get first n characters of an ICD code (ignoring dots)"""
+        return code.replace(".", "").replace("x", "0")[:n]
+
+    def determine_mdc(self, primary_diag_code: str) -> tuple[str, str]:
+        clean = primary_diag_code.replace(".", "").replace("x", "0")
+        # Try exact 3-char prefix match (specific mapping)
+        prefix3 = clean[:3]
+        for icd_prefix, mdc in ICD_TO_MDC.items():
+            icd_clean = icd_prefix.replace(".", "")
+            if prefix3 == icd_clean[:3]:
+                return mdc, MDC_NAMES.get(mdc, "未分类")
+        # Try 2-char prefix only for codes with known letter+digit patterns
+        prefix2 = clean[:2]
+        for icd_prefix, mdc in ICD_TO_MDC.items():
+            icd_clean = icd_prefix.replace(".", "")
+            if len(icd_clean) == 2 and prefix2 == icd_clean:
+                return mdc, MDC_NAMES.get(mdc, "未分类")
+        # Fallback: map by first character
+        if clean[0] == "R":
+            return "MDCS", MDC_NAMES.get("MDCS", "症状/体征")
+        if clean[0] == "O":
+            return "MDCN", MDC_NAMES.get("MDCN", "妊娠/分娩")
+        if clean[0] == "P":
+            return "MDCO", MDC_NAMES.get("MDCO", "新生儿")
+        return "MDCZ", MDC_NAMES.get("MDCZ", "未分类")
+
+    def determine_cc_flag(self, secondary_diag_codes: list[str]) -> str:
+        for code in secondary_diag_codes:
+            clean = code.replace(".", "").replace("x", "0")
+            if code in MCC_CODES or any(clean.startswith(m.replace(".", "")) for m in MCC_CODES):
+                return "MCC"
+        for code in secondary_diag_codes:
+            clean = code.replace(".", "").replace("x", "0")
+            if code in CC_CODES or any(clean.startswith(c.replace(".", "")) for c in CC_CODES):
+                return "CC"
+        return "无"
+
+    def _match_adrg(self, primary_diag: str, proc_codes: list[str], mdc: str) -> tuple[str, str, bool, float]:
+        """Match the best ADRG based on diagnosis and procedure codes
+
+        ADRG code first letter → MDC mapping (CHS-DRG 1.2 convention):
+        A→A, B→B, C→C, D→D, E→E, F→F, G→G, H→H, I→I, J→J,
+        K→K, L→L, M→M, N→N, O→O, P→P, Q→Q, R→R, S→S, T→T
+        """
+        clean_diag = primary_diag.replace(".", "").replace("x", "0")
+        clean_procs = [p.replace(".", "").replace("x", "0") for p in proc_codes]
+        mdc_letter = mdc[3] if len(mdc) > 3 else "Z"
+        best = None
+
+        for adrg_code, name, is_surg, triggers, weight in ADRG_DEFS:
+            adrg_letter = adrg_code[0]
+            # Map MDC letter to ADRG letter
+            expected_letter = mdc_letter
+
+            # A surgical ADRG requires procedures
+            if is_surg and clean_procs:
+                for trigger in triggers:
+                    t_clean = trigger.replace(".", "")
+                    for proc in clean_procs:
+                        if proc.startswith(t_clean):
+                            # Prefer ADRGs whose letter matches the MDC
+                            bonus = 100 if adrg_letter == expected_letter else 0
+                            score = len(t_clean) + bonus
+                            if best is None or score > best[0]:
+                                best = (score, adrg_code, name, True, weight)
+            # A medical ADRG matches by diagnosis code prefix
+            elif not is_surg:
+                for trigger in triggers:
+                    t_clean = trigger.replace(".", "")
+                    if clean_diag.startswith(t_clean):
+                        bonus = 100 if adrg_letter == expected_letter else 0
+                        score = len(t_clean) + bonus
+                        if best is None or score > best[0]:
+                            best = (score, adrg_code, name, False, weight)
+
+        if best:
+            return best[1], best[2], best[3], best[4]
+        # Fallback: return a generic result based on MDC
+        return "", "待确定", len(clean_procs) > 0, 0.80
+
+    def _get_drg_suffix_and_weight(self, adrg: str, base_weight: float, cc_flag: str) -> tuple[str, float, str]:
+        """Determine final DRG suffix and adjusted weight"""
+        multiplier = {"MCC": 1.30, "CC": 1.10, "无": 1.00}
+        suffix_map = {"MCC": "1", "CC": "3", "无": "5"}
+
+        if adrg in ("FR1", "FS1", "FA1", "FB1"):
+            multiplier["无"] = 1.00
+            multiplier["CC"] = 1.15
+            multiplier["MCC"] = 1.40
+
+        suffix = suffix_map[cc_flag]
+        adjusted_weight = round(base_weight * multiplier[cc_flag], 2)
+        complexity = "高复杂度" if cc_flag == "MCC" else "中等复杂度" if cc_flag == "CC" else "常规"
+        return suffix, adjusted_weight, complexity
+
+    def group(
+        self,
+        primary_diag_code: str,
+        secondary_diag_codes: list[str],
+        procedure_codes: list[str],
+        patient_info: dict,
+    ) -> DRGResult:
+        """Execute complete DRG grouping"""
+        mdc, mdc_name = self.determine_mdc(primary_diag_code)
+        cc_flag = self.determine_cc_flag(secondary_diag_codes)
+        adrg, adrg_name, is_surgical, base_weight = self._match_adrg(primary_diag_code, procedure_codes, mdc)
+        suffix, adjusted_weight, complexity = self._get_drg_suffix_and_weight(adrg, base_weight, cc_flag)
+
+        drg_code = f"{adrg}{suffix}" if adrg else f"{mdc}-NA"
+        drg_name = adrg_name if adrg_name else "待确定"
+
+        from src.config.settings import get_settings
+        rate = get_settings().drg_base_rate
+        days = max(patient_info.get("days_of_stay", 1), 1)
+        estimated_payment = adjusted_weight * rate
+        if days > 30:
+            estimated_payment *= 1.2
+
+        return DRGResult(
+            mdc=mdc,
+            mdc_name=mdc_name,
+            adrg=adrg,
+            adrg_name=adrg_name,
+            drg_code=drg_code,
+            drg_name=drg_name,
+            is_surgical=is_surgical,
+            weight=adjusted_weight,
+            rate=rate,
+            estimated_payment=round(estimated_payment, 2),
+            cc_flag=cc_flag,
+            patient_complexity=complexity,
+        )
+
+
+drg_grouper = DRGGrouper()

@@ -1,0 +1,109 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Microsoft YaHei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #f0f5f9;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* Card hover lift */
+.ant-card {
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  border: 1px solid #e8edf2;
+}
+.ant-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Statistic polished */
+.ant-statistic-title { font-size: 13px; color: #64748b; font-weight: 500; }
+
+/* Table */
+.ant-table-small .ant-table-thead > tr > th {
+  background: #f8fafc;
+  font-weight: 600;
+  font-size: 13px;
+  color: #475569;
+}
+.ant-table-row:hover > td { background: #f0f9ff !important; }
+
+/* Tags */
+.ant-tag { border-radius: 4px; font-weight: 500; }
+
+/* Steps */
+.ant-steps-item-finish .ant-steps-item-icon {
+  background: #10b981;
+  border-color: #10b981;
+}
+.ant-steps-item-process .ant-steps-item-icon {
+  background: #0ea5e9;
+  border-color: #0ea5e9;
+}
+
+/* Button glow */
+.ant-btn-primary {
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.35);
+}
+.ant-btn-primary:hover {
+  box-shadow: 0 4px 16px rgba(14, 165, 233, 0.45);
+}
+
+/* Pipeline page special */
+.pipeline-card-complete {
+  border-left: 3px solid #10b981;
+}
+.pipeline-card-processing {
+  border-left: 3px solid #0ea5e9;
+  animation: pulse-border 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-border {
+  0%, 100% { border-left-color: #0ea5e9; }
+  50% { border-left-color: #7dd3fc; }
+}
+
+/* Login page animated background */
+.login-bg {
+  position: relative;
+  overflow: hidden;
+}
+.login-bg::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(ellipse at 30% 50%, rgba(14, 165, 233, 0.15) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+              radial-gradient(ellipse at 50% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 40%);
+  animation: bg-drift 20s ease-in-out infinite;
+}
+@keyframes bg-drift {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(1%, 2%) rotate(1deg); }
+  66% { transform: translate(-1%, -1%) rotate(-1deg); }
+}
+
+/* Money animation */
+.money-amount {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .ant-layout-content { margin: 8px !important; padding: 12px !important; }
+}
