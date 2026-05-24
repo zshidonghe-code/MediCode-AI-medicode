@@ -29,7 +29,7 @@ add_para('总时长：5分钟 | 版本：v1.0 | 日期：2026年5月24日', ital
 doc.add_heading('一、演示前准备清单', level=2)
 
 add_para('1. 确保后端和前端都已启动（python -m src.main + npm run dev）', bold=False)
-add_para('2. 浏览器打开 http://localhost:5173，登录 admin / admin123', bold=False)
+add_para('2. 浏览器打开 http://localhost:5173，登录 admin / medicode2024', bold=False)
 add_para('3. 打开两个浏览器Tab：', bold=False)
 add_para('    Tab 1: 智能流水线页面（/pipeline）— 点击"快速演示"按钮', bold=False)
 add_para('    Tab 2: 数据驾驶舱页面（/dashboard）— 展示运营数据', bold=False)

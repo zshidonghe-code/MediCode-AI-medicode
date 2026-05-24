@@ -2,8 +2,8 @@
 
 > 用 AI 自动完成住院病历的 ICD-10 诊断编码和 DRG 付费分组，同时做病历内涵质控 — 帮医院不被医保扣钱，帮医保基金不被浪费。
 
-[![Python](https://img.shields.io/badge/Python-3.14-blue)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green)](https://fastapi.tiangolo.com/)
+[![Python](https://img.shields.io/badge/Python-3.12+-blue)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.111-green)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-18-61dafb)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178c6)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
@@ -43,7 +43,7 @@ DRG/DIP 付费改革是国家医保局重点推进的政策 — 每一份病历�
 | 层级 | 技术 | 说明 |
 |------|------|------|
 | **前端** | React 18 + TypeScript + Ant Design 5 + ECharts | 组件化 UI，医疗行业成熟方案 |
-| **后端** | Python 3.14 + FastAPI + SQLAlchemy 2.0 (async) | 高性能异步 API，自动 Swagger 文档 |
+| **后端** | Python 3.12+ + FastAPI + SQLAlchemy 2.0 (async) | 高性能异步 API，自动 Swagger 文档 |
 | **AI/ML** | Ollama (Qwen2.5:3B) + LangChain + 规则引擎 | 大模型编码推荐 + 规则兜底 |
 | **数据库** | SQLite (开发) / PostgreSQL (生产) | 轻量到企业级灵活切换 |
 | **部署** | Docker Compose | 一键启动，支持医院私有化 |
@@ -61,7 +61,7 @@ DRG/DIP 付费改革是国家医保局重点推进的政策 — 每一份病历�
 ### 1. 克隆项目
 
 ```bash
-git clone https://github.com/your-org/medicode.git
+git clone https://github.com/MediCode-AI/medicode.git
 cd medicode
 ```
 
@@ -94,7 +94,7 @@ ollama pull qwen2.5:3b
 ### 5. 访问系统
 
 1. 打开 `http://localhost:5173`
-2. 默认管理员账号：`admin` / `admin123`
+2. 默认管理员账号：`admin` / `medicode2024`
 3. 首次启动自动填充演示数据
 
 ---
@@ -107,7 +107,7 @@ medicode/
 │   ├── src/
 │   │   ├── api/v1/endpoints/    # API 端点（auth, coding, drg, qc, dashboard, admin, pipeline）
 │   │   ├── config/              # 配置管理
-│   │   ├── data/                # ICD 编码数据（JSON，300+ 诊断 + 113 手术）
+│   │   ├── data/                # ICD 编码数据（JSON，870条诊断 + 558条手术，CHS-DRG 2.0）
 │   │   ├── models/              # SQLAlchemy 数据模型
 │   │   ├── scripts/             # 种子数据脚本
 │   │   └── services/            # 核心服务（NLP 引擎、ICD 编码器、DRG 分组器、质控引擎、LLM 引擎）
@@ -136,8 +136,8 @@ medicode/
 | 角色 | 成员 |
 |------|------|
 | 项目负责人 | 郑诗东和 — 上海对外经贸大学，方向决策、路演答辩 |
-| 技术开发 | Claude (AI Agent) — 全栈开发、架构设计 |
-| 医学顾问 | 待招募 |
+| 技术开发 | 郑诗东和（AI辅助）— 利用AI开发工具，单人完成全栈开发 |
+| 医学顾问 | 招募中 — 已与医学院和医院编码科取得联系 |
 
 ---
 

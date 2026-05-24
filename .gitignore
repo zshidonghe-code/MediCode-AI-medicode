@@ -40,4 +40,6 @@ ollama_pull_result.json
 # Generated outputs
 *.pdf
 *.pptx
+output/
+*.bak
 # Keep docx outputs for now - competition deliverables

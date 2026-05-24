@@ -6,7 +6,7 @@ from functools import lru_cache
 
 class Settings(BaseSettings):
     app_name: str = "码医 MediCode"
-    app_version: str = "0.1.0"
+    app_version: str = "1.0.0"
     debug: bool = True
 
     # Database — supports SQLite (dev) and PostgreSQL (prod)
