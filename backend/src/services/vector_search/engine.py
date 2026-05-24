@@ -12,6 +12,10 @@
 import logging
 import numpy as np
 from dataclasses import dataclass
+from typing import Optional
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 logger = logging.getLogger(__name__)
 
@@ -29,8 +33,8 @@ class VectorSearchEngine:
 
     def __init__(self):
         self._documents: list[dict] = []  # [{code, name, category}]
-        self._tfidf_matrix: np.ndarray | None = None
-        self._vectorizer: object | None = None
+        self._tfidf_matrix = None  # scipy sparse matrix
+        self._vectorizer: Optional[TfidfVectorizer] = None
         self._ready: bool = False
 
     def build_index(self, documents: list[dict]) -> int:
@@ -45,9 +49,6 @@ class VectorSearchEngine:
         self._documents = documents
         names = [d["name"] for d in documents]
 
-        # Lazy import sklearn
-        from sklearn.feature_extraction.text import TfidfVectorizer
-
         self._vectorizer = TfidfVectorizer(
             analyzer="char",
             ngram_range=(1, 3),
@@ -55,7 +56,7 @@ class VectorSearchEngine:
             lowercase=False,
             token_pattern=None,
         )
-        self._tfidf_matrix = self._vectorizer.fit_transform(names).toarray()
+        self._tfidf_matrix = self._vectorizer.fit_transform(names)
         self._ready = True
         return len(self._documents)
 
@@ -69,13 +70,11 @@ class VectorSearchEngine:
         Returns:
             按相似度降序排列的搜索结果
         """
-        if not self._ready or not self._tfidf_matrix is not None:
+        if not self._ready or self._tfidf_matrix is None:
             return []
 
-        from sklearn.metrics.pairwise import cosine_similarity
-
         try:
-            query_vec = self._vectorizer.transform([query]).toarray()
+            query_vec = self._vectorizer.transform([query])
         except Exception as e:
             logger.warning(f"Vectorizer transform failed for '{query}': {e}")
             return []

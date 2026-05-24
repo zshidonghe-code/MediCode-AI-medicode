@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-from sqlalchemy import select, delete, func
+from sqlalchemy import select, delete, func, text
 
 from src.api.v1.endpoints.auth import require_admin
 from src.config.settings import get_settings
@@ -96,7 +96,6 @@ async def reset_data(body: ResetRequest, _admin: dict = Depends(require_admin)):
 
         # 3. Reset SQLite autoincrement counters
         try:
-            from sqlalchemy import text
             await db.execute(text(
                 "DELETE FROM sqlite_sequence WHERE name IN "
                 "('coding_logs', 'qc_results', 'coding_results', 'medical_records', 'patients')"

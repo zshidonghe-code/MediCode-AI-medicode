@@ -1,9 +1,13 @@
 import time
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from typing import Optional
+from sqlalchemy import select
+
 from src.services.qc_engine.engine import qc_engine, Severity, RuleType
 from src.api.v1.endpoints.auth import get_current_user
+from src.models.database import async_session
+from src.models.qc import QCResult
 
 router = APIRouter()
 
@@ -96,31 +100,21 @@ async def list_qc_rules(rule_type: str = "", severity: str = "", user: dict = De
     return {"rules": rules, "total": len(rules)}
 
 
-@router.put("/results/{result_id}/accept")
-async def accept_qc_result(result_id: int, note: str = ""):
-    from src.models.database import async_session
-    from src.models.qc import QCResult
-    from sqlalchemy import select, update
+async def _update_qc_acceptance(result_id: int, accepted: bool) -> dict:
     async with async_session() as db:
         r = (await db.execute(select(QCResult).where(QCResult.id == result_id))).scalar_one_or_none()
         if not r:
-            from fastapi import HTTPException
             raise HTTPException(status_code=404, detail="质控结果不存在")
-        r.is_accepted = True
+        r.is_accepted = accepted
         await db.commit()
-    return {"result_id": result_id, "accepted": True}
+    return {"result_id": result_id, "accepted": accepted}
+
+
+@router.put("/results/{result_id}/accept")
+async def accept_qc_result(result_id: int, note: str = ""):
+    return await _update_qc_acceptance(result_id, True)
 
 
 @router.put("/results/{result_id}/reject")
 async def reject_qc_result(result_id: int, note: str = ""):
-    from src.models.database import async_session
-    from src.models.qc import QCResult
-    from sqlalchemy import select
-    async with async_session() as db:
-        r = (await db.execute(select(QCResult).where(QCResult.id == result_id))).scalar_one_or_none()
-        if not r:
-            from fastapi import HTTPException
-            raise HTTPException(status_code=404, detail="质控结果不存在")
-        r.is_accepted = False
-        await db.commit()
-    return {"result_id": result_id, "rejected": True}
+    return await _update_qc_acceptance(result_id, False)

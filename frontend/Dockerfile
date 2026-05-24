@@ -1,15 +1,19 @@
-FROM node:20-alpine
+# Build stage
+FROM node:20-alpine AS build
 
 WORKDIR /app
 
-# Install dependencies
 COPY package.json package-lock.json* ./
-RUN npm install
+RUN npm ci
 
-# Copy source code
 COPY . .
+RUN npm run build
 
-# Expose port
-EXPOSE 5173
+# Production stage
+FROM nginx:1.25-alpine
 
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+COPY --from=build /app/dist /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

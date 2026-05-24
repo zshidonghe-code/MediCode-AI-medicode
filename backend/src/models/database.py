@@ -9,7 +9,7 @@ if settings.use_sqlite:
     engine = create_async_engine(
         settings.database_url,
         echo=settings.debug,
-        connect_args={"check_same_thread": False},
+        connect_args={"check_same_thread": False, "timeout": 30},
     )
 else:
     engine = create_async_engine(
@@ -17,6 +17,7 @@ else:
         echo=settings.debug,
         pool_size=20,
         max_overflow=10,
+        pool_pre_ping=True,
     )
 
 async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)

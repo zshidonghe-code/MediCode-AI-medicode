@@ -192,10 +192,10 @@ add_bullet('第3层：语义向量检索 → TF-IDF + char n-gram (1-3) + 余弦
 add_bullet('第4层：LLM推理 → Ollama (qwen2.5:7b) 对候选编码做最终推荐，处理复杂疑难多诊断关联场景')
 
 add_para('技术指标：', bold=True)
-add_bullet('诊断映射库：870条（覆盖14个系统，基于CHS-DRG 2.0方案，持续扩充中，计划覆盖方案中所有高频诊断编码）')
-add_bullet('手术映射库：558条（覆盖9个专科，持续扩充中）')
+add_bullet('诊断映射库：920条（覆盖14个系统，基于CHS-DRG 2.0方案，持续扩充中，计划覆盖方案中所有高频诊断编码）')
+add_bullet('手术映射库：571条（覆盖9个专科，持续扩充中）')
 add_bullet('语义检索：TF-IDF字符级1-3 gram，5000特征维度')
-add_bullet('实际测试数据（50例×8科室基准测试）：诊断Top-1准确率98%，诊断F1得分83.1%')
+add_bullet('实际测试数据（203例×8科室基准测试）：诊断Top-1准确率94.1%，诊断F1得分84.5%')
 
 doc.add_heading('3.2 DRG自动分组器', level=3)
 add_para('输入：ICD编码结果 + 患者基本信息（年龄、性别、住院天数、离院方式）', bold=True)
@@ -353,7 +353,7 @@ add_bullet('FastAPI应用骨架，CORS配置，lifespan事件管理（含自动�
 add_bullet('8张数据表模型（SQLAlchemy 2.0 async）+ 17个单元测试全部通过')
 add_bullet('7组API路由：auth、coding、drg、qc、dashboard、admin（管理）、pipeline（保存）')
 add_bullet('NLP引擎：SOAP段落拆分 + 正则医学实体识别（诊断名、手术名、部位、药物）')
-add_bullet('ICD编码器：4层推荐策略，870条诊断映射（JSON数据源统一），558条手术映射，50例基准测试诊断Top-1准确率98%')
+add_bullet('ICD编码器：4层推荐策略，920条诊断映射（JSON数据源统一），571条手术映射，203例基准测试诊断Top-1准确率94.1%')
 add_bullet('DRG分组器：26个MDC大类判定 + CC/MCC合并症逻辑 + 分组接口 + 费用计算')
 add_bullet('质控引擎：规则引擎 + LLM语义双模，15条规则，异步执行')
 add_bullet('LLM引擎：OllamaBackend + RuleBasedBackend双后端，自动检测切换 + 健康检查端点')
@@ -488,8 +488,8 @@ add_table_simple(['角色', '成员', '职责'], [
 doc.add_heading('十、下一步计划', level=2)
 
 add_table_simple(['时间', '里程碑'], [
-    ['已完成', '核心功能开发：ICD编码(870诊断/558手术) + DRG分组 + 质控引擎 + Pipeline(快速/完整双模式) + Dashboard + Admin管理 + 数据导出'],
-    ['已完成', '50例基准测试：8科室，诊断Top-1准确率98%，F1得分83.1%，基于CHS-DRG 2.0方案'],
+    ['已完成', '核心功能开发：ICD编码(920诊断/571手术) + DRG分组 + 质控引擎 + Pipeline(快速/完整双模式) + Dashboard + Admin管理 + 数据导出'],
+    ['已完成', '203例基准测试：8科室，诊断Top-1准确率94.1%，F1得分84.5%，基于CHS-DRG 2.0方案'],
     ['已完成', '竞赛材料：商业计划书(v3.0精简版) + 路演PPT(20页) + 演示脚本(5分钟) + 项目介绍文档'],
     ['本周', 'DRG完整分组匹配 -> 商业计划书定稿 -> 路演PPT制作'],
     ['2周内', '质控规则扩充到50+条 -> 编码准确率系统测试 -> 演示脚本打磨'],

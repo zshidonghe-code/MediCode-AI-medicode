@@ -107,7 +107,7 @@ medicode/
 │   ├── src/
 │   │   ├── api/v1/endpoints/    # API 端点（auth, coding, drg, qc, dashboard, admin, pipeline）
 │   │   ├── config/              # 配置管理
-│   │   ├── data/                # ICD 编码数据（JSON，870条诊断 + 558条手术，CHS-DRG 2.0）
+│   │   ├── data/                # ICD 编码数据（JSON，920条诊断 + 571条手术，CHS-DRG 2.0）
 │   │   ├── models/              # SQLAlchemy 数据模型
 │   │   ├── scripts/             # 种子数据脚本
 │   │   └── services/            # 核心服务（NLP 引擎、ICD 编码器、DRG 分组器、质控引擎、LLM 引擎）

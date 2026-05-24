@@ -9,6 +9,7 @@
 
 import logging
 from dataclasses import dataclass
+from functools import lru_cache
 import json
 from pathlib import Path
 from sqlalchemy import select, or_
@@ -16,6 +17,9 @@ from src.models.database import async_session
 from src.models.icd import ICDCode, ICDVersion
 
 logger = logging.getLogger(__name__)
+
+# Confidence threshold above which LLM rerank is skipped
+_LLM_RERANK_CONFIDENCE_THRESHOLD = 0.85
 
 
 def _load_icd_map(filename: str) -> dict[str, tuple[str, str]]:
@@ -94,16 +98,16 @@ class ICDCoder:
     def __init__(self):
         self._vector_engine = None
         self._vector_ready = False
-        self._index_built = False
         # Prefix index: first 1-3 chars → list of (keyword, code, name, category)
         self._prefix_index: dict[str, list[tuple[str, str, str, str]]] = {}
         # Reverse index: keyword → (code, name, category) for exact lookup
         self._exact_index: dict[str, tuple[str, str, str]] = {}
+        self._build_local_index()  # Eagerly build on init
 
     def _build_local_index(self):
         """Build prefix and exact match indices for O(1) local lookups"""
-        if self._index_built:
-            return
+        if self._exact_index:
+            return  # Already built
         all_entries = [
             *[(k, v[0], v[1], "诊断") for k, v in _DIAGNOSIS_MAP.items()],
             *[(k, v[0], v[1], "手术操作") for k, v in _PROCEDURE_MAP.items()],
@@ -115,7 +119,6 @@ class ICDCoder:
                 if prefix not in self._prefix_index:
                     self._prefix_index[prefix] = []
                 self._prefix_index[prefix].append((keyword, code, name, cat))
-        self._index_built = True
 
     def _ensure_vector_index(self):
         """懒加载语义搜索索引"""
@@ -162,6 +165,9 @@ class ICDCoder:
         candidates = [c for c in candidates if c.score >= 0.58]
 
         if candidates:
+            # Skip LLM rerank for high-confidence exact matches
+            if candidates[0].score >= _LLM_RERANK_CONFIDENCE_THRESHOLD:
+                return candidates
             return await self._llm_rerank(text, candidates, context, use_llm)
 
         # 3. Semantic vector search
@@ -244,9 +250,13 @@ class ICDCoder:
 
                 candidates = []
                 for row in rows:
-                    # Score: exact match > partial match with word boundary > generic LIKE
+                    # Check if text matches an alias (stored in search_terms)
+                    aliases = row.search_terms.get("alias", []) if row.search_terms else []
+                    # Score: exact match > alias exact match > partial match > generic LIKE
                     if row.name == text:
                         score = 1.0
+                    elif text in aliases:
+                        score = 0.95  # Alias exact match
                     elif text in row.name and len(text) >= 3:
                         # Penalize if the matched text is only part of a longer word
                         # e.g. "糖尿病" matching "糖尿病肾病" should get lower score
@@ -281,7 +291,6 @@ class ICDCoder:
 
     def _local_search(self, text: str) -> list[ICDCandidate]:
         """本地内置映射检索（使用预建索引加速）"""
-        self._build_local_index()
         seen: set[str] = set()
         candidates: list[ICDCandidate] = []
 
@@ -320,7 +329,6 @@ class ICDCoder:
 
     def lookup_code(self, diagnosis_text: str) -> str:
         """快速查码（使用预建索引）"""
-        self._build_local_index()
         if diagnosis_text in self._exact_index:
             return self._exact_index[diagnosis_text][0]
         # Fallback: prefix-based lookup
@@ -399,7 +407,6 @@ class ICDCoder:
             logger.warning(f"DB search_by_keyword failed for '{keyword}': {e}")
 
         # 2. Local keyword search (indexed)
-        self._build_local_index()
         kw = keyword.lower()
         prefix = keyword[:2]
         if prefix in self._prefix_index:

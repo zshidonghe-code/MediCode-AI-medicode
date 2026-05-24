@@ -8,6 +8,15 @@
 
 from dataclasses import dataclass, field
 import re
+import logging
+
+logger = logging.getLogger(__name__)
+
+try:
+    import jieba
+    _JIEBA_AVAILABLE = True
+except ImportError:
+    _JIEBA_AVAILABLE = False
 
 
 @dataclass
@@ -49,6 +58,62 @@ class StructuredRecord:
     surgeries: list[MedicalEntity] = field(default_factory=list)
     medications: list[MedicalEntity] = field(default_factory=list)
     summary: str = ""
+
+
+class MedicalTokenizer:
+    """Jieba-based medical tokenizer with ICD dictionary augmentation"""
+
+    def __init__(self):
+        self._ready = _JIEBA_AVAILABLE
+        if self._ready:
+            self._load_medical_dict()
+
+    def _load_medical_dict(self):
+        """Load ICD diagnosis names as custom jieba dictionary"""
+        try:
+            from pathlib import Path
+            import json
+            data_path = Path(__file__).parent.parent.parent / "data" / "icd_diagnoses.json"
+            if data_path.exists():
+                with open(data_path, "r", encoding="utf-8") as f:
+                    entries = json.load(f)
+                for entry in entries:
+                    name = entry.get("name", "")
+                    if len(name) >= 2:
+                        jieba.add_word(name, freq=10, tag="dz")
+                    for alias in entry.get("aliases", []):
+                        if len(alias) >= 2:
+                            jieba.add_word(alias, freq=8, tag="dz")
+            proc_path = Path(__file__).parent.parent.parent / "data" / "icd_procedures.json"
+            if proc_path.exists():
+                with open(proc_path, "r", encoding="utf-8") as f:
+                    entries = json.load(f)
+                for entry in entries:
+                    name = entry.get("name", "")
+                    if len(name) >= 2:
+                        jieba.add_word(name, freq=10, tag="ss")
+        except Exception as e:
+            logger.debug(f"Failed to load medical dictionary for jieba: {e}")
+
+    def tokenize(self, text: str) -> list[str]:
+        if not self._ready:
+            return list(text)
+        return [w for w in jieba.cut(text) if len(w.strip()) >= 1]
+
+    def find_entities(self, text: str, entity_type: str = "diagnosis") -> list[str]:
+        """Use jieba POS-like tagging to find medical entities"""
+        if not self._ready:
+            return []
+        tag = "dz" if entity_type == "diagnosis" else "ss"
+        words = jieba.cut(text)
+        return [w for w in words if len(w) >= 2 and w not in _STOP_ENTITIES]
+
+
+# Shared stop-words for entity extraction
+_STOP_ENTITIES = {"现病", "入院", "出院", "既往", "个人", "家属", "体格", "辅助", "诊疗", "治疗", "医师"}
+
+# Singleton tokenizer
+_medical_tokenizer = MedicalTokenizer()
 
 
 class NLPParser:
@@ -146,24 +211,29 @@ class NLPParser:
 
     def _is_negated(self, entity: MedicalEntity, text: str) -> bool:
         """Check if an extracted entity appears in a negated context"""
-        # Check the full matched span (before cleaning) for negation keywords
         span_text = text[entity.start_pos:entity.end_pos]
         for kw in ("否认", "排除", "未见", "无明显", "未及", "不伴", "无明确"):
             if kw in span_text:
                 return True
-        # Check short prefix context (10 chars) — tight window to avoid false positives
-        start = max(0, entity.start_pos - 10)
+        # Use jieba tokenization for wider context window (up to 20 chars)
+        start = max(0, entity.start_pos - 20)
         prefix_context = text[start:entity.start_pos]
-        for kw in ("否认", "排除", "未见", "未及", "不伴"):
-            if kw in prefix_context:
-                return True
+        if _JIEBA_AVAILABLE:
+            tokens = [w for w in jieba.cut(prefix_context) if len(w) >= 1]
+            for kw in ("否认", "排除", "未见", "未及", "不伴"):
+                if kw in tokens:
+                    return True
+        else:
+            for kw in ("否认", "排除", "未见", "未及", "不伴"):
+                if kw in prefix_context:
+                    return True
         return False
 
     def _extract_diagnoses(self, text: str) -> list[MedicalEntity]:
         entities = []
         seen = set()
 
-        # Regex-based extraction
+        # Regex-based extraction (preserved for coverage)
         for pattern in self.DIAGNOSIS_PATTERNS:
             for match in re.finditer(pattern, text):
                 word = match.group(1).strip()
@@ -178,6 +248,21 @@ class NLPParser:
                     if not self._is_negated(entity, text):
                         seen.add(word)
                         entities.append(entity)
+
+        # Jieba-based extraction (higher precision for dictionary-known terms)
+        if _JIEBA_AVAILABLE:
+            for word in _medical_tokenizer.find_entities(text, "diagnosis"):
+                if word not in seen and len(word) >= 2 and word not in self.STOP_WORDS:
+                    seen.add(word)
+                    # Find position in text
+                    idx = text.find(word)
+                    if idx >= 0:
+                        entity = MedicalEntity(
+                            text=word, entity_type="diagnosis", normalized=word,
+                            start_pos=idx, end_pos=idx + len(word), confidence=0.82,
+                        )
+                        if not self._is_negated(entity, text):
+                            entities.append(entity)
 
         # Keyword-based extraction (for terms without standard suffixes)
         for kw in self.KNOWN_DIAGNOSES:

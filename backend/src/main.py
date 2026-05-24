@@ -2,6 +2,7 @@ import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 from sqlalchemy import select, func
 from src.config.settings import get_settings
 from src.models import init_db  # registers all models on Base.metadata
@@ -11,6 +12,17 @@ from src.api.router import api_router
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
+
+
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        if not settings.debug:
+            response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        return response
 
 
 @asynccontextmanager
@@ -48,6 +60,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
@@ -61,7 +74,7 @@ app.include_router(api_router, prefix="/api/v1")
 
 @app.get("/health")
 async def health_check():
-    return {"status": "ok", "app": settings.app_name, "version": settings.app_version}
+    return {"status": "ok"}
 
 
 @app.get("/health/llm")

@@ -13,13 +13,14 @@ import httpx
 import asyncio
 from dataclasses import dataclass, field
 
-logger = logging.getLogger(__name__)
 from src.services.llm_engine.prompts import (
     ICD_CODING_SYSTEM, QC_SYSTEM, CODE_RECOMMEND_PROMPT,
     QC_SURGERY_DIAG_CONSISTENCY, QC_PRIMARY_DIAGNOSIS_VALIDITY,
     QC_CODE_TEXT_MATCH, QC_CODE_TEXT_MATCH_BATCH, QC_MISSED_DIAGNOSIS,
     DRG_ANALYSIS_PROMPT,
 )
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass

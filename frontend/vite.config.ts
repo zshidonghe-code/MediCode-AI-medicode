@@ -10,6 +10,30 @@ export default defineConfig({
         target: 'http://localhost:8000',
         changeOrigin: true,
       },
+      '/health': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
+      '/docs': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
+    },
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ['react', 'react-dom', 'react-router-dom'],
+          antd: ['antd', '@ant-design/icons'],
+          echarts: ['echarts', 'echarts-for-react'],
+        },
+      },
+    },
+    terserOptions: {
+      compress: {
+        drop_console: true,
+      },
     },
   },
 })
