@@ -102,10 +102,13 @@ export default function PipelinePage() {
   const [demoMode, setDemoMode] = useState(false)
   const [demoRunning, setDemoRunning] = useState(false)
   const [caseIdx, setCaseIdx] = useState(0)
-  const [demoSpeed, setDemoSpeed] = useState<string>('normal')
+  const [demoSpeed, setDemoSpeed] = useState<string>('fast')
+  const [fastMode, setFastMode] = useState(true)  // 快速模式：跳过打字机，1秒出结果
   const [typingDone, setTypingDone] = useState(false)
   const [showCelebration, setShowCelebration] = useState(false)
+  const [elapsedTime, setElapsedTime] = useState(0)
   const typewriterRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const startTimeRef = useRef(0)
 
   // ─── Pipeline execution ─────────────────────────────────────────────────
 
@@ -118,6 +121,8 @@ export default function PipelinePage() {
     setCodingResult(null)
     setQcResult(null)
     setDrgResult(null)
+    startTimeRef.current = Date.now()
+    setElapsedTime(0)
 
     try {
       // Step 1: NLP + ICD Coding
@@ -152,6 +157,9 @@ export default function PipelinePage() {
 
       // Step 4: Done
       setCurrentStep(3)
+      if (startTimeRef.current) {
+        setElapsedTime(Date.now() - startTimeRef.current)
+      }
 
       // Auto-save pipeline results to database
       try {
@@ -188,14 +196,29 @@ export default function PipelinePage() {
 
   const startDemo = useCallback(() => {
     setDemoMode(true)
-    setDemoRunning(true)
-    setTypingDone(false)
     setShowCelebration(false)
     setCodingResult(null)
     setQcResult(null)
     setDrgResult(null)
     setCurrentStep(-1)
-  }, [])
+    setElapsedTime(0)
+
+    if (fastMode) {
+      // 快速模式：直接粘贴全文，立即开始分析
+      const text = SAMPLE_CASES[caseIdx]?.content ?? ''
+      setContent(text)
+      setTypingDone(true)
+      setDemoRunning(false)
+      // 短暂延迟让UI刷新后自动触发
+      setTimeout(() => {
+        handleStart(text)
+      }, 100)
+    } else {
+      // 传统打字机模式
+      setDemoRunning(true)
+      setTypingDone(false)
+    }
+  }, [fastMode, caseIdx, handleStart])
 
   // Typewriter
   useEffect(() => {
@@ -267,18 +290,26 @@ export default function PipelinePage() {
         {/* Demo mode controls */}
         <Space direction="vertical" align="end" size={4}>
           {!demoMode ? (
-            <Button
-              type="primary"
-              icon={<PlayCircleOutlined />}
-              onClick={startDemo}
-              style={{
-                background: 'linear-gradient(135deg, #6366f1, #0ea5e9)',
-                border: 'none', borderRadius: 8, fontWeight: 600,
-                boxShadow: '0 4px 14px rgba(99, 102, 241, 0.4)',
-              }}
-            >
-              演示模式
-            </Button>
+            <Space>
+              <Button
+                type="primary"
+                icon={<ThunderboltOutlined />}
+                onClick={() => { setFastMode(true); startDemo(); }}
+                style={{
+                  background: 'linear-gradient(135deg, #6366f1, #0ea5e9)',
+                  border: 'none', borderRadius: 8, fontWeight: 600,
+                  boxShadow: '0 4px 14px rgba(99, 102, 241, 0.4)',
+                }}
+              >
+                快速演示
+              </Button>
+              <Button
+                icon={<PlayCircleOutlined />}
+                onClick={() => { setFastMode(false); startDemo(); }}
+              >
+                完整演示
+              </Button>
+            </Space>
           ) : (
             <Space>
               <Select
@@ -288,16 +319,18 @@ export default function PipelinePage() {
                 style={{ width: 180 }}
                 options={SAMPLE_CASES.map((c, i) => ({ value: i, label: c.name }))}
               />
-              <Segmented
-                size="small"
-                value={demoSpeed}
-                onChange={(v) => setDemoSpeed(v as string)}
-                options={[
-                  { value: 'fast', label: '快' },
-                  { value: 'normal', label: '中' },
-                  { value: 'slow', label: '慢' },
-                ]}
-              />
+              {!fastMode && (
+                <Segmented
+                  size="small"
+                  value={demoSpeed}
+                  onChange={(v) => setDemoSpeed(v as string)}
+                  options={[
+                    { value: 'fast', label: '快' },
+                    { value: 'normal', label: '中' },
+                    { value: 'slow', label: '慢' },
+                  ]}
+                />
+              )}
               {demoRunning ? (
                 <Button
                   size="small" icon={<PauseCircleOutlined />}
@@ -311,7 +344,7 @@ export default function PipelinePage() {
                   onClick={startDemo}
                   style={{ background: 'linear-gradient(135deg, #6366f1, #0ea5e9)', border: 'none', color: '#fff' }}
                 >
-                  重新演示
+                  {fastMode ? '重新演示' : '重新演示'}
                 </Button>
               )}
               <Button size="small" onClick={() => { setDemoMode(false); stopDemo(); setContent(''); setCodingResult(null); setQcResult(null); setDrgResult(null); setCurrentStep(-1); }}>
@@ -320,12 +353,19 @@ export default function PipelinePage() {
             </Space>
           )}
           {demoMode && (
-            <Tag
-              color={demoRunning ? 'processing' : 'success'}
-              icon={demoRunning ? <LoadingOutlined /> : <CheckCircleOutlined />}
-            >
-              {demoRunning ? '演示进行中...' : '演示就绪'}
-            </Tag>
+            <Space size={4}>
+              {fastMode && (
+                <Tag color="orange" icon={<ThunderboltOutlined />}>
+                  快速模式（离线）
+                </Tag>
+              )}
+              <Tag
+                color={loading ? 'processing' : demoRunning ? 'processing' : 'success'}
+                icon={loading ? <LoadingOutlined /> : demoRunning ? <LoadingOutlined /> : <CheckCircleOutlined />}
+              >
+                {loading ? '分析中...' : demoRunning ? '打字中...' : elapsedTime > 0 ? `完成 (${(elapsedTime / 1000).toFixed(1)}s)` : typingDone ? '分析中...' : '准备就绪'}
+              </Tag>
+            </Space>
           )}
         </Space>
       </div>
@@ -626,9 +666,9 @@ export default function PipelinePage() {
         {!codingResult && !loading && demoMode && !demoRunning && !typingDone && (
           <Card>
             <div style={{ textAlign: 'center', padding: 60, color: '#ccc' }}>
-              <PlayCircleOutlined style={{ fontSize: 64, marginBottom: 16, display: 'block', color: '#6366f1' }} />
+              <ThunderboltOutlined style={{ fontSize: 64, marginBottom: 16, display: 'block', color: '#0ea5e9' }} />
               <Text type="secondary" style={{ fontSize: 16 }}>
-                点击"重新演示"开始自动演示，AI将逐字输入病历并自动完成全流程分析
+                {fastMode ? '快速模式：跳过打字动画，1秒内完成全流程分析' : '点击"重新演示"开始完整演示'}
               </Text>
             </div>
           </Card>

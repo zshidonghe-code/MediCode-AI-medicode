@@ -1,11 +1,71 @@
 [
   {
+    "code": "A01.000",
+    "name": "伤寒",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "sh",
+    "aliases": []
+  },
+  {
+    "code": "A02.000",
+    "name": "沙门菌感染",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "smjgr",
+    "aliases": []
+  },
+  {
+    "code": "A03.900",
+    "name": "细菌性痢疾",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "xjxlj",
+    "aliases": [
+      "菌痢"
+    ]
+  },
+  {
+    "code": "A04.700",
+    "name": "艰难梭菌性小肠结肠炎",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "jnsjxxcjcy",
+    "aliases": []
+  },
+  {
+    "code": "A06.000",
+    "name": "急性阿米巴痢疾",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxamblj",
+    "aliases": []
+  },
+  {
+    "code": "A08.400",
+    "name": "病毒性肠炎",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "bdxcy",
+    "aliases": []
+  },
+  {
     "code": "A09.900",
     "name": "感染性胃肠炎和结肠炎",
     "category": "传染病",
     "version": "ICD10_CLINICAL",
     "py": "GRXCWYHJHY",
     "aliases": []
+  },
+  {
+    "code": "A15.000",
+    "name": "肺结核(细菌学证实)",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "fjh(xjxzs)",
+    "aliases": [
+      "活动性肺结核"
+    ]
   },
   {
     "code": "A15.900",
@@ -34,6 +94,38 @@
     ]
   },
   {
+    "code": "A18.200",
+    "name": "周围淋巴结结核",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "zwlbjjh",
+    "aliases": []
+  },
+  {
+    "code": "A37.900",
+    "name": "百日咳",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "brk",
+    "aliases": []
+  },
+  {
+    "code": "A38.900",
+    "name": "猩红热",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "xhr",
+    "aliases": []
+  },
+  {
+    "code": "A40.900",
+    "name": "链球菌性败血症",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "lqjxbxz",
+    "aliases": []
+  },
+  {
     "code": "A41.900",
     "name": "脓毒症",
     "category": "传染病",
@@ -42,6 +134,14 @@
     "aliases": [
       "败血症"
     ]
+  },
+  {
+    "code": "A46.900",
+    "name": "丹毒",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "dd",
+    "aliases": []
   },
   {
     "code": "A49.900",
@@ -58,6 +158,24 @@
     "version": "ICD10_CLINICAL",
     "py": "",
     "aliases": []
+  },
+  {
+    "code": "B00.200",
+    "name": "疱疹性咽炎",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "pzxyy",
+    "aliases": []
+  },
+  {
+    "code": "B00.900",
+    "name": "疱疹病毒感染",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "pzbdgr",
+    "aliases": [
+      "单纯疱疹"
+    ]
   },
   {
     "code": "B01.900",
@@ -82,6 +200,44 @@
     "version": "ICD10_CLINICAL",
     "py": "",
     "aliases": []
+  },
+  {
+    "code": "B05.900",
+    "name": "麻疹",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "mz",
+    "aliases": []
+  },
+  {
+    "code": "B15.900",
+    "name": "急性甲型肝炎",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxjxgy",
+    "aliases": [
+      "甲肝"
+    ]
+  },
+  {
+    "code": "B16.900",
+    "name": "急性乙型肝炎",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxyxgy",
+    "aliases": [
+      "急性乙肝"
+    ]
+  },
+  {
+    "code": "B17.100",
+    "name": "急性丙型肝炎",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxbxgy",
+    "aliases": [
+      "急性丙肝"
+    ]
   },
   {
     "code": "B18.100",
@@ -134,11 +290,89 @@
     ]
   },
   {
+    "code": "B25.900",
+    "name": "巨细胞病毒感染",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxbbdgr",
+    "aliases": [
+      "巨细胞病毒病"
+    ]
+  },
+  {
+    "code": "B26.900",
+    "name": "流行性腮腺炎",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "lxxsxy",
+    "aliases": []
+  },
+  {
+    "code": "B27.900",
+    "name": "传染性单核细胞增多症",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "crxdhxbzdz",
+    "aliases": []
+  },
+  {
     "code": "B34.900",
     "name": "病毒性感染",
     "category": "传染病",
     "version": "ICD10_CLINICAL",
     "py": "BDXGR",
+    "aliases": []
+  },
+  {
+    "code": "B35.900",
+    "name": "皮肤真菌感染",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "pfzjgr",
+    "aliases": [
+      "体癣"
+    ]
+  },
+  {
+    "code": "B37.900",
+    "name": "念珠菌病",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "nzjb",
+    "aliases": [
+      "真菌感染"
+    ]
+  },
+  {
+    "code": "B49.900",
+    "name": "真菌病",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "zjb",
+    "aliases": []
+  },
+  {
+    "code": "B54.900",
+    "name": "疟疾",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "nj",
+    "aliases": []
+  },
+  {
+    "code": "B65.900",
+    "name": "血吸虫病",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "xxcb",
+    "aliases": []
+  },
+  {
+    "code": "B86.900",
+    "name": "疥疮",
+    "category": "传染病",
+    "version": "ICD10_CLINICAL",
+    "py": "jc",
     "aliases": []
   },
   {
@@ -222,6 +456,26 @@
     "aliases": []
   },
   {
+    "code": "C00.900",
+    "name": "唇恶性肿瘤",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "cexzl",
+    "aliases": [
+      "唇癌"
+    ]
+  },
+  {
+    "code": "C11.900",
+    "name": "鼻咽恶性肿瘤",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "byexzl",
+    "aliases": [
+      "鼻咽癌"
+    ]
+  },
+  {
     "code": "C15.900",
     "name": "食管恶性肿瘤",
     "category": "肿瘤",
@@ -272,6 +526,16 @@
     ]
   },
   {
+    "code": "C23.900",
+    "name": "胆囊恶性肿瘤",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "dnexzl",
+    "aliases": [
+      "胆囊癌"
+    ]
+  },
+  {
     "code": "C25.900",
     "name": "胰腺恶性肿瘤",
     "category": "肿瘤",
@@ -282,6 +546,24 @@
     ]
   },
   {
+    "code": "C32.900",
+    "name": "喉恶性肿瘤",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "hexzl",
+    "aliases": [
+      "喉癌"
+    ]
+  },
+  {
+    "code": "C33.900",
+    "name": "气管恶性肿瘤",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "qgexzl",
+    "aliases": []
+  },
+  {
     "code": "C34.900",
     "name": "支气管和肺恶性肿瘤",
     "category": "肿瘤",
@@ -289,6 +571,26 @@
     "py": "ZQGHFEXZL",
     "aliases": [
       "肺癌"
+    ]
+  },
+  {
+    "code": "C41.900",
+    "name": "骨恶性肿瘤",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "gexzl",
+    "aliases": [
+      "骨癌"
+    ]
+  },
+  {
+    "code": "C43.900",
+    "name": "皮肤恶性黑色素瘤",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "pfexhssl",
+    "aliases": [
+      "黑色素瘤"
     ]
   },
   {
@@ -310,6 +612,26 @@
     "aliases": []
   },
   {
+    "code": "C54.000",
+    "name": "子宫内膜恶性肿瘤",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "zgnmexzl",
+    "aliases": [
+      "子宫内膜癌"
+    ]
+  },
+  {
+    "code": "C56.900",
+    "name": "卵巢恶性肿瘤",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "lcexzl",
+    "aliases": [
+      "卵巢癌"
+    ]
+  },
+  {
     "code": "C61.900",
     "name": "前列腺恶性肿瘤",
     "category": "肿瘤",
@@ -317,6 +639,16 @@
     "py": "QLXEXZL",
     "aliases": [
       "前列腺癌"
+    ]
+  },
+  {
+    "code": "C62.900",
+    "name": "睾丸恶性肿瘤",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "gwexzl",
+    "aliases": [
+      "睾丸癌"
     ]
   },
   {
@@ -357,6 +689,56 @@
     "py": "",
     "aliases": [
       "甲状腺癌"
+    ]
+  },
+  {
+    "code": "C77.900",
+    "name": "淋巴结继发恶性肿瘤",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "lbjjfexzl",
+    "aliases": [
+      "淋巴结转移癌"
+    ]
+  },
+  {
+    "code": "C78.000",
+    "name": "肺继发恶性肿瘤",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "fjfexzl",
+    "aliases": [
+      "肺转移癌"
+    ]
+  },
+  {
+    "code": "C78.700",
+    "name": "肝继发恶性肿瘤",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "gjfexzl",
+    "aliases": [
+      "肝转移癌"
+    ]
+  },
+  {
+    "code": "C79.500",
+    "name": "骨继发恶性肿瘤",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "gjfexzl",
+    "aliases": [
+      "骨转移癌"
+    ]
+  },
+  {
+    "code": "C79.900",
+    "name": "继发性恶性肿瘤",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "jfxexzl",
+    "aliases": [
+      "转移癌"
     ]
   },
   {
@@ -402,11 +784,67 @@
     "aliases": []
   },
   {
+    "code": "D06.900",
+    "name": "宫颈原位癌",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "gjywa",
+    "aliases": []
+  },
+  {
+    "code": "D10.900",
+    "name": "口腔良性肿瘤",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "kqlxzl",
+    "aliases": []
+  },
+  {
     "code": "D12.600",
     "name": "结肠良性肿瘤",
     "category": "肿瘤",
     "version": "ICD10_CLINICAL",
     "py": "JCLXZL",
+    "aliases": []
+  },
+  {
+    "code": "D14.300",
+    "name": "支气管良性肿瘤",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "zqglxzl",
+    "aliases": []
+  },
+  {
+    "code": "D16.900",
+    "name": "骨良性肿瘤",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "glxzl",
+    "aliases": []
+  },
+  {
+    "code": "D17.900",
+    "name": "脂肪瘤",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "zfl",
+    "aliases": []
+  },
+  {
+    "code": "D18.000",
+    "name": "血管瘤",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "xgl",
+    "aliases": []
+  },
+  {
+    "code": "D22.900",
+    "name": "黑色素细胞痣",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "hssxbz",
     "aliases": []
   },
   {
@@ -418,6 +856,40 @@
     "aliases": [
       "子宫肌瘤"
     ]
+  },
+  {
+    "code": "D35.000",
+    "name": "肾上腺良性肿瘤",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "ssxlxzl",
+    "aliases": []
+  },
+  {
+    "code": "D37.900",
+    "name": "消化系统交界性肿瘤",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "xhxtjjxzl",
+    "aliases": []
+  },
+  {
+    "code": "D46.900",
+    "name": "骨髓增生异常综合征",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "gszsyczhz",
+    "aliases": [
+      "MDS"
+    ]
+  },
+  {
+    "code": "D47.100",
+    "name": "骨髓增殖性疾病",
+    "category": "肿瘤",
+    "version": "ICD10_CLINICAL",
+    "py": "gszzxjb",
+    "aliases": []
   },
   {
     "code": "D50.900",
@@ -438,11 +910,63 @@
     ]
   },
   {
+    "code": "D52.900",
+    "name": "叶酸缺乏性贫血",
+    "category": "血液系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ysqfxpx",
+    "aliases": [
+      "巨幼细胞性贫血"
+    ]
+  },
+  {
+    "code": "D53.900",
+    "name": "其他营养性贫血",
+    "category": "血液系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "qtyyxpx",
+    "aliases": []
+  },
+  {
+    "code": "D55.900",
+    "name": "酶缺乏性贫血",
+    "category": "血液系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "mqfxpx",
+    "aliases": []
+  },
+  {
     "code": "D58.900",
     "name": "溶血性贫血",
     "category": "血液系统疾病",
     "version": "ICD10_CLINICAL",
     "py": "",
+    "aliases": []
+  },
+  {
+    "code": "D59.900",
+    "name": "获得性溶血性贫血",
+    "category": "血液系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "hdxrxxpx",
+    "aliases": []
+  },
+  {
+    "code": "D61.900",
+    "name": "再生障碍性贫血",
+    "category": "血液系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zszaxpx",
+    "aliases": [
+      "再障"
+    ]
+  },
+  {
+    "code": "D62.900",
+    "name": "急性失血性贫血",
+    "category": "血液系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxsxxpx",
     "aliases": []
   },
   {
@@ -452,6 +976,26 @@
     "version": "ICD10_CLINICAL",
     "py": "PX",
     "aliases": []
+  },
+  {
+    "code": "D65.900",
+    "name": "弥散性血管内凝血",
+    "category": "血液系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "msxxgnnx",
+    "aliases": [
+      "DIC"
+    ]
+  },
+  {
+    "code": "D66.900",
+    "name": "血友病A",
+    "category": "血液系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "xybA",
+    "aliases": [
+      "血友病"
+    ]
   },
   {
     "code": "D68.900",
@@ -468,6 +1012,16 @@
     "version": "ICD10_CLINICAL",
     "py": "",
     "aliases": []
+  },
+  {
+    "code": "D69.300",
+    "name": "特发性血小板减少性紫癜",
+    "category": "血液系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "tfxxxbjsxzd",
+    "aliases": [
+      "ITP"
+    ]
   },
   {
     "code": "D69.600",
@@ -488,6 +1042,48 @@
     "aliases": [
       "白细胞减少"
     ]
+  },
+  {
+    "code": "D73.000",
+    "name": "脾功能亢进",
+    "category": "血液系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "pgnkj",
+    "aliases": [
+      "脾亢"
+    ]
+  },
+  {
+    "code": "D75.900",
+    "name": "血液系统疾病",
+    "category": "血液系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "xyxtjb",
+    "aliases": []
+  },
+  {
+    "code": "D80.900",
+    "name": "体液免疫缺陷",
+    "category": "血液系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "tymyqx",
+    "aliases": []
+  },
+  {
+    "code": "D86.900",
+    "name": "结节病",
+    "category": "血液系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jjb",
+    "aliases": []
+  },
+  {
+    "code": "E00.900",
+    "name": "先天性甲状腺功能减退",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "xtxjzxgnjt",
+    "aliases": []
   },
   {
     "code": "E03.900",
@@ -532,6 +1128,30 @@
     "category": "内分泌疾病",
     "version": "ICD10_CLINICAL",
     "py": "",
+    "aliases": []
+  },
+  {
+    "code": "E06.900",
+    "name": "甲状腺炎",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jzxy",
+    "aliases": []
+  },
+  {
+    "code": "E07.900",
+    "name": "甲状腺疾病",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jzxjb",
+    "aliases": []
+  },
+  {
+    "code": "E08.900",
+    "name": "糖尿病(继发性)",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "tnb(jfx)",
     "aliases": []
   },
   {
@@ -583,6 +1203,24 @@
     "aliases": []
   },
   {
+    "code": "E11.600",
+    "name": "2型糖尿病伴足病变",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "2xtnbbzbb",
+    "aliases": [
+      "糖尿病足"
+    ]
+  },
+  {
+    "code": "E11.700",
+    "name": "2型糖尿病伴多种并发症",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "2xtnbbdzbfz",
+    "aliases": []
+  },
+  {
     "code": "E11.900",
     "name": "2型糖尿病",
     "category": "内分泌",
@@ -598,6 +1236,90 @@
     "category": "内分泌",
     "version": "ICD10_CLINICAL",
     "py": "TNB",
+    "aliases": []
+  },
+  {
+    "code": "E21.300",
+    "name": "甲状旁腺功能亢进",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jzpxgnkj",
+    "aliases": [
+      "甲旁亢"
+    ]
+  },
+  {
+    "code": "E22.000",
+    "name": "肢端肥大症",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zdfdz",
+    "aliases": []
+  },
+  {
+    "code": "E23.000",
+    "name": "垂体功能减退",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ctgnjt",
+    "aliases": []
+  },
+  {
+    "code": "E24.900",
+    "name": "库欣综合征",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "kxzhz",
+    "aliases": []
+  },
+  {
+    "code": "E26.900",
+    "name": "醛固酮增多症",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "qgtzdz",
+    "aliases": []
+  },
+  {
+    "code": "E27.400",
+    "name": "肾上腺皮质功能减退",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ssxpzgnjt",
+    "aliases": []
+  },
+  {
+    "code": "E28.200",
+    "name": "多囊卵巢综合征",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "dnlczhz",
+    "aliases": [
+      "PCOS"
+    ]
+  },
+  {
+    "code": "E43.900",
+    "name": "重度营养不良",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zdyybl",
+    "aliases": []
+  },
+  {
+    "code": "E44.100",
+    "name": "轻度营养不良",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "qdyybl",
+    "aliases": []
+  },
+  {
+    "code": "E46.900",
+    "name": "营养不良",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "yybl",
     "aliases": []
   },
   {
@@ -644,11 +1366,77 @@
     "aliases": []
   },
   {
+    "code": "E83.300",
+    "name": "磷代谢紊乱",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ldxwl",
+    "aliases": []
+  },
+  {
+    "code": "E83.500",
+    "name": "钙代谢紊乱",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gdxwl",
+    "aliases": []
+  },
+  {
+    "code": "E84.900",
+    "name": "囊性纤维化",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "nxxwh",
+    "aliases": []
+  },
+  {
+    "code": "E86.900",
+    "name": "脱水",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ts",
+    "aliases": []
+  },
+  {
+    "code": "E87.000",
+    "name": "高钠血症",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gnxz",
+    "aliases": []
+  },
+  {
     "code": "E87.100",
     "name": "低钠血症",
     "category": "内分泌",
     "version": "ICD10_CLINICAL",
     "py": "DNXZ",
+    "aliases": []
+  },
+  {
+    "code": "E87.200",
+    "name": "酸中毒",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "szd",
+    "aliases": [
+      "代谢性酸中毒"
+    ]
+  },
+  {
+    "code": "E87.300",
+    "name": "碱中毒",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jzd",
+    "aliases": []
+  },
+  {
+    "code": "E87.500",
+    "name": "高钾血症",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gjxz",
     "aliases": []
   },
   {
@@ -670,6 +1458,14 @@
     ]
   },
   {
+    "code": "E88.100",
+    "name": "脂肪代谢障碍",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zfdxza",
+    "aliases": []
+  },
+  {
     "code": "E88.900",
     "name": "代谢紊乱",
     "category": "内分泌疾病",
@@ -680,11 +1476,97 @@
     ]
   },
   {
+    "code": "E89.000",
+    "name": "术后甲状腺功能减退",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "shjzxgnjt",
+    "aliases": [
+      "术后甲减"
+    ]
+  },
+  {
+    "code": "E89.800",
+    "name": "手术后内分泌紊乱",
+    "category": "内分泌疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "sshnfmwl",
+    "aliases": []
+  },
+  {
+    "code": "F00.900",
+    "name": "阿尔茨海默病性痴呆",
+    "category": "精神疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "aechmbxcd",
+    "aliases": [
+      "痴呆"
+    ]
+  },
+  {
+    "code": "F05.900",
+    "name": "谵妄",
+    "category": "精神疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zw",
+    "aliases": []
+  },
+  {
+    "code": "F06.800",
+    "name": "器质性精神障碍",
+    "category": "精神疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "qzxjsza",
+    "aliases": []
+  },
+  {
+    "code": "F10.200",
+    "name": "酒精依赖综合征",
+    "category": "精神疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jjylzhz",
+    "aliases": [
+      "酒精依赖"
+    ]
+  },
+  {
+    "code": "F11.200",
+    "name": "阿片类依赖",
+    "category": "精神疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "aplyl",
+    "aliases": []
+  },
+  {
+    "code": "F17.200",
+    "name": "烟草依赖",
+    "category": "精神疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ycyl",
+    "aliases": []
+  },
+  {
     "code": "F20.900",
     "name": "精神分裂症",
     "category": "精神",
     "version": "ICD10_CLINICAL",
     "py": "JSFLZ",
+    "aliases": []
+  },
+  {
+    "code": "F29.900",
+    "name": "非器质性精神病",
+    "category": "精神疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "fqzxjsb",
+    "aliases": []
+  },
+  {
+    "code": "F31.900",
+    "name": "双相情感障碍",
+    "category": "精神疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "sxqgza",
     "aliases": []
   },
   {
@@ -696,11 +1578,125 @@
     "aliases": []
   },
   {
+    "code": "F33.900",
+    "name": "复发性抑郁障碍",
+    "category": "精神疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ffxyyza",
+    "aliases": []
+  },
+  {
     "code": "F41.900",
     "name": "焦虑障碍",
     "category": "精神",
     "version": "ICD10_CLINICAL",
     "py": "JLZA",
+    "aliases": []
+  },
+  {
+    "code": "F42.900",
+    "name": "强迫症",
+    "category": "精神疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "qpz",
+    "aliases": [
+      "强迫性障碍"
+    ]
+  },
+  {
+    "code": "F43.100",
+    "name": "创伤后应激障碍",
+    "category": "精神疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "cshyjza",
+    "aliases": [
+      "PTSD"
+    ]
+  },
+  {
+    "code": "F45.900",
+    "name": "躯体形式障碍",
+    "category": "精神疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "qtxsza",
+    "aliases": []
+  },
+  {
+    "code": "F48.900",
+    "name": "神经症",
+    "category": "精神疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "sjz",
+    "aliases": []
+  },
+  {
+    "code": "F50.000",
+    "name": "神经性厌食",
+    "category": "精神疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "sjxys",
+    "aliases": []
+  },
+  {
+    "code": "F51.000",
+    "name": "失眠障碍",
+    "category": "精神疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "smza",
+    "aliases": [
+      "失眠症"
+    ]
+  },
+  {
+    "code": "F71.900",
+    "name": "中度精神发育迟滞",
+    "category": "精神疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zdjsfycz",
+    "aliases": []
+  },
+  {
+    "code": "F84.000",
+    "name": "孤独症",
+    "category": "精神疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gdz",
+    "aliases": [
+      "自闭症"
+    ]
+  },
+  {
+    "code": "F90.900",
+    "name": "注意缺陷多动障碍",
+    "category": "精神疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zyqxddza",
+    "aliases": [
+      "ADHD"
+    ]
+  },
+  {
+    "code": "G00.900",
+    "name": "细菌性脑膜炎",
+    "category": "神经系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "xjxnmy",
+    "aliases": []
+  },
+  {
+    "code": "G03.900",
+    "name": "脑膜炎",
+    "category": "神经系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "nmy",
+    "aliases": []
+  },
+  {
+    "code": "G04.900",
+    "name": "脑炎",
+    "category": "神经系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ny",
     "aliases": []
   },
   {
@@ -712,11 +1708,53 @@
     "aliases": []
   },
   {
+    "code": "G08.900",
+    "name": "颅内静脉窦血栓形成",
+    "category": "神经系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "lnjmdxsxc",
+    "aliases": []
+  },
+  {
+    "code": "G10.900",
+    "name": "亨廷顿病",
+    "category": "神经系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "htdb",
+    "aliases": []
+  },
+  {
+    "code": "G12.200",
+    "name": "肌萎缩侧索硬化",
+    "category": "神经系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jwscsyh",
+    "aliases": [
+      "ALS"
+    ]
+  },
+  {
     "code": "G20.900",
     "name": "帕金森病",
     "category": "神经系统",
     "version": "ICD10_CLINICAL",
     "py": "PJSB",
+    "aliases": []
+  },
+  {
+    "code": "G24.900",
+    "name": "肌张力障碍",
+    "category": "神经系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jzlza",
+    "aliases": []
+  },
+  {
+    "code": "G25.000",
+    "name": "特发性震颤",
+    "category": "神经系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "tfxzc",
     "aliases": []
   },
   {
@@ -730,11 +1768,29 @@
     ]
   },
   {
+    "code": "G35.900",
+    "name": "多发性硬化",
+    "category": "神经系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "dfxyh",
+    "aliases": [
+      "MS"
+    ]
+  },
+  {
     "code": "G40.900",
     "name": "癫痫",
     "category": "神经系统",
     "version": "ICD10_CLINICAL",
     "py": "DX",
+    "aliases": []
+  },
+  {
+    "code": "G41.900",
+    "name": "癫痫持续状态",
+    "category": "神经系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "dxcxzt",
     "aliases": []
   },
   {
@@ -774,6 +1830,14 @@
     "aliases": []
   },
   {
+    "code": "G50.000",
+    "name": "三叉神经痛",
+    "category": "神经系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "scsjt",
+    "aliases": []
+  },
+  {
     "code": "G51.000",
     "name": "面神经麻痹",
     "category": "神经系统疾病",
@@ -784,12 +1848,90 @@
     ]
   },
   {
+    "code": "G54.100",
+    "name": "坐骨神经病变",
+    "category": "神经系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zgsjbb",
+    "aliases": []
+  },
+  {
+    "code": "G56.000",
+    "name": "腕管综合征",
+    "category": "神经系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "wgzhz",
+    "aliases": []
+  },
+  {
+    "code": "G61.000",
+    "name": "吉兰-巴雷综合征",
+    "category": "神经系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jl-blzhz",
+    "aliases": [
+      "GBS"
+    ]
+  },
+  {
+    "code": "G62.900",
+    "name": "周围神经病",
+    "category": "神经系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zwsjb",
+    "aliases": []
+  },
+  {
+    "code": "G70.000",
+    "name": "重症肌无力",
+    "category": "神经系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zzjwl",
+    "aliases": []
+  },
+  {
+    "code": "G71.000",
+    "name": "肌营养不良",
+    "category": "神经系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jyybl",
+    "aliases": []
+  },
+  {
+    "code": "G80.900",
+    "name": "脑性瘫痪",
+    "category": "神经系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "nxth",
+    "aliases": [
+      "脑瘫"
+    ]
+  },
+  {
     "code": "G81.900",
     "name": "偏瘫",
     "category": "神经系统",
     "version": "ICD10_CLINICAL",
     "py": "PT",
     "aliases": []
+  },
+  {
+    "code": "G82.900",
+    "name": "截瘫",
+    "category": "神经系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jt",
+    "aliases": []
+  },
+  {
+    "code": "G90.900",
+    "name": "自主神经功能障碍",
+    "category": "神经系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zzsjgnza",
+    "aliases": [
+      "自主神经功能紊乱"
+    ]
   },
   {
     "code": "G91.900",
@@ -808,12 +1950,70 @@
     "aliases": []
   },
   {
+    "code": "G95.900",
+    "name": "脊髓疾病",
+    "category": "神经系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jsjb",
+    "aliases": []
+  },
+  {
+    "code": "H00.100",
+    "name": "睑板腺囊肿",
+    "category": "眼科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jbxnz",
+    "aliases": []
+  },
+  {
+    "code": "H04.900",
+    "name": "泪器疾病",
+    "category": "眼科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "lqjb",
+    "aliases": []
+  },
+  {
     "code": "H10.900",
     "name": "结膜炎",
     "category": "眼科",
     "version": "ICD10_CLINICAL",
     "py": "JMY",
     "aliases": []
+  },
+  {
+    "code": "H11.000",
+    "name": "翼状胬肉",
+    "category": "眼科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "yznr",
+    "aliases": []
+  },
+  {
+    "code": "H16.900",
+    "name": "角膜炎",
+    "category": "眼科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jmy",
+    "aliases": []
+  },
+  {
+    "code": "H18.900",
+    "name": "角膜疾病",
+    "category": "眼科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jmjb",
+    "aliases": []
+  },
+  {
+    "code": "H20.900",
+    "name": "虹膜睫状体炎",
+    "category": "眼科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "hmjzty",
+    "aliases": [
+      "虹膜炎"
+    ]
   },
   {
     "code": "H25.900",
@@ -826,12 +2026,58 @@
     ]
   },
   {
+    "code": "H26.900",
+    "name": "白内障(其他类型)",
+    "category": "眼科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "bnz(qtlx)",
+    "aliases": []
+  },
+  {
+    "code": "H33.000",
+    "name": "视网膜脱离",
+    "category": "眼科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "swmtl",
+    "aliases": [
+      "视网膜脱落"
+    ]
+  },
+  {
+    "code": "H34.900",
+    "name": "视网膜血管闭塞",
+    "category": "眼科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "swmxgbs",
+    "aliases": []
+  },
+  {
     "code": "H35.300",
     "name": "黄斑变性",
     "category": "眼科疾病",
     "version": "ICD10_CLINICAL",
     "py": "",
     "aliases": []
+  },
+  {
+    "code": "H35.800",
+    "name": "视网膜病变",
+    "category": "眼科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "swmbb",
+    "aliases": [
+      "视网膜病"
+    ]
+  },
+  {
+    "code": "H36.000",
+    "name": "糖尿病视网膜病变",
+    "category": "眼科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "tnbswmbb",
+    "aliases": [
+      "糖网"
+    ]
   },
   {
     "code": "H40.900",
@@ -842,12 +2088,176 @@
     "aliases": []
   },
   {
+    "code": "H43.900",
+    "name": "玻璃体疾病",
+    "category": "眼科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "bltjb",
+    "aliases": []
+  },
+  {
+    "code": "H44.900",
+    "name": "眼球疾病",
+    "category": "眼科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "yqjb",
+    "aliases": []
+  },
+  {
+    "code": "H50.900",
+    "name": "斜视",
+    "category": "眼科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "xs",
+    "aliases": []
+  },
+  {
+    "code": "H52.100",
+    "name": "近视",
+    "category": "眼科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "js",
+    "aliases": []
+  },
+  {
+    "code": "H52.200",
+    "name": "远视",
+    "category": "眼科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ys",
+    "aliases": []
+  },
+  {
+    "code": "H53.900",
+    "name": "视觉障碍",
+    "category": "眼科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "sjza",
+    "aliases": []
+  },
+  {
+    "code": "H57.900",
+    "name": "眼及附属器疾病",
+    "category": "眼科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "yjfsqjb",
+    "aliases": []
+  },
+  {
+    "code": "H60.900",
+    "name": "外耳炎",
+    "category": "耳科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "wey",
+    "aliases": []
+  },
+  {
+    "code": "H65.900",
+    "name": "非化脓性中耳炎",
+    "category": "耳科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "fhnxzey",
+    "aliases": [
+      "分泌性中耳炎"
+    ]
+  },
+  {
     "code": "H66.900",
     "name": "中耳炎",
     "category": "耳科",
     "version": "ICD10_CLINICAL",
     "py": "ZEY",
     "aliases": []
+  },
+  {
+    "code": "H71.900",
+    "name": "胆脂瘤",
+    "category": "耳科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "dzl",
+    "aliases": []
+  },
+  {
+    "code": "H81.000",
+    "name": "梅尼埃病",
+    "category": "耳科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "mnab",
+    "aliases": [
+      "梅尼尔病"
+    ]
+  },
+  {
+    "code": "H81.900",
+    "name": "前庭功能障碍",
+    "category": "耳科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "qtgnza",
+    "aliases": []
+  },
+  {
+    "code": "H90.500",
+    "name": "感音神经性耳聋",
+    "category": "耳科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gysjxel",
+    "aliases": [
+      "神经性耳聋"
+    ]
+  },
+  {
+    "code": "H91.900",
+    "name": "听力丧失",
+    "category": "耳科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "tlss",
+    "aliases": [
+      "听力下降"
+    ]
+  },
+  {
+    "code": "H93.100",
+    "name": "耳鸣",
+    "category": "耳科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "em",
+    "aliases": []
+  },
+  {
+    "code": "I05.000",
+    "name": "二尖瓣狭窄",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ejbxz",
+    "aliases": []
+  },
+  {
+    "code": "I06.900",
+    "name": "风湿性主动脉瓣疾病",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "fsxzdmbjb",
+    "aliases": []
+  },
+  {
+    "code": "I08.000",
+    "name": "二尖瓣及主动脉瓣联合瓣膜病",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ejbjzdmblhbmb",
+    "aliases": [
+      "联合瓣膜病"
+    ]
+  },
+  {
+    "code": "I09.900",
+    "name": "风湿性心脏病",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "fsxxzb",
+    "aliases": [
+      "风心病"
+    ]
   },
   {
     "code": "I10.x00",
@@ -859,6 +2269,22 @@
       "高血压",
       "高血压病"
     ]
+  },
+  {
+    "code": "I10.x01",
+    "name": "原发性高血压1级",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "yfxgxy1j",
+    "aliases": []
+  },
+  {
+    "code": "I10.x02",
+    "name": "原发性高血压2级",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "yfxgxy2j",
+    "aliases": []
   },
   {
     "code": "I10.x03",
@@ -874,6 +2300,24 @@
     "category": "循环系统",
     "version": "ICD10_CLINICAL",
     "py": "GXYXZB",
+    "aliases": []
+  },
+  {
+    "code": "I12.900",
+    "name": "高血压肾病",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gxysb",
+    "aliases": [
+      "高血压性肾病"
+    ]
+  },
+  {
+    "code": "I13.000",
+    "name": "高血压心脏病伴心力衰竭",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gxyxzbbxlsj",
     "aliases": []
   },
   {
@@ -927,6 +2371,22 @@
     "aliases": []
   },
   {
+    "code": "I21.200",
+    "name": "急性后壁心肌梗死",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxhbxjgs",
+    "aliases": []
+  },
+  {
+    "code": "I21.300",
+    "name": "急性心内膜下心肌梗死",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxxnmxxjgs",
+    "aliases": []
+  },
+  {
     "code": "I21.900",
     "name": "急性心肌梗死",
     "category": "循环系统",
@@ -934,6 +2394,32 @@
     "py": "JXXJGS",
     "aliases": [
       "心肌梗死"
+    ]
+  },
+  {
+    "code": "I22.900",
+    "name": "再发性心肌梗死",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zfxxjgs",
+    "aliases": []
+  },
+  {
+    "code": "I23.800",
+    "name": "急性心肌梗死后并发症",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxxjgshbfz",
+    "aliases": []
+  },
+  {
+    "code": "I24.900",
+    "name": "急性缺血性心脏病",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxqxxxzb",
+    "aliases": [
+      "急性冠脉综合征"
     ]
   },
   {
@@ -953,6 +2439,32 @@
     "version": "ICD10_CLINICAL",
     "py": "CJXXJGS",
     "aliases": []
+  },
+  {
+    "code": "I25.500",
+    "name": "缺血性心肌病",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "qxxxjb",
+    "aliases": []
+  },
+  {
+    "code": "I25.800",
+    "name": "无症状心肌缺血",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "wzzxjqx",
+    "aliases": []
+  },
+  {
+    "code": "I25.900",
+    "name": "慢性缺血性心脏病",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "mxqxxxzb",
+    "aliases": [
+      "慢性冠心病"
+    ]
   },
   {
     "code": "I26.900",
@@ -979,11 +2491,27 @@
     "aliases": []
   },
   {
+    "code": "I31.300",
+    "name": "心包积液(非炎性)",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "xbjy(fyx)",
+    "aliases": []
+  },
+  {
     "code": "I31.900",
     "name": "心包积液",
     "category": "循环系统",
     "version": "ICD10_CLINICAL",
     "py": "XBJY",
+    "aliases": []
+  },
+  {
+    "code": "I33.000",
+    "name": "感染性心内膜炎",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "grxxnmy",
     "aliases": []
   },
   {
@@ -1003,11 +2531,27 @@
     "aliases": []
   },
   {
+    "code": "I36.900",
+    "name": "非风湿性瓣膜疾病",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ffsxbmjb",
+    "aliases": []
+  },
+  {
     "code": "I38.900",
     "name": "心脏瓣膜病",
     "category": "循环系统疾病",
     "version": "ICD10_CLINICAL",
     "py": "",
+    "aliases": []
+  },
+  {
+    "code": "I40.900",
+    "name": "急性心肌炎",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxxjy",
     "aliases": []
   },
   {
@@ -1027,6 +2571,40 @@
     "aliases": []
   },
   {
+    "code": "I44.200",
+    "name": "完全性房室传导阻滞",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "wqxfscdzz",
+    "aliases": [
+      "三度房室传导阻滞"
+    ]
+  },
+  {
+    "code": "I44.700",
+    "name": "左束支传导阻滞",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zszcdzz",
+    "aliases": []
+  },
+  {
+    "code": "I45.900",
+    "name": "心脏传导障碍",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "xzcdza",
+    "aliases": []
+  },
+  {
+    "code": "I46.900",
+    "name": "心脏骤停",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "xzzt",
+    "aliases": []
+  },
+  {
     "code": "I47.100",
     "name": "室上性心动过速",
     "category": "循环系统",
@@ -1034,6 +2612,16 @@
     "py": "SSXXDGS",
     "aliases": [
       "窦性心动过速"
+    ]
+  },
+  {
+    "code": "I48.000",
+    "name": "阵发性心房颤动",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zfxxfcd",
+    "aliases": [
+      "阵发性房颤"
     ]
   },
   {
@@ -1047,11 +2635,29 @@
     ]
   },
   {
+    "code": "I48.200",
+    "name": "慢性心房颤动",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "mxxfcd",
+    "aliases": [
+      "持续性房颤"
+    ]
+  },
+  {
     "code": "I48.300",
     "name": "心房扑动",
     "category": "循环系统疾病",
     "version": "ICD10_CLINICAL",
     "py": "",
+    "aliases": []
+  },
+  {
+    "code": "I48.400",
+    "name": "典型心房扑动",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "dxxfpd",
     "aliases": []
   },
   {
@@ -1075,6 +2681,16 @@
     "aliases": [
       "室性早搏",
       "室早"
+    ]
+  },
+  {
+    "code": "I49.500",
+    "name": "病态窦房结综合征",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "btdfjzhz",
+    "aliases": [
+      "病窦综合征"
     ]
   },
   {
@@ -1114,6 +2730,24 @@
     "aliases": []
   },
   {
+    "code": "I63.000",
+    "name": "脑血栓形成",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "nxsxc",
+    "aliases": []
+  },
+  {
+    "code": "I63.100",
+    "name": "脑栓塞",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "nss",
+    "aliases": [
+      "脑栓塞"
+    ]
+  },
+  {
     "code": "I63.800",
     "name": "其他脑梗死",
     "category": "循环系统疾病",
@@ -1143,12 +2777,46 @@
     "aliases": []
   },
   {
+    "code": "I65.200",
+    "name": "颈动脉狭窄",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jdmxz",
+    "aliases": []
+  },
+  {
+    "code": "I66.900",
+    "name": "脑动脉闭塞",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ndmbs",
+    "aliases": []
+  },
+  {
     "code": "I67.900",
     "name": "脑血管疾病",
     "category": "循环系统",
     "version": "ICD10_CLINICAL",
     "py": "NXGJB",
     "aliases": []
+  },
+  {
+    "code": "I69.300",
+    "name": "脑梗死后遗症",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ngshyz",
+    "aliases": []
+  },
+  {
+    "code": "I69.400",
+    "name": "脑出血后遗症",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ncxhyz",
+    "aliases": [
+      "中风后遗症"
+    ]
   },
   {
     "code": "I70.200",
@@ -1161,11 +2829,53 @@
     ]
   },
   {
+    "code": "I70.900",
+    "name": "动脉粥样硬化",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "dmzyyh",
+    "aliases": [
+      "动脉硬化"
+    ]
+  },
+  {
     "code": "I71.900",
     "name": "主动脉瘤",
     "category": "循环系统",
     "version": "ICD10_CLINICAL",
     "py": "ZDML",
+    "aliases": []
+  },
+  {
+    "code": "I72.400",
+    "name": "下肢动脉瘤",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "xzdml",
+    "aliases": []
+  },
+  {
+    "code": "I73.900",
+    "name": "周围血管病",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zwxgb",
+    "aliases": []
+  },
+  {
+    "code": "I74.900",
+    "name": "动脉栓塞",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "dmss",
+    "aliases": []
+  },
+  {
+    "code": "I77.100",
+    "name": "主动脉狭窄",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zdmxz",
     "aliases": []
   },
   {
@@ -1195,6 +2905,86 @@
     "aliases": []
   },
   {
+    "code": "I87.100",
+    "name": "静脉功能不全",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jmgnbq",
+    "aliases": []
+  },
+  {
+    "code": "I87.200",
+    "name": "静脉曲张",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jmqz",
+    "aliases": []
+  },
+  {
+    "code": "I88.900",
+    "name": "淋巴结炎",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "lbjy",
+    "aliases": []
+  },
+  {
+    "code": "I95.900",
+    "name": "低血压",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "dxy",
+    "aliases": []
+  },
+  {
+    "code": "I97.000",
+    "name": "心脏术后综合征",
+    "category": "循环系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "xzshzhz",
+    "aliases": []
+  },
+  {
+    "code": "J01.900",
+    "name": "急性鼻窦炎",
+    "category": "呼吸系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxbdy",
+    "aliases": []
+  },
+  {
+    "code": "J02.900",
+    "name": "急性咽炎",
+    "category": "呼吸系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxyy",
+    "aliases": []
+  },
+  {
+    "code": "J03.900",
+    "name": "急性扁桃体炎",
+    "category": "呼吸系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxbtty",
+    "aliases": []
+  },
+  {
+    "code": "J04.000",
+    "name": "急性喉炎",
+    "category": "呼吸系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxhy",
+    "aliases": []
+  },
+  {
+    "code": "J05.100",
+    "name": "急性会厌炎",
+    "category": "呼吸系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxhyy",
+    "aliases": []
+  },
+  {
     "code": "J06.900",
     "name": "急性上呼吸道感染",
     "category": "呼吸系统",
@@ -1203,6 +2993,22 @@
     "aliases": [
       "上呼吸道感染"
     ]
+  },
+  {
+    "code": "J13.900",
+    "name": "肺炎链球菌性肺炎",
+    "category": "呼吸系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "fylqjxfy",
+    "aliases": []
+  },
+  {
+    "code": "J14.900",
+    "name": "流感嗜血杆菌性肺炎",
+    "category": "呼吸系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "lgsxgjxfy",
+    "aliases": []
   },
   {
     "code": "J15.900",
@@ -1240,6 +3046,14 @@
     "aliases": []
   },
   {
+    "code": "J21.900",
+    "name": "急性细支气管炎",
+    "category": "呼吸系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxxzqgy",
+    "aliases": []
+  },
+  {
     "code": "J30.400",
     "name": "过敏性鼻炎",
     "category": "呼吸系统疾病",
@@ -1268,6 +3082,14 @@
     ]
   },
   {
+    "code": "J34.200",
+    "name": "鼻中隔偏曲",
+    "category": "呼吸系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "bzgpq",
+    "aliases": []
+  },
+  {
     "code": "J35.900",
     "name": "慢性扁桃体炎",
     "category": "呼吸系统疾病",
@@ -1276,6 +3098,14 @@
     "aliases": [
       "扁桃体炎"
     ]
+  },
+  {
+    "code": "J38.000",
+    "name": "声带麻痹",
+    "category": "呼吸系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "sdmb",
+    "aliases": []
   },
   {
     "code": "J40.900",
@@ -1322,6 +3152,14 @@
     ]
   },
   {
+    "code": "J46.900",
+    "name": "哮喘持续状态",
+    "category": "呼吸系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "xccxzt",
+    "aliases": []
+  },
+  {
     "code": "J47.900",
     "name": "支气管扩张症",
     "category": "呼吸系统",
@@ -1330,6 +3168,50 @@
     "aliases": [
       "支气管扩张"
     ]
+  },
+  {
+    "code": "J60.900",
+    "name": "煤工尘肺",
+    "category": "呼吸系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "mgcf",
+    "aliases": [
+      "尘肺"
+    ]
+  },
+  {
+    "code": "J61.900",
+    "name": "石棉肺",
+    "category": "呼吸系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "smf",
+    "aliases": []
+  },
+  {
+    "code": "J67.900",
+    "name": "过敏性肺炎",
+    "category": "呼吸系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gmxfy",
+    "aliases": []
+  },
+  {
+    "code": "J69.000",
+    "name": "吸入性肺炎",
+    "category": "呼吸系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "xrxfy",
+    "aliases": [
+      "误吸性肺炎"
+    ]
+  },
+  {
+    "code": "J70.900",
+    "name": "外部因素所致呼吸系统疾病",
+    "category": "呼吸系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "wbysszhxxtjb",
+    "aliases": []
   },
   {
     "code": "J80.900",
@@ -1353,6 +3235,30 @@
     "category": "呼吸系统疾病",
     "version": "ICD10_CLINICAL",
     "py": "",
+    "aliases": []
+  },
+  {
+    "code": "J84.900",
+    "name": "间质性肺病",
+    "category": "呼吸系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jzxfb",
+    "aliases": []
+  },
+  {
+    "code": "J85.100",
+    "name": "肺脓肿",
+    "category": "呼吸系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "fnz",
+    "aliases": []
+  },
+  {
+    "code": "J86.900",
+    "name": "脓胸",
+    "category": "呼吸系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "nx",
     "aliases": []
   },
   {
@@ -1382,6 +3288,22 @@
     "aliases": []
   },
   {
+    "code": "J94.900",
+    "name": "胸膜疾病",
+    "category": "呼吸系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "xmjb",
+    "aliases": []
+  },
+  {
+    "code": "J95.800",
+    "name": "术后呼吸系统并发症",
+    "category": "呼吸系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "shhxxtbfz",
+    "aliases": []
+  },
+  {
     "code": "J96.900",
     "name": "呼吸衰竭",
     "category": "呼吸系统",
@@ -1389,6 +3311,64 @@
     "py": "HXSJ",
     "aliases": [
       "呼吸功能不全"
+    ]
+  },
+  {
+    "code": "J98.400",
+    "name": "肺功能障碍",
+    "category": "呼吸系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "fgnza",
+    "aliases": []
+  },
+  {
+    "code": "J98.900",
+    "name": "呼吸系统疾病(未特指)",
+    "category": "呼吸系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "hxxtjb(wtz)",
+    "aliases": []
+  },
+  {
+    "code": "K00.900",
+    "name": "龋齿",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "qc",
+    "aliases": []
+  },
+  {
+    "code": "K04.900",
+    "name": "牙髓病",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ysb",
+    "aliases": []
+  },
+  {
+    "code": "K05.900",
+    "name": "牙龈炎",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "yyy",
+    "aliases": []
+  },
+  {
+    "code": "K11.900",
+    "name": "唾液腺疾病",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "tyxjb",
+    "aliases": []
+  },
+  {
+    "code": "K12.000",
+    "name": "复发性口腔溃疡",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ffxkqky",
+    "aliases": [
+      "口腔溃疡"
     ]
   },
   {
@@ -1418,6 +3398,48 @@
     "aliases": []
   },
   {
+    "code": "K22.100",
+    "name": "食管溃疡",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "sgky",
+    "aliases": []
+  },
+  {
+    "code": "K22.200",
+    "name": "食管梗阻",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "sggz",
+    "aliases": []
+  },
+  {
+    "code": "K22.800",
+    "name": "食管静脉曲张",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "sgjmqz",
+    "aliases": [
+      "食管静脉曲张"
+    ]
+  },
+  {
+    "code": "K25.000",
+    "name": "急性胃溃疡伴出血",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxwkybcx",
+    "aliases": []
+  },
+  {
+    "code": "K25.400",
+    "name": "胃溃疡伴出血",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "wkybcx",
+    "aliases": []
+  },
+  {
     "code": "K25.900",
     "name": "胃溃疡",
     "category": "消化系统",
@@ -1442,11 +3464,35 @@
     "aliases": []
   },
   {
+    "code": "K28.900",
+    "name": "胃空肠溃疡",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "wkcky",
+    "aliases": []
+  },
+  {
+    "code": "K29.000",
+    "name": "急性出血性胃炎",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxcxxwy",
+    "aliases": []
+  },
+  {
     "code": "K29.100",
     "name": "急性胃炎",
     "category": "消化系统疾病",
     "version": "ICD10_CLINICAL",
     "py": "",
+    "aliases": []
+  },
+  {
+    "code": "K29.200",
+    "name": "酒精性胃炎",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jjxwy",
     "aliases": []
   },
   {
@@ -1468,11 +3514,37 @@
     "aliases": []
   },
   {
+    "code": "K29.600",
+    "name": "其他胃炎",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "qtwy",
+    "aliases": []
+  },
+  {
     "code": "K29.700",
     "name": "胃炎",
     "category": "消化系统",
     "version": "ICD10_CLINICAL",
     "py": "WY",
+    "aliases": []
+  },
+  {
+    "code": "K31.800",
+    "name": "胃排空障碍",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "wpkza",
+    "aliases": [
+      "胃瘫"
+    ]
+  },
+  {
+    "code": "K31.900",
+    "name": "胃及十二指肠疾病",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "wjsezcjb",
     "aliases": []
   },
   {
@@ -1486,6 +3558,30 @@
     ]
   },
   {
+    "code": "K36.900",
+    "name": "阑尾炎(未特指)",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "lwy(wtz)",
+    "aliases": []
+  },
+  {
+    "code": "K37.900",
+    "name": "阑尾炎",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "lwy",
+    "aliases": []
+  },
+  {
+    "code": "K38.900",
+    "name": "阑尾疾病",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "lwjb",
+    "aliases": []
+  },
+  {
     "code": "K40.900",
     "name": "腹股沟疝",
     "category": "消化系统",
@@ -1494,11 +3590,43 @@
     "aliases": []
   },
   {
+    "code": "K42.900",
+    "name": "脐疝",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "qs",
+    "aliases": []
+  },
+  {
+    "code": "K43.900",
+    "name": "腹疝",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "fs",
+    "aliases": []
+  },
+  {
     "code": "K44.900",
     "name": "膈疝",
     "category": "消化系统",
     "version": "ICD10_CLINICAL",
     "py": "GS",
+    "aliases": []
+  },
+  {
+    "code": "K45.900",
+    "name": "腹内疝",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "fns",
+    "aliases": []
+  },
+  {
+    "code": "K46.900",
+    "name": "腹壁疝",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "fbs",
     "aliases": []
   },
   {
@@ -1518,6 +3646,14 @@
     "aliases": []
   },
   {
+    "code": "K52.200",
+    "name": "过敏性胃肠炎",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gmxwcy",
+    "aliases": []
+  },
+  {
     "code": "K52.900",
     "name": "非感染性胃肠炎",
     "category": "消化系统",
@@ -1529,6 +3665,48 @@
     ]
   },
   {
+    "code": "K55.000",
+    "name": "肠血管急症",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "cxgjz",
+    "aliases": []
+  },
+  {
+    "code": "K55.900",
+    "name": "肠道血管疾病",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "cdxgjb",
+    "aliases": [
+      "缺血性肠病"
+    ]
+  },
+  {
+    "code": "K56.000",
+    "name": "麻痹性肠梗阻",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "mbxcgz",
+    "aliases": []
+  },
+  {
+    "code": "K56.100",
+    "name": "肠套叠",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ctd",
+    "aliases": []
+  },
+  {
+    "code": "K56.500",
+    "name": "肠粘连",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "czl",
+    "aliases": []
+  },
+  {
     "code": "K56.600",
     "name": "肠梗阻",
     "category": "消化系统",
@@ -1537,6 +3715,14 @@
     "aliases": [
       "不完全性肠梗阻"
     ]
+  },
+  {
+    "code": "K56.700",
+    "name": "不完全性肠梗阻",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "bwqxcgz",
+    "aliases": []
   },
   {
     "code": "K57.900",
@@ -1563,11 +3749,67 @@
     "aliases": []
   },
   {
+    "code": "K59.100",
+    "name": "功能性腹泻",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gnxfx",
+    "aliases": []
+  },
+  {
+    "code": "K59.300",
+    "name": "巨结肠",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jjc",
+    "aliases": []
+  },
+  {
+    "code": "K60.000",
+    "name": "急性肛裂",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxgl",
+    "aliases": []
+  },
+  {
     "code": "K60.200",
     "name": "肛裂",
     "category": "消化系统疾病",
     "version": "ICD10_CLINICAL",
     "py": "",
+    "aliases": []
+  },
+  {
+    "code": "K60.300",
+    "name": "肛瘘",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gl",
+    "aliases": []
+  },
+  {
+    "code": "K61.000",
+    "name": "肛周脓肿",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gznz",
+    "aliases": []
+  },
+  {
+    "code": "K62.800",
+    "name": "直肠炎",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zcy",
+    "aliases": []
+  },
+  {
+    "code": "K63.000",
+    "name": "肠穿孔",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "cck",
     "aliases": []
   },
   {
@@ -1589,6 +3831,30 @@
     ]
   },
   {
+    "code": "K65.000",
+    "name": "急性腹膜炎",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxfmy",
+    "aliases": []
+  },
+  {
+    "code": "K65.900",
+    "name": "腹膜炎",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "fmy",
+    "aliases": []
+  },
+  {
+    "code": "K66.000",
+    "name": "腹腔粘连",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "fqzl",
+    "aliases": []
+  },
+  {
     "code": "K70.300",
     "name": "酒精性肝硬化",
     "category": "消化系统疾病",
@@ -1605,6 +3871,22 @@
     "aliases": []
   },
   {
+    "code": "K71.900",
+    "name": "中毒性肝病",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zdxgb",
+    "aliases": []
+  },
+  {
+    "code": "K72.000",
+    "name": "急性肝功能衰竭",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxggnsj",
+    "aliases": []
+  },
+  {
     "code": "K72.900",
     "name": "肝功能衰竭",
     "category": "消化系统",
@@ -1613,11 +3895,35 @@
     "aliases": []
   },
   {
+    "code": "K73.900",
+    "name": "慢性肝炎",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "mxgy",
+    "aliases": []
+  },
+  {
+    "code": "K74.000",
+    "name": "肝纤维化",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gxwh",
+    "aliases": []
+  },
+  {
     "code": "K74.600",
     "name": "肝硬化",
     "category": "消化系统",
     "version": "ICD10_CLINICAL",
     "py": "GYH",
+    "aliases": []
+  },
+  {
+    "code": "K75.000",
+    "name": "肝脓肿",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gnz",
     "aliases": []
   },
   {
@@ -1634,6 +3940,32 @@
     "category": "消化系统",
     "version": "ICD10_CLINICAL",
     "py": "ZFG",
+    "aliases": []
+  },
+  {
+    "code": "K76.600",
+    "name": "门静脉高压",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "mjmgy",
+    "aliases": [
+      ""
+    ]
+  },
+  {
+    "code": "K76.800",
+    "name": "肝囊肿(非感染性)",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gnz(fgrx)",
+    "aliases": []
+  },
+  {
+    "code": "K76.900",
+    "name": "肝病",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gb",
     "aliases": []
   },
   {
@@ -1687,6 +4019,54 @@
     "aliases": []
   },
   {
+    "code": "K82.000",
+    "name": "胆囊梗阻",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "dngz",
+    "aliases": []
+  },
+  {
+    "code": "K82.800",
+    "name": "胆囊息肉",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "dnxr",
+    "aliases": []
+  },
+  {
+    "code": "K82.900",
+    "name": "胆囊疾病",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "dnjb",
+    "aliases": []
+  },
+  {
+    "code": "K83.000",
+    "name": "胆管炎",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "dgy",
+    "aliases": []
+  },
+  {
+    "code": "K83.100",
+    "name": "胆管梗阻",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "dggz",
+    "aliases": []
+  },
+  {
+    "code": "K83.900",
+    "name": "胆道疾病",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ddjb",
+    "aliases": []
+  },
+  {
     "code": "K85.900",
     "name": "急性胰腺炎",
     "category": "消化系统",
@@ -1705,12 +4085,48 @@
     "aliases": []
   },
   {
+    "code": "K86.800",
+    "name": "胰腺囊肿",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "yxnz",
+    "aliases": []
+  },
+  {
+    "code": "K90.000",
+    "name": "乳糜泻",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "rmx",
+    "aliases": []
+  },
+  {
     "code": "K91.200",
     "name": "术后肠梗阻",
     "category": "消化系统",
     "version": "ICD10_CLINICAL",
     "py": "SHCGZ",
     "aliases": []
+  },
+  {
+    "code": "K92.000",
+    "name": "呕血",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ox",
+    "aliases": [
+      "吐血"
+    ]
+  },
+  {
+    "code": "K92.100",
+    "name": "黑便",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "hb",
+    "aliases": [
+      "便血"
+    ]
   },
   {
     "code": "K92.200",
@@ -1721,6 +4137,40 @@
     "aliases": []
   },
   {
+    "code": "K92.900",
+    "name": "消化系统疾病(未特指)",
+    "category": "消化系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "xhxtjb(wtz)",
+    "aliases": []
+  },
+  {
+    "code": "L00.900",
+    "name": "天疱疮",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "tpc",
+    "aliases": []
+  },
+  {
+    "code": "L01.000",
+    "name": "脓疱疮",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "npc",
+    "aliases": []
+  },
+  {
+    "code": "L02.900",
+    "name": "皮肤脓肿",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "pfnz",
+    "aliases": [
+      "疖"
+    ]
+  },
+  {
     "code": "L03.900",
     "name": "蜂窝织炎",
     "category": "皮肤",
@@ -1729,11 +4179,87 @@
     "aliases": []
   },
   {
+    "code": "L05.000",
+    "name": "藏毛囊肿",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "cmnz",
+    "aliases": []
+  },
+  {
     "code": "L08.900",
     "name": "皮肤感染",
     "category": "皮肤",
     "version": "ICD10_CLINICAL",
     "py": "PFGR",
+    "aliases": []
+  },
+  {
+    "code": "L10.900",
+    "name": "寻常型天疱疮",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "xcxtpc",
+    "aliases": []
+  },
+  {
+    "code": "L12.900",
+    "name": "类天疱疮",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ltpc",
+    "aliases": []
+  },
+  {
+    "code": "L20.900",
+    "name": "特应性皮炎",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "tyxpy",
+    "aliases": [
+      "湿疹"
+    ]
+  },
+  {
+    "code": "L21.900",
+    "name": "脂溢性皮炎",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zyxpy",
+    "aliases": []
+  },
+  {
+    "code": "L25.900",
+    "name": "接触性皮炎",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jcxpy",
+    "aliases": []
+  },
+  {
+    "code": "L27.900",
+    "name": "药物性皮炎",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ywxpy",
+    "aliases": [
+      "药疹"
+    ]
+  },
+  {
+    "code": "L28.000",
+    "name": "慢性单纯性苔癣",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "mxdcxtx",
+    "aliases": []
+  },
+  {
+    "code": "L28.200",
+    "name": "瘙痒症",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "syz",
     "aliases": []
   },
   {
@@ -1757,11 +4283,69 @@
     ]
   },
   {
+    "code": "L43.900",
+    "name": "扁平苔癣",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "bptx",
+    "aliases": []
+  },
+  {
     "code": "L50.900",
     "name": "荨麻疹",
     "category": "皮肤",
     "version": "ICD10_CLINICAL",
     "py": "QMZ",
+    "aliases": []
+  },
+  {
+    "code": "L51.900",
+    "name": "多形性红斑",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "dxxhb",
+    "aliases": []
+  },
+  {
+    "code": "L52.900",
+    "name": "结节性红斑",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jjxhb",
+    "aliases": []
+  },
+  {
+    "code": "L53.900",
+    "name": "紫癜",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zd",
+    "aliases": []
+  },
+  {
+    "code": "L60.000",
+    "name": "甲癣",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jx",
+    "aliases": [
+      "灰指甲"
+    ]
+  },
+  {
+    "code": "L63.900",
+    "name": "斑秃",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "bt",
+    "aliases": []
+  },
+  {
+    "code": "L65.900",
+    "name": "脱发",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "tf",
     "aliases": []
   },
   {
@@ -1773,11 +4357,95 @@
     "aliases": []
   },
   {
+    "code": "L72.900",
+    "name": "皮脂腺囊肿",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "pzxnz",
+    "aliases": []
+  },
+  {
+    "code": "L82.900",
+    "name": "脂溢性角化",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zyxjh",
+    "aliases": []
+  },
+  {
+    "code": "L85.900",
+    "name": "表皮增厚",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "bpzh",
+    "aliases": []
+  },
+  {
     "code": "L89.900",
     "name": "压力性溃疡",
     "category": "皮肤",
     "version": "ICD10_CLINICAL",
     "py": "YLXKY",
+    "aliases": []
+  },
+  {
+    "code": "L90.900",
+    "name": "皮肤萎缩",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "pfws",
+    "aliases": []
+  },
+  {
+    "code": "L91.900",
+    "name": "瘢痕疙瘩",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "bhgd",
+    "aliases": []
+  },
+  {
+    "code": "L97.900",
+    "name": "下肢溃疡",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "xzky",
+    "aliases": [
+      "小腿溃疡"
+    ]
+  },
+  {
+    "code": "L98.400",
+    "name": "慢性皮肤溃疡",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "mxpfky",
+    "aliases": [
+      "褥疮"
+    ]
+  },
+  {
+    "code": "L98.900",
+    "name": "皮肤及皮下组织疾病",
+    "category": "皮肤疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "pfjpxzzjb",
+    "aliases": []
+  },
+  {
+    "code": "M00.900",
+    "name": "化脓性关节炎",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "hnxgjy",
+    "aliases": []
+  },
+  {
+    "code": "M05.900",
+    "name": "血清阳性类风湿关节炎",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "xqyxlfsgjy",
     "aliases": []
   },
   {
@@ -1796,6 +4464,22 @@
     "category": "骨骼",
     "version": "ICD10_CLINICAL",
     "py": "TF",
+    "aliases": []
+  },
+  {
+    "code": "M13.900",
+    "name": "关节炎(未特指)",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gjy(wtz)",
+    "aliases": []
+  },
+  {
+    "code": "M15.900",
+    "name": "多关节病",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "dgjb",
     "aliases": []
   },
   {
@@ -1827,11 +4511,67 @@
     ]
   },
   {
+    "code": "M20.000",
+    "name": "手指畸形",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "szjx",
+    "aliases": []
+  },
+  {
+    "code": "M21.900",
+    "name": "肢体畸形",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ztjx",
+    "aliases": []
+  },
+  {
+    "code": "M22.400",
+    "name": "髌骨软化症",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "bgrhz",
+    "aliases": []
+  },
+  {
+    "code": "M23.900",
+    "name": "膝关节内部紊乱",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "xgjnbwl",
+    "aliases": []
+  },
+  {
+    "code": "M24.900",
+    "name": "关节疾病",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gjjb",
+    "aliases": []
+  },
+  {
     "code": "M25.500",
     "name": "关节痛",
     "category": "骨骼",
     "version": "ICD10_CLINICAL",
     "py": "GJT",
+    "aliases": []
+  },
+  {
+    "code": "M25.800",
+    "name": "关节僵硬",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gjjy",
+    "aliases": []
+  },
+  {
+    "code": "M30.300",
+    "name": "川崎病",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "cqb",
     "aliases": []
   },
   {
@@ -1843,11 +4583,79 @@
     "aliases": []
   },
   {
+    "code": "M33.900",
+    "name": "多发性肌炎",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "dfxjy",
+    "aliases": []
+  },
+  {
+    "code": "M34.900",
+    "name": "系统性硬化症",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "xtxyhz",
+    "aliases": [
+      "硬皮病"
+    ]
+  },
+  {
+    "code": "M35.000",
+    "name": "干燥综合征",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gzzhz",
+    "aliases": [
+      "Sjogren"
+    ]
+  },
+  {
+    "code": "M35.900",
+    "name": "结缔组织病",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jdzzb",
+    "aliases": []
+  },
+  {
+    "code": "M40.900",
+    "name": "脊柱后凸",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jzht",
+    "aliases": []
+  },
+  {
+    "code": "M41.900",
+    "name": "脊柱侧弯",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jzcw",
+    "aliases": []
+  },
+  {
+    "code": "M43.900",
+    "name": "脊柱变形",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jzbx",
+    "aliases": []
+  },
+  {
     "code": "M45.900",
     "name": "强直性脊柱炎",
     "category": "骨骼肌肉疾病",
     "version": "ICD10_CLINICAL",
     "py": "",
+    "aliases": []
+  },
+  {
+    "code": "M46.900",
+    "name": "炎性脊柱关节病",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "yxjzgjb",
     "aliases": []
   },
   {
@@ -1883,6 +4691,16 @@
     "aliases": []
   },
   {
+    "code": "M51.100",
+    "name": "腰椎间盘脱出",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "yzjptc",
+    "aliases": [
+      "腰椎间盘突出伴脱出"
+    ]
+  },
+  {
     "code": "M51.200",
     "name": "腰椎间盘突出",
     "category": "骨骼",
@@ -1893,11 +4711,27 @@
     ]
   },
   {
+    "code": "M54.100",
+    "name": "颈神经根病",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jsjgb",
+    "aliases": []
+  },
+  {
     "code": "M54.300",
     "name": "坐骨神经痛",
     "category": "骨骼肌肉疾病",
     "version": "ICD10_CLINICAL",
     "py": "",
+    "aliases": []
+  },
+  {
+    "code": "M54.400",
+    "name": "背痛伴坐骨神经痛",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "btbzgsjt",
     "aliases": []
   },
   {
@@ -1910,6 +4744,46 @@
       "腰痛",
       "腰肌劳损"
     ]
+  },
+  {
+    "code": "M60.900",
+    "name": "肌炎",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jy",
+    "aliases": []
+  },
+  {
+    "code": "M62.900",
+    "name": "肌肉疾病",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jrjb",
+    "aliases": []
+  },
+  {
+    "code": "M65.900",
+    "name": "滑膜炎",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "hmy",
+    "aliases": []
+  },
+  {
+    "code": "M67.400",
+    "name": "腱鞘囊肿",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jqnz",
+    "aliases": []
+  },
+  {
+    "code": "M70.900",
+    "name": "软组织疾病",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "rzzjb",
+    "aliases": []
   },
   {
     "code": "M72.900",
@@ -1930,11 +4804,61 @@
     ]
   },
   {
+    "code": "M75.100",
+    "name": "肩袖撕裂",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxsl",
+    "aliases": [
+      "肩袖损伤"
+    ]
+  },
+  {
+    "code": "M75.800",
+    "name": "肩部软组织疾病",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jbrzzjb",
+    "aliases": []
+  },
+  {
+    "code": "M77.900",
+    "name": "肌腱附着点病",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jjfzdb",
+    "aliases": []
+  },
+  {
+    "code": "M79.000",
+    "name": "风湿病",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "fsb",
+    "aliases": []
+  },
+  {
     "code": "M79.100",
     "name": "肌痛",
     "category": "骨骼",
     "version": "ICD10_CLINICAL",
     "py": "JT",
+    "aliases": []
+  },
+  {
+    "code": "M79.600",
+    "name": "肢体疼痛",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zttt",
+    "aliases": []
+  },
+  {
+    "code": "M79.700",
+    "name": "纤维肌痛",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "xwjt",
     "aliases": []
   },
   {
@@ -1954,6 +4878,22 @@
     "aliases": []
   },
   {
+    "code": "M84.900",
+    "name": "骨折愈合障碍",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gzyhza",
+    "aliases": []
+  },
+  {
+    "code": "M85.900",
+    "name": "骨密度异常",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gmdyc",
+    "aliases": []
+  },
+  {
     "code": "M87.900",
     "name": "骨坏死",
     "category": "骨骼肌肉疾病",
@@ -1962,6 +4902,56 @@
     "aliases": [
       "股骨头坏死"
     ]
+  },
+  {
+    "code": "M89.900",
+    "name": "骨疾病",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gjb",
+    "aliases": []
+  },
+  {
+    "code": "M93.900",
+    "name": "骨软骨病",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "grgb",
+    "aliases": []
+  },
+  {
+    "code": "M94.900",
+    "name": "软骨疾病",
+    "category": "骨骼肌肉疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "rgjb",
+    "aliases": []
+  },
+  {
+    "code": "N00.900",
+    "name": "急性肾炎综合征",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxsyzhz",
+    "aliases": [
+      "急性肾炎"
+    ]
+  },
+  {
+    "code": "N01.900",
+    "name": "急进性肾炎综合征",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jjxsyzhz",
+    "aliases": []
+  },
+  {
+    "code": "N02.900",
+    "name": "复发性血尿",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ffxxn",
+    "aliases": []
   },
   {
     "code": "N03.900",
@@ -1979,6 +4969,22 @@
     "category": "泌尿系统疾病",
     "version": "ICD10_CLINICAL",
     "py": "",
+    "aliases": []
+  },
+  {
+    "code": "N07.900",
+    "name": "遗传性肾病",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ycxsb",
+    "aliases": []
+  },
+  {
+    "code": "N08.300",
+    "name": "糖尿病肾病",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "tnbsb",
     "aliases": []
   },
   {
@@ -2006,11 +5012,43 @@
     "aliases": []
   },
   {
+    "code": "N13.300",
+    "name": "肾积水",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "sjs",
+    "aliases": []
+  },
+  {
+    "code": "N15.900",
+    "name": "肾小管间质疾病",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "sxgjzjb",
+    "aliases": []
+  },
+  {
     "code": "N17.900",
     "name": "急性肾损伤",
     "category": "泌尿系统",
     "version": "ICD10_CLINICAL",
     "py": "JXSSS",
+    "aliases": []
+  },
+  {
+    "code": "N18.100",
+    "name": "慢性肾脏病1期",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "mxszb1q",
+    "aliases": []
+  },
+  {
+    "code": "N18.200",
+    "name": "慢性肾脏病2期",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "mxszb2q",
     "aliases": []
   },
   {
@@ -2091,11 +5129,69 @@
     "aliases": []
   },
   {
+    "code": "N25.900",
+    "name": "肾小管功能障碍",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "sxggnza",
+    "aliases": []
+  },
+  {
+    "code": "N26.900",
+    "name": "肾萎缩",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "sws",
+    "aliases": []
+  },
+  {
+    "code": "N28.900",
+    "name": "肾及输尿管疾病",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "sjsngjb",
+    "aliases": []
+  },
+  {
     "code": "N30.900",
     "name": "膀胱炎",
     "category": "泌尿系统",
     "version": "ICD10_CLINICAL",
     "py": "PGY",
+    "aliases": []
+  },
+  {
+    "code": "N31.900",
+    "name": "膀胱神经肌肉功能障碍",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "pgsjjrgnza",
+    "aliases": [
+      "神经源性膀胱"
+    ]
+  },
+  {
+    "code": "N32.900",
+    "name": "膀胱疾病",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "pgjb",
+    "aliases": []
+  },
+  {
+    "code": "N34.900",
+    "name": "尿道炎",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ndy",
+    "aliases": []
+  },
+  {
+    "code": "N35.900",
+    "name": "尿道狭窄",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ndxz",
     "aliases": []
   },
   {
@@ -2108,6 +5204,24 @@
       "泌尿系感染",
       "尿路感染"
     ]
+  },
+  {
+    "code": "N39.300",
+    "name": "压力性尿失禁",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "ylxnsj",
+    "aliases": [
+      "尿失禁"
+    ]
+  },
+  {
+    "code": "N39.400",
+    "name": "急迫性尿失禁",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jpxnsj",
+    "aliases": []
   },
   {
     "code": "N40.000",
@@ -2128,6 +5242,22 @@
     "aliases": []
   },
   {
+    "code": "N41.000",
+    "name": "急性前列腺炎",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "jxqlxy",
+    "aliases": []
+  },
+  {
+    "code": "N41.100",
+    "name": "慢性前列腺炎",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "mxqlxy",
+    "aliases": []
+  },
+  {
     "code": "N41.900",
     "name": "前列腺炎",
     "category": "泌尿系统",
@@ -2136,11 +5266,109 @@
     "aliases": []
   },
   {
+    "code": "N42.900",
+    "name": "前列腺疾病",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "qlxjb",
+    "aliases": []
+  },
+  {
+    "code": "N43.900",
+    "name": "鞘膜积液",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "qmjy",
+    "aliases": []
+  },
+  {
+    "code": "N44.900",
+    "name": "睾丸扭转",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gwnz",
+    "aliases": []
+  },
+  {
+    "code": "N45.900",
+    "name": "附睾炎",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "fgy",
+    "aliases": []
+  },
+  {
+    "code": "N50.900",
+    "name": "男性生殖器疾病",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "nxszqjb",
+    "aliases": []
+  },
+  {
+    "code": "N60.900",
+    "name": "乳腺增生",
+    "category": "乳腺疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "rxzs",
+    "aliases": []
+  },
+  {
+    "code": "N61.900",
+    "name": "乳腺炎",
+    "category": "乳腺疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "rxy",
+    "aliases": []
+  },
+  {
+    "code": "N62.900",
+    "name": "乳腺肥大",
+    "category": "乳腺疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "rxfd",
+    "aliases": []
+  },
+  {
+    "code": "N63.900",
+    "name": "乳腺肿块",
+    "category": "乳腺疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "rxzk",
+    "aliases": [
+      "乳腺结节"
+    ]
+  },
+  {
+    "code": "N64.900",
+    "name": "乳腺疾病",
+    "category": "乳腺疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "rxjb",
+    "aliases": []
+  },
+  {
     "code": "N70.900",
     "name": "盆腔炎性疾病",
     "category": "妇科",
     "version": "ICD10_CLINICAL",
     "py": "PQYXJB",
+    "aliases": []
+  },
+  {
+    "code": "N71.900",
+    "name": "子宫炎",
+    "category": "妇科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zgy",
+    "aliases": []
+  },
+  {
+    "code": "N72.900",
+    "name": "宫颈炎",
+    "category": "妇科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gjy",
     "aliases": []
   },
   {
@@ -2172,11 +5400,45 @@
     ]
   },
   {
+    "code": "N81.900",
+    "name": "女性生殖器脱垂",
+    "category": "妇科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "nxszqtc",
+    "aliases": [
+      "子宫脱垂"
+    ]
+  },
+  {
     "code": "N83.200",
     "name": "卵巢囊肿",
     "category": "妇科",
     "version": "ICD10_CLINICAL",
     "py": "LCNZ",
+    "aliases": []
+  },
+  {
+    "code": "N84.900",
+    "name": "子宫内膜息肉",
+    "category": "妇科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zgnmxr",
+    "aliases": []
+  },
+  {
+    "code": "N85.900",
+    "name": "子宫疾病",
+    "category": "妇科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "zgjb",
+    "aliases": []
+  },
+  {
+    "code": "N87.900",
+    "name": "宫颈发育不良",
+    "category": "妇科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "gjfybl",
     "aliases": []
   },
   {
@@ -2196,11 +5458,63 @@
     "aliases": []
   },
   {
+    "code": "N93.900",
+    "name": "异常子宫出血",
+    "category": "妇科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "yczgcx",
+    "aliases": [
+      "功血"
+    ]
+  },
+  {
+    "code": "N94.900",
+    "name": "女性生殖器疼痛",
+    "category": "妇科疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "nxszqtt",
+    "aliases": []
+  },
+  {
     "code": "N95.900",
     "name": "围绝经期综合征",
     "category": "妇科",
     "version": "ICD10_CLINICAL",
     "py": "WJJQZHZ",
+    "aliases": []
+  },
+  {
+    "code": "N99.900",
+    "name": "泌尿生殖系统术后并发症",
+    "category": "泌尿系统疾病",
+    "version": "ICD10_CLINICAL",
+    "py": "mnszxtshbfz",
+    "aliases": []
+  },
+  {
+    "code": "O00.900",
+    "name": "异位妊娠",
+    "category": "妊娠分娩",
+    "version": "ICD10_CLINICAL",
+    "py": "ywrs",
+    "aliases": [
+      "宫外孕"
+    ]
+  },
+  {
+    "code": "O01.900",
+    "name": "葡萄胎",
+    "category": "妊娠分娩",
+    "version": "ICD10_CLINICAL",
+    "py": "ptt",
+    "aliases": []
+  },
+  {
+    "code": "O10.900",
+    "name": "慢性高血压合并妊娠",
+    "category": "妊娠分娩",
+    "version": "ICD10_CLINICAL",
+    "py": "mxgxyhbrs",
     "aliases": []
   },
   {
@@ -2214,11 +5528,35 @@
     ]
   },
   {
+    "code": "O14.900",
+    "name": "子痫前期",
+    "category": "妊娠分娩",
+    "version": "ICD10_CLINICAL",
+    "py": "zxqq",
+    "aliases": []
+  },
+  {
+    "code": "O15.900",
+    "name": "子痫",
+    "category": "妊娠分娩",
+    "version": "ICD10_CLINICAL",
+    "py": "zx",
+    "aliases": []
+  },
+  {
     "code": "O20.000",
     "name": "先兆流产",
     "category": "妊娠分娩",
     "version": "ICD10_CLINICAL",
     "py": "",
+    "aliases": []
+  },
+  {
+    "code": "O21.900",
+    "name": "妊娠剧吐",
+    "category": "妊娠分娩",
+    "version": "ICD10_CLINICAL",
+    "py": "rsjt",
     "aliases": []
   },
   {
@@ -2240,6 +5578,97 @@
     "aliases": []
   },
   {
+    "code": "O30.000",
+    "name": "双胎妊娠",
+    "category": "妊娠分娩",
+    "version": "ICD10_CLINICAL",
+    "py": "strs",
+    "aliases": []
+  },
+  {
+    "code": "O34.200",
+    "name": "子宫瘢痕妊娠",
+    "category": "妊娠分娩",
+    "version": "ICD10_CLINICAL",
+    "py": "zgbhrs",
+    "aliases": []
+  },
+  {
+    "code": "O36.600",
+    "name": "巨大儿",
+    "category": "妊娠分娩",
+    "version": "ICD10_CLINICAL",
+    "py": "jde",
+    "aliases": []
+  },
+  {
+    "code": "O42.900",
+    "name": "胎膜早破",
+    "category": "妊娠分娩",
+    "version": "ICD10_CLINICAL",
+    "py": "tmzp",
+    "aliases": []
+  },
+  {
+    "code": "O48.900",
+    "name": "过期妊娠",
+    "category": "妊娠分娩",
+    "version": "ICD10_CLINICAL",
+    "py": "gqrs",
+    "aliases": []
+  },
+  {
+    "code": "O60.900",
+    "name": "早产",
+    "category": "妊娠分娩",
+    "version": "ICD10_CLINICAL",
+    "py": "zc",
+    "aliases": []
+  },
+  {
+    "code": "O62.900",
+    "name": "产力异常",
+    "category": "妊娠分娩",
+    "version": "ICD10_CLINICAL",
+    "py": "clyc",
+    "aliases": []
+  },
+  {
+    "code": "O64.900",
+    "name": "胎位异常",
+    "category": "妊娠分娩",
+    "version": "ICD10_CLINICAL",
+    "py": "twyc",
+    "aliases": [
+      "臀位",
+      "横位"
+    ]
+  },
+  {
+    "code": "O66.900",
+    "name": "梗阻性分娩",
+    "category": "妊娠分娩",
+    "version": "ICD10_CLINICAL",
+    "py": "gzxfm",
+    "aliases": []
+  },
+  {
+    "code": "O70.900",
+    "name": "会阴裂伤",
+    "category": "妊娠分娩",
+    "version": "ICD10_CLINICAL",
+    "py": "hyls",
+    "aliases": []
+  },
+  {
+    "code": "O72.000",
+    "name": "产后出血",
+    "category": "妊娠分娩",
+    "version": "ICD10_CLINICAL",
+    "py": "chcx",
+    "aliases": []
+  },
+  {
     "code": "O80.900",
     "name": "单胎自然分娩",
     "category": "产科",
@@ -2256,6 +5685,54 @@
     "aliases": []
   },
   {
+    "code": "O85.900",
+    "name": "产褥感染",
+    "category": "妊娠分娩",
+    "version": "ICD10_CLINICAL",
+    "py": "crgr",
+    "aliases": []
+  },
+  {
+    "code": "O90.900",
+    "name": "产后并发症",
+    "category": "妊娠分娩",
+    "version": "ICD10_CLINICAL",
+    "py": "chbfz",
+    "aliases": []
+  },
+  {
+    "code": "O99.000",
+    "name": "妊娠合并贫血",
+    "category": "妊娠分娩",
+    "version": "ICD10_CLINICAL",
+    "py": "rshbpx",
+    "aliases": []
+  },
+  {
+    "code": "O99.300",
+    "name": "妊娠合并精神障碍",
+    "category": "妊娠分娩",
+    "version": "ICD10_CLINICAL",
+    "py": "rshbjsza",
+    "aliases": []
+  },
+  {
+    "code": "O99.400",
+    "name": "妊娠合并循环系统疾病",
+    "category": "妊娠分娩",
+    "version": "ICD10_CLINICAL",
+    "py": "rshbxhxtjb",
+    "aliases": []
+  },
+  {
+    "code": "P05.900",
+    "name": "小于胎龄儿",
+    "category": "新生儿",
+    "version": "ICD10_CLINICAL",
+    "py": "xytle",
+    "aliases": []
+  },
+  {
     "code": "P07.300",
     "name": "早产儿",
     "category": "新生儿",
@@ -2264,11 +5741,159 @@
     "aliases": []
   },
   {
+    "code": "P08.000",
+    "name": "巨大儿",
+    "category": "新生儿",
+    "version": "ICD10_CLINICAL",
+    "py": "jde",
+    "aliases": []
+  },
+  {
+    "code": "P20.900",
+    "name": "宫内缺氧",
+    "category": "新生儿",
+    "version": "ICD10_CLINICAL",
+    "py": "gnqy",
+    "aliases": [
+      "胎儿窘迫"
+    ]
+  },
+  {
+    "code": "P21.900",
+    "name": "新生儿窒息",
+    "category": "新生儿",
+    "version": "ICD10_CLINICAL",
+    "py": "xsezx",
+    "aliases": []
+  },
+  {
     "code": "P22.900",
     "name": "新生儿呼吸窘迫",
     "category": "新生儿",
     "version": "ICD10_CLINICAL",
     "py": "XSEHXJP",
+    "aliases": []
+  },
+  {
+    "code": "P24.000",
+    "name": "新生儿胎粪吸入综合征",
+    "category": "新生儿",
+    "version": "ICD10_CLINICAL",
+    "py": "xsetfxrzhz",
+    "aliases": []
+  },
+  {
+    "code": "P36.900",
+    "name": "新生儿败血症",
+    "category": "新生儿",
+    "version": "ICD10_CLINICAL",
+    "py": "xsebxz",
+    "aliases": []
+  },
+  {
+    "code": "P39.900",
+    "name": "新生儿感染",
+    "category": "新生儿",
+    "version": "ICD10_CLINICAL",
+    "py": "xsegr",
+    "aliases": []
+  },
+  {
+    "code": "P55.900",
+    "name": "新生儿溶血病",
+    "category": "新生儿",
+    "version": "ICD10_CLINICAL",
+    "py": "xserxb",
+    "aliases": []
+  },
+  {
+    "code": "P59.900",
+    "name": "新生儿黄疸",
+    "category": "新生儿",
+    "version": "ICD10_CLINICAL",
+    "py": "xsehd",
+    "aliases": []
+  },
+  {
+    "code": "P70.900",
+    "name": "新生儿低血糖",
+    "category": "新生儿",
+    "version": "ICD10_CLINICAL",
+    "py": "xsedxt",
+    "aliases": []
+  },
+  {
+    "code": "P77.900",
+    "name": "新生儿坏死性小肠结肠炎",
+    "category": "新生儿",
+    "version": "ICD10_CLINICAL",
+    "py": "xsehsxxcjcy",
+    "aliases": [
+      "NEC"
+    ]
+  },
+  {
+    "code": "P91.900",
+    "name": "新生儿脑病",
+    "category": "新生儿",
+    "version": "ICD10_CLINICAL",
+    "py": "xsenb",
+    "aliases": []
+  },
+  {
+    "code": "Q05.900",
+    "name": "脊柱裂",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "jzl",
+    "aliases": []
+  },
+  {
+    "code": "Q07.900",
+    "name": "神经系统先天畸形",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "sjxtxtjx",
+    "aliases": []
+  },
+  {
+    "code": "Q11.200",
+    "name": "小眼畸形",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "xyjx",
+    "aliases": []
+  },
+  {
+    "code": "Q12.900",
+    "name": "先天性晶状体畸形",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "xtxjztjx",
+    "aliases": []
+  },
+  {
+    "code": "Q17.900",
+    "name": "先天性耳畸形",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "xtxejx",
+    "aliases": []
+  },
+  {
+    "code": "Q18.900",
+    "name": "先天性面颈畸形",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "xtxmjjx",
+    "aliases": []
+  },
+  {
+    "code": "Q20.900",
+    "name": "先天性心脏腔室畸形",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "xtxxzqsjx",
     "aliases": []
   },
   {
@@ -2288,11 +5913,213 @@
     "aliases": []
   },
   {
+    "code": "Q25.000",
+    "name": "动脉导管未闭",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "dmdgwb",
+    "aliases": [
+      "PDA"
+    ]
+  },
+  {
+    "code": "Q25.100",
+    "name": "主动脉缩窄",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "zdmsz",
+    "aliases": []
+  },
+  {
+    "code": "Q26.900",
+    "name": "大血管畸形",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "dxgjx",
+    "aliases": []
+  },
+  {
+    "code": "Q33.900",
+    "name": "先天性肺畸形",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "xtxfjx",
+    "aliases": []
+  },
+  {
+    "code": "Q35.900",
+    "name": "腭裂",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "el",
+    "aliases": []
+  },
+  {
+    "code": "Q36.900",
+    "name": "唇裂",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "cl",
+    "aliases": []
+  },
+  {
+    "code": "Q38.900",
+    "name": "先天性舌畸形",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "xtxsjx",
+    "aliases": []
+  },
+  {
+    "code": "Q42.900",
+    "name": "先天性肠闭锁",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "xtxcbs",
+    "aliases": []
+  },
+  {
+    "code": "Q43.900",
+    "name": "先天性肠畸形",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "xtxcjx",
+    "aliases": []
+  },
+  {
     "code": "Q44.600",
     "name": "肝囊肿",
     "category": "先天异常",
     "version": "ICD10_CLINICAL",
     "py": "",
+    "aliases": []
+  },
+  {
+    "code": "Q53.900",
+    "name": "隐睾",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "yg",
+    "aliases": []
+  },
+  {
+    "code": "Q54.900",
+    "name": "尿道下裂",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "ndxl",
+    "aliases": []
+  },
+  {
+    "code": "Q62.900",
+    "name": "先天性肾畸形",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "xtxsjx",
+    "aliases": []
+  },
+  {
+    "code": "Q65.900",
+    "name": "先天性髋关节畸形",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "xtxkgjjx",
+    "aliases": [
+      "先天性髋脱位"
+    ]
+  },
+  {
+    "code": "Q66.900",
+    "name": "先天性足畸形",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "xtxzjx",
+    "aliases": [
+      "马蹄内翻足"
+    ]
+  },
+  {
+    "code": "Q68.900",
+    "name": "先天性骨骼畸形",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "xtxggjx",
+    "aliases": []
+  },
+  {
+    "code": "Q76.400",
+    "name": "先天性脊柱侧弯",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "xtxjzcw",
+    "aliases": []
+  },
+  {
+    "code": "Q79.900",
+    "name": "先天性肌肉骨骼畸形",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "xtxjrggjx",
+    "aliases": []
+  },
+  {
+    "code": "Q90.900",
+    "name": "唐氏综合征",
+    "category": "先天畸形",
+    "version": "ICD10_CLINICAL",
+    "py": "tszhz",
+    "aliases": [
+      "21三体综合征"
+    ]
+  },
+  {
+    "code": "R00.000",
+    "name": "心动过速",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "xdgs",
+    "aliases": []
+  },
+  {
+    "code": "R00.100",
+    "name": "心动过缓",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "xdgh",
+    "aliases": []
+  },
+  {
+    "code": "R00.200",
+    "name": "心悸",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "xj",
+    "aliases": []
+  },
+  {
+    "code": "R01.000",
+    "name": "心脏杂音",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "xzzy",
+    "aliases": []
+  },
+  {
+    "code": "R04.000",
+    "name": "鼻出血",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "bcx",
+    "aliases": [
+      "鼻衄"
+    ]
+  },
+  {
+    "code": "R05.900",
+    "name": "咳嗽",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "ks",
     "aliases": []
   },
   {
@@ -2304,11 +6131,29 @@
     "aliases": []
   },
   {
+    "code": "R06.600",
+    "name": "打嗝",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "dg",
+    "aliases": [
+      "呃逆"
+    ]
+  },
+  {
     "code": "R07.400",
     "name": "胸痛",
     "category": "症状",
     "version": "ICD10_CLINICAL",
     "py": "XT",
+    "aliases": []
+  },
+  {
+    "code": "R09.100",
+    "name": "胸膜炎",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "xmy",
     "aliases": []
   },
   {
@@ -2328,11 +6173,131 @@
     "aliases": []
   },
   {
+    "code": "R13.900",
+    "name": "吞咽困难",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "tykn",
+    "aliases": []
+  },
+  {
+    "code": "R14.900",
+    "name": "胃肠胀气",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "wczq",
+    "aliases": [
+      "腹胀"
+    ]
+  },
+  {
+    "code": "R16.000",
+    "name": "肝大",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "gd",
+    "aliases": []
+  },
+  {
+    "code": "R16.100",
+    "name": "脾大",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "pd",
+    "aliases": []
+  },
+  {
     "code": "R17.900",
     "name": "黄疸",
     "category": "症状",
     "version": "ICD10_CLINICAL",
     "py": "HD",
+    "aliases": []
+  },
+  {
+    "code": "R18.900",
+    "name": "腹腔积液",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "fqjy",
+    "aliases": [
+      "腹水"
+    ]
+  },
+  {
+    "code": "R19.000",
+    "name": "腹部包块",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "fbbk",
+    "aliases": [
+      "腹部肿块"
+    ]
+  },
+  {
+    "code": "R22.900",
+    "name": "皮下结节",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "pxjj",
+    "aliases": []
+  },
+  {
+    "code": "R23.800",
+    "name": "皮肤颜色改变",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "pfysgb",
+    "aliases": []
+  },
+  {
+    "code": "R25.200",
+    "name": "肌肉痉挛",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "jrjl",
+    "aliases": [
+      "抽筋"
+    ]
+  },
+  {
+    "code": "R26.900",
+    "name": "步态异常",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "btyc",
+    "aliases": []
+  },
+  {
+    "code": "R29.800",
+    "name": "跌倒",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "dd",
+    "aliases": []
+  },
+  {
+    "code": "R30.000",
+    "name": "排尿困难",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "pnkn",
+    "aliases": []
+  },
+  {
+    "code": "R31.900",
+    "name": "血尿",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "xn",
+    "aliases": []
+  },
+  {
+    "code": "R32.900",
+    "name": "尿失禁",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "nsj",
     "aliases": []
   },
   {
@@ -2344,6 +6309,38 @@
     "aliases": []
   },
   {
+    "code": "R34.900",
+    "name": "无尿",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "wn",
+    "aliases": []
+  },
+  {
+    "code": "R35.900",
+    "name": "多尿",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "dn",
+    "aliases": []
+  },
+  {
+    "code": "R40.200",
+    "name": "昏迷",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "hm",
+    "aliases": []
+  },
+  {
+    "code": "R41.000",
+    "name": "定向力障碍",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "dxlza",
+    "aliases": []
+  },
+  {
     "code": "R42.900",
     "name": "头晕",
     "category": "症状",
@@ -2352,6 +6349,22 @@
     "aliases": [
       "眩晕"
     ]
+  },
+  {
+    "code": "R45.800",
+    "name": "情绪不稳定",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "qxbwd",
+    "aliases": []
+  },
+  {
+    "code": "R47.000",
+    "name": "失语",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "sy",
+    "aliases": []
   },
   {
     "code": "R50.900",
@@ -2367,6 +6380,22 @@
     "category": "症状",
     "version": "ICD10_CLINICAL",
     "py": "TT",
+    "aliases": []
+  },
+  {
+    "code": "R52.000",
+    "name": "急性疼痛",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "jxtt",
+    "aliases": []
+  },
+  {
+    "code": "R52.200",
+    "name": "慢性疼痛",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "mxtt",
     "aliases": []
   },
   {
@@ -2386,6 +6415,14 @@
     "aliases": []
   },
   {
+    "code": "R56.800",
+    "name": "惊厥",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "jj",
+    "aliases": []
+  },
+  {
     "code": "R57.200",
     "name": "感染性休克",
     "category": "症状",
@@ -2399,6 +6436,14 @@
     "category": "症状",
     "version": "ICD10_CLINICAL",
     "py": "XK",
+    "aliases": []
+  },
+  {
+    "code": "R58.900",
+    "name": "出血",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "cx",
     "aliases": []
   },
   {
@@ -2418,11 +6463,51 @@
     "aliases": []
   },
   {
+    "code": "R62.800",
+    "name": "发育迟缓",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "fych",
+    "aliases": []
+  },
+  {
+    "code": "R63.000",
+    "name": "厌食",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "ys",
+    "aliases": []
+  },
+  {
+    "code": "R63.300",
+    "name": "进食困难",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "jskn",
+    "aliases": []
+  },
+  {
     "code": "R63.500",
     "name": "体重减轻",
     "category": "症状",
     "version": "ICD10_CLINICAL",
     "py": "TZJQ",
+    "aliases": []
+  },
+  {
+    "code": "R64.900",
+    "name": "恶病质",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "ebz",
+    "aliases": []
+  },
+  {
+    "code": "R68.800",
+    "name": "全身症状(未特指)",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "qszz(wtz)",
     "aliases": []
   },
   {
@@ -2434,6 +6519,54 @@
     "aliases": []
   },
   {
+    "code": "R73.000",
+    "name": "糖耐量异常",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "tnlyc",
+    "aliases": []
+  },
+  {
+    "code": "R74.800",
+    "name": "肝功能检查异常",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "ggnjcyc",
+    "aliases": []
+  },
+  {
+    "code": "R76.800",
+    "name": "免疫学检查异常",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "myxjcyc",
+    "aliases": []
+  },
+  {
+    "code": "R78.800",
+    "name": "血药浓度异常",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "xyndyc",
+    "aliases": []
+  },
+  {
+    "code": "R79.800",
+    "name": "其他血液化学异常",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "qtxyhxyc",
+    "aliases": []
+  },
+  {
+    "code": "R90.800",
+    "name": "颅内占位性病变",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "lnzwxbb",
+    "aliases": []
+  },
+  {
     "code": "R91.100",
     "name": "肺结节",
     "category": "异常发现",
@@ -2442,11 +6575,51 @@
     "aliases": []
   },
   {
+    "code": "R93.800",
+    "name": "其他诊断性影像异常",
+    "category": "症状",
+    "version": "ICD10_CLINICAL",
+    "py": "qtzdxyxyc",
+    "aliases": []
+  },
+  {
     "code": "R94.500",
     "name": "肝功能异常",
     "category": "异常发现",
     "version": "ICD10_CLINICAL",
     "py": "",
+    "aliases": []
+  },
+  {
+    "code": "S00.900",
+    "name": "头部浅表伤",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "tbqbs",
+    "aliases": []
+  },
+  {
+    "code": "S01.900",
+    "name": "头部开放性伤口",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "tbkfxsk",
+    "aliases": []
+  },
+  {
+    "code": "S02.900",
+    "name": "颅骨骨折",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "lggz",
+    "aliases": []
+  },
+  {
+    "code": "S05.900",
+    "name": "眼损伤",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "yss",
     "aliases": []
   },
   {
@@ -2466,11 +6639,59 @@
     "aliases": []
   },
   {
+    "code": "S12.900",
+    "name": "颈椎骨折",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "jcgz",
+    "aliases": []
+  },
+  {
+    "code": "S20.900",
+    "name": "胸部浅表伤",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "xbqbs",
+    "aliases": []
+  },
+  {
     "code": "S22.400",
     "name": "肋骨骨折",
     "category": "损伤",
     "version": "ICD10_CLINICAL",
     "py": "LGGZ",
+    "aliases": []
+  },
+  {
+    "code": "S25.900",
+    "name": "胸部大血管损伤",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "xbdxgss",
+    "aliases": []
+  },
+  {
+    "code": "S26.900",
+    "name": "心脏损伤",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "xzss",
+    "aliases": []
+  },
+  {
+    "code": "S27.900",
+    "name": "胸部器官损伤",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "xbqgss",
+    "aliases": []
+  },
+  {
+    "code": "S30.900",
+    "name": "腹部浅表伤",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "fbqbs",
     "aliases": []
   },
   {
@@ -2482,11 +6703,57 @@
     "aliases": []
   },
   {
+    "code": "S36.000",
+    "name": "脾损伤",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "pss",
+    "aliases": [
+      "脾破裂"
+    ]
+  },
+  {
+    "code": "S36.100",
+    "name": "肝损伤",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "gss",
+    "aliases": [
+      "肝破裂"
+    ]
+  },
+  {
+    "code": "S37.000",
+    "name": "肾损伤",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "sss",
+    "aliases": [
+      "肾挫伤"
+    ]
+  },
+  {
+    "code": "S40.900",
+    "name": "肩部浅表伤",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "jbqbs",
+    "aliases": []
+  },
+  {
     "code": "S42.900",
     "name": "肩部骨折",
     "category": "损伤",
     "version": "ICD10_CLINICAL",
     "py": "JBGZ",
+    "aliases": []
+  },
+  {
+    "code": "S50.900",
+    "name": "前臂浅表伤",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "qbqbs",
     "aliases": []
   },
   {
@@ -2498,6 +6765,30 @@
     "aliases": []
   },
   {
+    "code": "S60.900",
+    "name": "手部浅表伤",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "sbqbs",
+    "aliases": []
+  },
+  {
+    "code": "S62.900",
+    "name": "手部骨折",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "sbgz",
+    "aliases": []
+  },
+  {
+    "code": "S70.900",
+    "name": "髋部浅表伤",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "kbqbs",
+    "aliases": []
+  },
+  {
     "code": "S72.900",
     "name": "股骨骨折",
     "category": "损伤",
@@ -2506,11 +6797,59 @@
     "aliases": []
   },
   {
+    "code": "S80.900",
+    "name": "小腿浅表伤",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "xtqbs",
+    "aliases": []
+  },
+  {
     "code": "S82.900",
     "name": "小腿骨折",
     "category": "损伤",
     "version": "ICD10_CLINICAL",
     "py": "XTGZ",
+    "aliases": []
+  },
+  {
+    "code": "S83.900",
+    "name": "膝关节扭伤",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "xgjns",
+    "aliases": []
+  },
+  {
+    "code": "S90.900",
+    "name": "足踝浅表伤",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "zhqbs",
+    "aliases": []
+  },
+  {
+    "code": "S92.900",
+    "name": "足部骨折",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "zbgz",
+    "aliases": []
+  },
+  {
+    "code": "T00.900",
+    "name": "多处浅表伤",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "dcqbs",
+    "aliases": []
+  },
+  {
+    "code": "T07.900",
+    "name": "多处损伤",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "dcss",
     "aliases": []
   },
   {
@@ -2530,6 +6869,258 @@
     "aliases": []
   },
   {
+    "code": "T17.900",
+    "name": "呼吸道异物",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "hxdyw",
+    "aliases": []
+  },
+  {
+    "code": "T18.900",
+    "name": "消化道异物",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "xhdyw",
+    "aliases": []
+  },
+  {
+    "code": "T36.900",
+    "name": "抗生素中毒",
+    "category": "中毒",
+    "version": "ICD10_CLINICAL",
+    "py": "ksszd",
+    "aliases": []
+  },
+  {
+    "code": "T39.900",
+    "name": "止痛药中毒",
+    "category": "中毒",
+    "version": "ICD10_CLINICAL",
+    "py": "ztyzd",
+    "aliases": []
+  },
+  {
+    "code": "T42.900",
+    "name": "镇静催眠药中毒",
+    "category": "中毒",
+    "version": "ICD10_CLINICAL",
+    "py": "zjcmyzd",
+    "aliases": []
+  },
+  {
+    "code": "T50.900",
+    "name": "药物中毒",
+    "category": "中毒",
+    "version": "ICD10_CLINICAL",
+    "py": "ywzd",
+    "aliases": []
+  },
+  {
+    "code": "T63.900",
+    "name": "动物毒素中毒",
+    "category": "中毒",
+    "version": "ICD10_CLINICAL",
+    "py": "dwdszd",
+    "aliases": []
+  },
+  {
+    "code": "T67.900",
+    "name": "中暑",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "zs",
+    "aliases": []
+  },
+  {
+    "code": "T75.100",
+    "name": "溺水",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "ns",
+    "aliases": [
+      ""
+    ]
+  },
+  {
+    "code": "T78.400",
+    "name": "过敏性休克",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "gmxxk",
+    "aliases": []
+  },
+  {
+    "code": "T79.900",
+    "name": "创伤后并发症",
+    "category": "损伤",
+    "version": "ICD10_CLINICAL",
+    "py": "cshbfz",
+    "aliases": []
+  },
+  {
+    "code": "T81.400",
+    "name": "术后感染",
+    "category": "术后并发症",
+    "version": "ICD10_CLINICAL",
+    "py": "shgr",
+    "aliases": []
+  },
+  {
+    "code": "T81.800",
+    "name": "手术后并发症",
+    "category": "术后并发症",
+    "version": "ICD10_CLINICAL",
+    "py": "sshbfz",
+    "aliases": []
+  },
+  {
+    "code": "T82.900",
+    "name": "心脏介入装置并发症",
+    "category": "术后并发症",
+    "version": "ICD10_CLINICAL",
+    "py": "xzjrzzbfz",
+    "aliases": []
+  },
+  {
+    "code": "T83.900",
+    "name": "泌尿植入物并发症",
+    "category": "术后并发症",
+    "version": "ICD10_CLINICAL",
+    "py": "mnzrwbfz",
+    "aliases": []
+  },
+  {
+    "code": "T84.900",
+    "name": "骨科植入物并发症",
+    "category": "术后并发症",
+    "version": "ICD10_CLINICAL",
+    "py": "gkzrwbfz",
+    "aliases": []
+  },
+  {
+    "code": "T85.900",
+    "name": "其他植入物并发症",
+    "category": "术后并发症",
+    "version": "ICD10_CLINICAL",
+    "py": "qtzrwbfz",
+    "aliases": []
+  },
+  {
+    "code": "W01.000",
+    "name": "平地跌倒",
+    "category": "损伤外因",
+    "version": "ICD10_CLINICAL",
+    "py": "pddd",
+    "aliases": []
+  },
+  {
+    "code": "W19.900",
+    "name": "意外跌倒",
+    "category": "损伤外因",
+    "version": "ICD10_CLINICAL",
+    "py": "ywdd",
+    "aliases": []
+  },
+  {
+    "code": "X59.900",
+    "name": "意外事故",
+    "category": "损伤外因",
+    "version": "ICD10_CLINICAL",
+    "py": "ywsg",
+    "aliases": []
+  },
+  {
+    "code": "Y34.900",
+    "name": "不明原因损伤",
+    "category": "损伤外因",
+    "version": "ICD10_CLINICAL",
+    "py": "bmyyss",
+    "aliases": []
+  },
+  {
+    "code": "Z00.000",
+    "name": "健康查体",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "jkct",
+    "aliases": [
+      "体检"
+    ]
+  },
+  {
+    "code": "Z00.600",
+    "name": "临床研究体检",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "lcyjtj",
+    "aliases": []
+  },
+  {
+    "code": "Z03.900",
+    "name": "疾病观察",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "jbgc",
+    "aliases": []
+  },
+  {
+    "code": "Z08.900",
+    "name": "恶性肿瘤术后随诊",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "exzlshsz",
+    "aliases": []
+  },
+  {
+    "code": "Z09.900",
+    "name": "术后随诊",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "shsz",
+    "aliases": []
+  },
+  {
+    "code": "Z11.900",
+    "name": "传染病筛查",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "crbsc",
+    "aliases": []
+  },
+  {
+    "code": "Z12.900",
+    "name": "肿瘤筛查",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "zlsc",
+    "aliases": []
+  },
+  {
+    "code": "Z20.900",
+    "name": "传染病接触史",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "crbjcs",
+    "aliases": []
+  },
+  {
+    "code": "Z30.900",
+    "name": "避孕管理",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "bygl",
+    "aliases": []
+  },
+  {
+    "code": "Z33.900",
+    "name": "妊娠状态",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "rszt",
+    "aliases": []
+  },
+  {
     "code": "Z34.900",
     "name": "妊娠监督",
     "category": "妊娠分娩",
@@ -2540,6 +7131,46 @@
     ]
   },
   {
+    "code": "Z43.000",
+    "name": "气管造口维护",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "qgzkwh",
+    "aliases": []
+  },
+  {
+    "code": "Z43.100",
+    "name": "胃造口维护",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "wzkwh",
+    "aliases": []
+  },
+  {
+    "code": "Z43.300",
+    "name": "结肠造口维护",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "jczkwh",
+    "aliases": []
+  },
+  {
+    "code": "Z45.000",
+    "name": "心脏起搏器维护",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "xzqbqwh",
+    "aliases": []
+  },
+  {
+    "code": "Z46.600",
+    "name": "助听器调试",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "ztqts",
+    "aliases": []
+  },
+  {
     "code": "Z47.000",
     "name": "骨折术后取内固定",
     "category": "术后",
@@ -2548,11 +7179,45 @@
     "aliases": []
   },
   {
+    "code": "Z47.900",
+    "name": "骨科术后康复",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "gkshkf",
+    "aliases": []
+  },
+  {
+    "code": "Z48.000",
+    "name": "手术后换药",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "sshhy",
+    "aliases": []
+  },
+  {
     "code": "Z48.900",
     "name": "手术后随诊",
     "category": "术后",
     "version": "ICD10_CLINICAL",
     "py": "SHSZ",
+    "aliases": []
+  },
+  {
+    "code": "Z49.000",
+    "name": "血液透析",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "xytx",
+    "aliases": [
+      "透析"
+    ]
+  },
+  {
+    "code": "Z50.900",
+    "name": "康复治疗",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "kfzl",
     "aliases": []
   },
   {
@@ -2572,12 +7237,88 @@
     "aliases": []
   },
   {
+    "code": "Z51.500",
+    "name": "姑息治疗",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "gxzl",
+    "aliases": [
+      "临终关怀"
+    ]
+  },
+  {
+    "code": "Z59.900",
+    "name": "社会心理因素",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "shxlys",
+    "aliases": []
+  },
+  {
+    "code": "Z66.900",
+    "name": "拒绝治疗",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "jjzl",
+    "aliases": []
+  },
+  {
+    "code": "Z74.000",
+    "name": "行动不便",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "xdbb",
+    "aliases": []
+  },
+  {
     "code": "Z85.900",
     "name": "恶性肿瘤个人史",
     "category": "病史",
     "version": "ICD10_CLINICAL",
     "py": "EXZLGRS",
     "aliases": []
+  },
+  {
+    "code": "Z87.400",
+    "name": "手术史",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "sss",
+    "aliases": []
+  },
+  {
+    "code": "Z88.900",
+    "name": "药物过敏史",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "ywgms",
+    "aliases": []
+  },
+  {
+    "code": "Z90.900",
+    "name": "器官缺失",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "qgqs",
+    "aliases": []
+  },
+  {
+    "code": "Z92.800",
+    "name": "长期用药史",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "cqyys",
+    "aliases": []
+  },
+  {
+    "code": "Z93.000",
+    "name": "气管造口状态",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "qgzkzt",
+    "aliases": [
+      "气管切开术后"
+    ]
   },
   {
     "code": "Z93.100",
@@ -2588,6 +7329,24 @@
     "aliases": []
   },
   {
+    "code": "Z94.900",
+    "name": "器官移植状态",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "qgyzzt",
+    "aliases": []
+  },
+  {
+    "code": "Z95.100",
+    "name": "冠脉搭桥术后状态",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "gmdqshzt",
+    "aliases": [
+      "CABG术后"
+    ]
+  },
+  {
     "code": "Z95.500",
     "name": "冠状动脉支架植入术后状态",
     "category": "影响健康状态因素",
@@ -2596,5 +7355,37 @@
     "aliases": [
       "PCI术后"
     ]
+  },
+  {
+    "code": "Z95.800",
+    "name": "其他心脏植入物状态",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "qtxzzrwzt",
+    "aliases": []
+  },
+  {
+    "code": "Z96.600",
+    "name": "骨科植入物状态",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "gkzrwzt",
+    "aliases": []
+  },
+  {
+    "code": "Z98.800",
+    "name": "手术后状态",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "sshzt",
+    "aliases": []
+  },
+  {
+    "code": "Z99.200",
+    "name": "依赖呼吸机",
+    "category": "健康状态",
+    "version": "ICD10_CLINICAL",
+    "py": "ylhxj",
+    "aliases": []
   }
 ]
