@@ -9,7 +9,7 @@ import {
   FilterOutlined, ReloadOutlined,
 } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
-import { qcAPI } from '../services/api'
+import { qcAPI, pipelineAPI } from '../services/api'
 
 const { TextArea } = Input
 const { Title, Text } = Typography
@@ -70,6 +70,12 @@ export default function QCPage() {
       } else {
         message.warning(`发现 ${total} 个质控问题（严重${data.critical_count} / 重要${data.major_count} / 一般${data.minor_count}）`)
       }
+      pipelineAPI.save({
+        content: input,
+        record_type: recordType,
+        qc_result: data,
+        department: '质控中心',
+      }).catch((e: any) => { console.warn('自动保存失败:', e?.response?.data || e?.message) })
     } catch {
       message.error('质控检查失败')
     } finally { setLoading(false) }

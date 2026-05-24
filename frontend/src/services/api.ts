@@ -88,7 +88,18 @@ export const dashboardAPI = {
 // === Admin API ===
 // === Pipeline API ===
 export const pipelineAPI = {
-  save: (data: { content: string; record_type: string; coding_result: any; qc_result?: any; drg_result?: any }) =>
+  save: (data: {
+    content?: string
+    record_type: string
+    coding_result?: any
+    qc_result?: any
+    drg_result?: any
+    department?: string
+    patient_info?: { age?: number; gender?: string }
+    primary_diagnosis_code?: string
+    secondary_diagnosis_codes?: string[]
+    procedure_codes?: string[]
+  }) =>
     api.post('/pipeline/save', data),
 }
 

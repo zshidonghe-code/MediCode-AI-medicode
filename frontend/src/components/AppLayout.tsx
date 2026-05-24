@@ -67,13 +67,14 @@ export default function AppLayout() {
   }
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout style={{ height: '100vh', overflow: 'hidden' }}>
       <Sider
         breakpoint="lg"
         collapsedWidth={64}
         style={{
           background: 'linear-gradient(180deg, #0f172a 0%, #162d50 100%)',
           borderRight: '1px solid rgba(255,255,255,0.04)',
+          overflow: 'hidden',
         }}
       >
         {/* Brand */}
@@ -143,7 +144,7 @@ export default function AppLayout() {
         </div>
       </Sider>
 
-      <Layout>
+      <Layout style={{ height: '100%', overflow: 'hidden' }}>
         <Header style={{
           background: '#fff',
           padding: '0 24px',
@@ -153,6 +154,7 @@ export default function AppLayout() {
           borderBottom: '1px solid #f0f0f0',
           boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
           zIndex: 10,
+          flexShrink: 0,
         }}>
           <Space size="middle">
             <Dropdown menu={userMenu}>
@@ -173,7 +175,7 @@ export default function AppLayout() {
           </Space>
         </Header>
 
-        <Content style={{ margin: 16, padding: 24, background: '#fff', borderRadius: 12, overflow: 'auto', minHeight: 360 }}>
+        <Content style={{ margin: 16, padding: 24, background: '#fff', borderRadius: 12, overflowY: 'auto', flex: 1, minHeight: 0 }}>
           <Outlet />
         </Content>
       </Layout>

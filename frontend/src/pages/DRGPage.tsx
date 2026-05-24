@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Card, Row, Col, Descriptions, Statistic, Tag, Divider, Typography, Button, Space, Input, InputNumber, Select, message } from 'antd'
-import { MedicineBoxOutlined, CalculatorOutlined } from '@ant-design/icons'
-import { drgAPI } from '../services/api'
+import { MedicineBoxOutlined, CalculatorOutlined, ThunderboltOutlined } from '@ant-design/icons'
+import { drgAPI, pipelineAPI } from '../services/api'
 
 const { Title, Text } = Typography
 
@@ -23,12 +23,12 @@ interface DRGResult {
 export default function DRGPage() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<DRGResult | null>(null)
-  const [primaryCode, setPrimaryCode] = useState('I10.x00')
-  const [secondaryCodes, setSecondaryCodes] = useState('E11.900, N18.3')
+  const [primaryCode, setPrimaryCode] = useState('')
+  const [secondaryCodes, setSecondaryCodes] = useState('')
   const [procedureCodes, setProcedureCodes] = useState('')
-  const [age, setAge] = useState(65)
+  const [age, setAge] = useState<number | null>(null)
   const [gender, setGender] = useState<'male' | 'female'>('male')
-  const [daysOfStay, setDaysOfStay] = useState(10)
+  const [daysOfStay, setDaysOfStay] = useState<number | null>(null)
   const [dischargeType, setDischargeType] = useState('1')
 
   const handleGroup = async () => {
@@ -44,21 +44,39 @@ export default function DRGPage() {
         .filter(Boolean)
 
       const { data } = await drgAPI.group({
-        patient_age: age,
+        patient_age: age ?? 0,
         patient_gender: gender,
         primary_diagnosis_code: primaryCode.trim(),
         secondary_diagnosis_codes: secCodes,
         procedure_codes: procCodes,
         discharge_type: dischargeType,
-        days_of_stay: daysOfStay,
+        days_of_stay: daysOfStay ?? 0,
       })
       setResult(data)
       message.success('DRG分组完成')
+      pipelineAPI.save({
+        record_type: 'discharge',
+        drg_result: data,
+        department: 'DRG分组',
+        patient_info: { age: age ?? undefined, gender },
+        primary_diagnosis_code: primaryCode.trim(),
+        secondary_diagnosis_codes: secCodes,
+        procedure_codes: procCodes,
+      }).catch((e: any) => { console.warn('自动保存失败:', e?.response?.data || e?.message) })
     } catch {
       message.error('分组失败，请检查编码格式')
     } finally {
       setLoading(false)
     }
+  }
+
+  const fillDemo = () => {
+    setPrimaryCode('I10.x00')
+    setSecondaryCodes('E11.900, N18.3')
+    setProcedureCodes('36.0700')
+    setAge(65)
+    setGender('male')
+    setDaysOfStay(10)
   }
 
   return (
@@ -70,7 +88,9 @@ export default function DRGPage() {
 
       <Row gutter={24}>
         <Col span={10}>
-          <Card title="分组参数">
+          <Card title="分组参数" extra={
+            <Button size="small" icon={<ThunderboltOutlined />} onClick={fillDemo}>加载演示数据</Button>
+          }>
             <Space direction="vertical" style={{ width: '100%' }} size="middle">
               <div>
                 <Text strong>主要诊断编码</Text>

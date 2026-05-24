@@ -7,7 +7,7 @@ import {
   ThunderboltOutlined, UploadOutlined, SearchOutlined,
   FileTextOutlined, MedicineBoxOutlined, HistoryOutlined,
 } from '@ant-design/icons'
-import { codingAPI } from '../services/api'
+import { codingAPI, pipelineAPI } from '../services/api'
 import IcdCodingResult from '../components/IcdCodingResult'
 import type { CodeItem, CodingResultData } from '../components/IcdCodingResult'
 
@@ -56,6 +56,12 @@ export default function CodingPage() {
         codes: (data.primary_diagnosis ? 1 : 0) + (data.secondary_diagnoses?.length || 0) + (data.procedures?.length || 0),
       }, ...prev].slice(0, 10))
       message.success(`编码完成，共识别 ${(data.primary_diagnosis ? 1 : 0) + (data.secondary_diagnoses?.length || 0)} 个诊断 + ${data.procedures?.length || 0} 个手术`)
+      pipelineAPI.save({
+        content: input,
+        record_type: recordType,
+        coding_result: data,
+        department: '智能编码',
+      }).catch((e: any) => { console.warn('自动保存失败:', e?.response?.data || e?.message) })
     } catch {
       message.error('编码失败，请重试')
     } finally { setLoading(false) }
