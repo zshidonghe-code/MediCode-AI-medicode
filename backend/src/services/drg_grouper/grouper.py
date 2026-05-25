@@ -50,7 +50,7 @@ ICD_TO_MDC: dict[str, str] = {
     "H60": "MDCC", "H65": "MDCC", "H66": "MDCC", "H70": "MDCC",
     "H74": "MDCC", "H80": "MDCC", "H81": "MDCC", "H90": "MDCC",
     "H91": "MDCC", "H93": "MDCC", "H95": "MDCC",
-    "J30": "MDCD", "J31": "MDCD", "J32": "MDCD", "J35": "MDCD",
+    "J30": "MDCC", "J31": "MDCC", "J32": "MDCC", "J35": "MDCC",
     # MDCD 呼吸系统
     "J00": "MDCD", "J01": "MDCD", "J02": "MDCD", "J04": "MDCD",
     "J05": "MDCD", "J06": "MDCD", "J09": "MDCD", "J12": "MDCD",
@@ -245,14 +245,10 @@ ICD_TO_MDC: dict[str, str] = {
     "Z00": "MDCV", "Z03": "MDCV", "Z04": "MDCV", "Z08": "MDCV",
     "Z09": "MDCV", "Z12": "MDCV", "Z30": "MDCV", "Z43": "MDCV",
     "Z45": "MDCV", "Z47": "MDCV", "Z48": "MDCV", "Z49": "MDCV",
-    "Z51": "MDCV", "Z54": "MDCV", "Z93": "MDCV", "Z95": "MDCV",
-    # MDCT 损伤/中毒
-    "S00": "MDCT", "S10": "MDCT", "S20": "MDCT", "S30": "MDCT",
-    "S40": "MDCT", "S50": "MDCT", "S60": "MDCT", "S70": "MDCT",
-    "S80": "MDCT", "S90": "MDCT",
-    "T00": "MDCT", "T02": "MDCT", "T08": "MDCT", "T14": "MDCT",
-    "T15": "MDCT", "T17": "MDCT", "T20": "MDCT", "T24": "MDCT",
-    "T28": "MDCT", "T30": "MDCT", "T34": "MDCT", "T36": "MDCT",
+    "Z51": "MDCV", "Z54": "MDCV", "Z93": "MDCV",
+    # MDCT 损伤/中毒 (S00-S99 already mapped to MDCH above; only non-musculoskeletal T codes here)
+    # T20/T24/T28/T30 are in MDCU (烧伤) below — burns take precedence over general injury
+    "T15": "MDCT", "T17": "MDCT", "T34": "MDCT", "T36": "MDCT",
     "T39": "MDCT", "T40": "MDCT", "T42": "MDCT", "T43": "MDCT",
     "T46": "MDCT", "T50": "MDCT", "T51": "MDCT", "T52": "MDCT",
     "T54": "MDCT", "T56": "MDCT", "T58": "MDCT", "T60": "MDCT",
@@ -546,7 +542,6 @@ ADRG_DEFS: list[tuple[str, str, bool, list[str], float]] = [
     ("ZR1", "多部位严重创伤", False, ["T02", "T04", "T05", "T06", "T07"], 2.80),
 
     # === Additional MDCE groups ===
-    ("FX1", "脑血管疾病", False, ["I65", "I66", "I67", "I69"], 1.00),
     ("FY1", "外周血管疾病", False, ["I70", "I71", "I72", "I73", "I74", "I77"], 0.95),
     ("FZ1", "其他循环系统疾病", False, ["I80", "I82", "I83", "I87", "I89", "I95", "I99", "R00", "R01", "R03", "R07"], 0.70),
 
@@ -626,6 +621,8 @@ class DRGGrouper:
         return code.replace(".", "").replace("x", "0")[:n]
 
     def determine_mdc(self, primary_diag_code: str) -> tuple[str, str]:
+        if not primary_diag_code or not primary_diag_code.strip():
+            return "MDCZ", MDC_NAMES.get("MDCZ", "未分类")
         clean = primary_diag_code.replace(".", "").replace("x", "0")
         # Try exact 3-char prefix match (specific mapping)
         prefix3 = clean[:3]
@@ -735,7 +732,8 @@ class DRGGrouper:
 
         from src.config.settings import get_settings
         rate = get_settings().drg_base_rate
-        days = max(patient_info.get("days_of_stay", 1), 1)
+        raw_days = patient_info.get("days_of_stay", 1) if patient_info else 1
+        days = max(raw_days if raw_days is not None else 1, 1)
         estimated_payment = adjusted_weight * rate
         if days > 30:
             estimated_payment *= 1.2

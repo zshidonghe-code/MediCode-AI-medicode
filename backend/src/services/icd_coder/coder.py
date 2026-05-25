@@ -31,8 +31,12 @@ def _load_icd_map(filename: str) -> dict[str, tuple[str, str]]:
     if not data_path.exists():
         logger.warning(f"ICD data file not found: {data_path}")
         return {}
-    with open(data_path, "r", encoding="utf-8") as f:
-        entries = json.load(f)
+    try:
+        with open(data_path, "r", encoding="utf-8") as f:
+            entries = json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        logger.warning(f"Failed to load ICD data file {filename}: {e}")
+        return {}
     mapping: dict[str, tuple[str, str]] = {}
     for entry in entries:
         code = entry["code"]
@@ -245,13 +249,12 @@ class ICDCoder:
                 _BASE_TO_COMPLICATION: dict[str, list[str]] = {
                     "E11": ["E11.2", "E11.3", "E11.4", "E11.5", "E11.6", "E11.7"],
                     "E10": ["E10.2", "E10.3", "E10.4", "E10.5", "E10.6", "E10.7"],
-                    "I10": ["I10.x00", "I10.x01", "I10.x02", "I10.x03"],
                 }
 
                 candidates = []
                 for row in rows:
                     # Check if text matches an alias (stored in search_terms)
-                    aliases = row.search_terms.get("alias", []) if row.search_terms else []
+                    aliases = row.search_terms.get("alias", []) if isinstance(row.search_terms, dict) else []
                     # Score: exact match > alias exact match > partial match > generic LIKE
                     if row.name == text:
                         score = 1.0
@@ -273,11 +276,12 @@ class ICDCoder:
                     if row.code and row.code[0] == "O" and not any(kw in text for kw in
                             ("妊娠", "孕", "产", "流产", "分娩", "剖宫", "胎", "羊水", "产后", "宫缩")):
                         score -= 0.8
+                        score = max(score, 0.0)
                     # Penalize complication subcodes when search text only matches base condition
                     for base_prefix, comp_prefixes in _BASE_TO_COMPLICATION.items():
                         if any(row.code.startswith(cp) for cp in comp_prefixes):
                             if text in row.name and not any(kw in text for kw in ("肾病", "视网膜", "神经", "足", "眼", "肾")):
-                                score -= 0.30
+                                score = max(0.0, score - 0.30)
                             break
                     cat = "手术操作" if row.version == ICDVersion.ICD9_CM3 else "诊断"
                     candidates.append(ICDCandidate(
@@ -370,12 +374,12 @@ class ICDCoder:
         if coding_result.primary_diagnosis:
             code = coding_result.primary_diagnosis.code
             if gender == "male" and any(code.startswith(p) for p in ["N70", "N80", "O00"]):
-                warnings.append(f"编码 {code} 可能不适用于男性患者")
+                errors.append(f"编码 {code} 不适用于男性患者（女性特有诊断编码）")
             if gender == "female" and code.startswith("N40"):
-                warnings.append(f"编码 {code} 可能不适用于女性患者")
+                errors.append(f"编码 {code} 不适用于女性患者（男性特有诊断编码）")
             for prefix in self.VALIDATION_RULES.get("never_primary", []):
                 if code.startswith(prefix):
-                    warnings.append(f"编码 {code} 不应作为主要诊断")
+                    errors.append(f"编码 {code} 不应作为主要诊断")
         return ValidationResult(is_valid=len(errors) == 0, errors=errors, warnings=warnings)
 
     async def search_by_keyword(self, keyword: str, limit: int = 20) -> list[ICDCandidate]:

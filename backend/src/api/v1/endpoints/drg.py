@@ -1,5 +1,7 @@
+import re
+from typing import Literal
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional
 from src.services.drg_grouper.grouper import drg_grouper
 from src.models.database import async_session
@@ -7,22 +9,37 @@ from src.models.icd import DRGGroup
 from src.config.settings import get_settings
 from src.api.v1.endpoints.auth import get_current_user
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
 settings = get_settings()
 
+ICD_PATTERN = re.compile(r"^[A-Z]\d{2}(\.\w{1,5})?$")
+
 
 class DRGRequest(BaseModel):
-    patient_age: int
-    patient_gender: str
-    primary_diagnosis_code: str
-    secondary_diagnosis_codes: list[str] = []
-    procedure_codes: list[str] = []
-    discharge_type: str = "1"
-    days_of_stay: int = 0
-    newborn_weight: Optional[int] = None
-    ventilation_hours: Optional[int] = None
+    patient_age: int = Field(..., ge=0, le=150)
+    patient_gender: Literal["male", "female"]
+    primary_diagnosis_code: str = Field(..., min_length=3, max_length=16)
+    secondary_diagnosis_codes: list[str] = Field(default=[], max_length=30)
+    procedure_codes: list[str] = Field(default=[], max_length=30)
+    days_of_stay: int = Field(default=0, ge=0, le=365)
+    newborn_weight: Optional[int] = Field(default=None, ge=0, le=10000)
+    ventilation_hours: Optional[int] = Field(default=None, ge=0, le=10000)
+
+    @field_validator("primary_diagnosis_code")
+    @classmethod
+    def validate_icd_format(cls, v: str) -> str:
+        if not ICD_PATTERN.match(v):
+            raise ValueError(f"无效的ICD编码格式: {v}")
+        return v
+
+    @field_validator("secondary_diagnosis_codes")
+    @classmethod
+    def validate_secondary_codes(cls, v: list[str]) -> list[str]:
+        for code in v:
+            if not ICD_PATTERN.match(code):
+                raise ValueError(f"无效的ICD编码: {code}")
+        return v
 
 
 class DRGResponse(BaseModel):

@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { Spin } from 'antd'
 import { useAuthStore } from './services/authStore'
 import AppLayout from './components/AppLayout'
+import { ErrorBoundary } from './components/ErrorBoundary'
 
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 const CodingPage = lazy(() => import('./pages/CodingPage'))
@@ -31,6 +32,7 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
+    <ErrorBoundary>
     <Routes>
       <Route path="/login" element={<LazyLoad><LoginPage /></LazyLoad>} />
       <Route
@@ -52,5 +54,6 @@ export default function App() {
         <Route path="*" element={<LazyLoad><NotFoundPage /></LazyLoad>} />
       </Route>
     </Routes>
+    </ErrorBoundary>
   )
 }

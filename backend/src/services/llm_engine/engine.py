@@ -52,9 +52,11 @@ class LLMDRGSuggestion:
 class OllamaBackend:
     """Ollama本地推理后端"""
 
-    def __init__(self, base_url: str = "http://localhost:11434", model: str = "qwen2.5:3b"):
-        self.base_url = base_url
-        self.model = model
+    def __init__(self, base_url: str = "", model: str = ""):
+        from src.config.settings import get_settings
+        settings = get_settings()
+        self.base_url = base_url or settings.llm_base_url
+        self.model = model or settings.llm_model_name
         self._available: bool | None = None
         self._last_check: float = 0.0
         self._cache_ttl: float = 60.0  # Re-check availability every 60s

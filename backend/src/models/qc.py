@@ -39,8 +39,8 @@ class QCResult(Base):
     __tablename__ = "qc_results"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    record_id: Mapped[int] = mapped_column(ForeignKey("medical_records.id"))
-    rule_id: Mapped[int] = mapped_column(ForeignKey("qc_rules.id"))
+    record_id: Mapped[int] = mapped_column(ForeignKey("medical_records.id", ondelete="CASCADE"), index=True)
+    rule_id: Mapped[int] = mapped_column(ForeignKey("qc_rules.id", ondelete="CASCADE"), index=True)
     severity: Mapped[QCSeverity] = mapped_column(SAEnum(QCSeverity))
     line_snippet: Mapped[str] = mapped_column(Text, nullable=True)    # 缺陷文本片段
     suggestion: Mapped[str] = mapped_column(Text, nullable=True)      # 修改建议
@@ -55,7 +55,7 @@ class CodingLog(Base):
     __tablename__ = "coding_logs"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    record_id: Mapped[int] = mapped_column(ForeignKey("medical_records.id"))
+    record_id: Mapped[int] = mapped_column(ForeignKey("medical_records.id", ondelete="CASCADE"), index=True)
     version: Mapped[int] = mapped_column(Integer)
     changes: Mapped[dict] = mapped_column(JSON)
     operator: Mapped[str] = mapped_column(String(128))

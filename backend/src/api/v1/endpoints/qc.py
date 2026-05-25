@@ -111,10 +111,10 @@ async def _update_qc_acceptance(result_id: int, accepted: bool) -> dict:
 
 
 @router.put("/results/{result_id}/accept")
-async def accept_qc_result(result_id: int, note: str = ""):
+async def accept_qc_result(result_id: int, user: dict = Depends(get_current_user)):
     return await _update_qc_acceptance(result_id, True)
 
 
 @router.put("/results/{result_id}/reject")
-async def reject_qc_result(result_id: int, note: str = ""):
+async def reject_qc_result(result_id: int, user: dict = Depends(get_current_user)):
     return await _update_qc_acceptance(result_id, False)

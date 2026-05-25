@@ -15,6 +15,7 @@ from src.models.database import async_session
 from src.models.patient import Patient, MedicalRecord, Gender, RecordType
 from src.models.icd import CodingResult, DRGGroup
 from src.models.qc import QCResult, QCSeverity
+from src.config.settings import get_settings
 from sqlalchemy import select, delete
 
 # ─── 病例模板池 ─────────────────────────────────────────────────
@@ -308,11 +309,31 @@ async def seed_pipeline_demo():
             ("DA1", "扁桃体切除术", 0.58, True),
             ("JA1", "带状疱疹", 0.55, False),
         ]
+        # MDC prefix → organ system mapping (CHS-DRG 1.2)
+        _drg_to_mdc = {
+            "A": "MDCA", "B": "MDCA",  # 神经系统
+            "C": "MDCC",                # 眼科
+            "D": "MDCD",                # 耳鼻喉
+            "E": "MDCD",                # 呼吸系统
+            "F": "MDCE",                # 循环系统
+            "G": "MDCG",                # 消化系统
+            "H": "MDCG",                # 肝/胆/胰
+            "I": "MDCI",                # 骨骼/肌肉
+            "J": "MDCJ",                # 皮肤
+            "K": "MDCK",                # 内分泌
+            "L": "MDCL",                # 肾脏/泌尿
+            "M": "MDCM",                # 男性生殖
+            "N": "MDCN",                # 女性生殖
+            "O": "MDCN",                # 女性生殖
+            "R": "MDCR",                # 肿瘤
+        }
         for code, name, weight, surgical in drg_data:
             existing = (await db.execute(select(DRGGroup).where(DRGGroup.code == code))).scalar_one_or_none()
             if not existing:
-                db.add(DRGGroup(code=code, name=name, mdc="MDCM", adrg=code[:2],
-                                is_surgical=surgical, weight=weight, rate=12000.0,
+                prefix = code[0] if code else "X"
+                mdc = _drg_to_mdc.get(prefix, "MDCZ")
+                db.add(DRGGroup(code=code, name=name, mdc=mdc, adrg=code[:2],
+                                is_surgical=surgical, weight=weight, rate=get_settings().drg_base_rate,
                                 avg_days=weight * 3.5))
         await db.flush()
 

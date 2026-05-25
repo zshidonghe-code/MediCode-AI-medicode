@@ -51,13 +51,12 @@ class Settings(BaseSettings):
             else:
                 raise ValueError("SECRET_KEY must be set in production (non-debug mode)")
         if not self.demo_admin_password and self.debug:
-            self.demo_admin_password = "medicode2024"
-            self.demo_coder_password = "code123"
-            self.demo_doctor_password = "doc123"
+            self.demo_admin_password = "MediCode@2025Demo#Admin"
+            self.demo_coder_password = "MediCode@2025Demo#Coder"
+            self.demo_doctor_password = "MediCode@2025Demo#Doctor"
         return self
 
-    class Config:
-        env_file = ".env"
+    model_config = {"env_file": ".env"}
 
 
 @lru_cache

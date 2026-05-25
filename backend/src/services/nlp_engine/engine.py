@@ -104,9 +104,10 @@ class MedicalTokenizer:
         """Use jieba POS-like tagging to find medical entities"""
         if not self._ready:
             return []
+        import jieba.posseg as pseg
         tag = "dz" if entity_type == "diagnosis" else "ss"
-        words = jieba.cut(text)
-        return [w for w in words if len(w) >= 2 and w not in _STOP_ENTITIES]
+        words = pseg.cut(text)
+        return [w.word for w in words if len(w.word) >= 2 and w.flag == tag and w.word not in _STOP_ENTITIES]
 
 
 # Shared stop-words for entity extraction
@@ -199,6 +200,7 @@ class NLPParser:
         "否认有", "否认", "排除", "未见明显", "未见", "无明显",
         "既往有", "曾有", "既往", "有", "行", "拟行", "已行", "术后",
         "入院", "出院", "诊断为", "诊断", "再发", "新发", "未及",
+        "无", "不伴",
     ]
 
     def _clean_entity(self, word: str) -> str:
@@ -211,11 +213,7 @@ class NLPParser:
 
     def _is_negated(self, entity: MedicalEntity, text: str) -> bool:
         """Check if an extracted entity appears in a negated context"""
-        span_text = text[entity.start_pos:entity.end_pos]
-        for kw in ("否认", "排除", "未见", "无明显", "未及", "不伴", "无明确"):
-            if kw in span_text:
-                return True
-        # Use jieba tokenization for wider context window (up to 20 chars)
+        # Check the prefix context window (up to 20 chars before entity)
         start = max(0, entity.start_pos - 20)
         prefix_context = text[start:entity.start_pos]
         if _JIEBA_AVAILABLE:

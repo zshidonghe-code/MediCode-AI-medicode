@@ -5,11 +5,7 @@ const api = axios.create({
   timeout: 60000,
 })
 
-// Sync token from localStorage on load
-const savedToken = localStorage.getItem('medicode_token')
-if (savedToken) {
-  api.defaults.headers.common['Authorization'] = `Bearer ${savedToken}`
-}
+export { api }
 
 export function setApiAuth(token: string | null) {
   if (token) {
@@ -23,7 +19,7 @@ export function setApiAuth(token: string | null) {
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401) {
+    if (err.response?.status === 401 && !window.location.pathname.startsWith('/login')) {
       localStorage.removeItem('medicode_token')
       window.location.href = '/login'
     }
@@ -39,9 +35,7 @@ export const codingAPI = {
   uploadAndCode: (file: File) => {
     const formData = new FormData()
     formData.append('file', file)
-    return api.post('/coding/auto-code/upload', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    })
+    return api.post('/coding/auto-code/upload', formData)
   },
 
   validate: (coding: any) => api.post('/coding/validate', coding),
@@ -68,9 +62,9 @@ export const qcAPI = {
   getRules: (ruleType = '', severity = '') =>
     api.get('/qc/rules', { params: { rule_type: ruleType, severity } }),
 
-  acceptResult: (id: number, note = '') => api.put(`/qc/results/${id}/accept`, null, { params: { note } }),
+  acceptResult: (id: number, note = '') => api.put(`/qc/results/${id}/accept`, { note }),
 
-  rejectResult: (id: number, note = '') => api.put(`/qc/results/${id}/reject`, null, { params: { note } }),
+  rejectResult: (id: number, note = '') => api.put(`/qc/results/${id}/reject`, { note }),
 }
 
 // === Dashboard API ===
@@ -85,7 +79,6 @@ export const dashboardAPI = {
   getRevenueAnalysis: (days = 30) => api.get('/dashboard/revenue-analysis', { params: { days } }),
 }
 
-// === Admin API ===
 // === Pipeline API ===
 export const pipelineAPI = {
   save: (data: {

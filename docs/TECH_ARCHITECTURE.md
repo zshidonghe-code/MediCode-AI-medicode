@@ -1,5 +1,8 @@
 # 技术架构设计文档
 
+> **注意：** 本文档为 v2.0 架构规划，不代表当前 v1.0 实现。
+> 当前 v1.0 使用 SQLite + 规则引擎 + TF-IDF，详见 [技术白皮书](TECH_WHITEPAPER.md)。
+
 ## 一、整体架构图
 
 ```
@@ -56,7 +59,7 @@
 | 状态管理 | Zustand | 轻量级，比Redux简单 |
 | HTTP客户端 | Axios | 拦截器支持 |
 | 图表 | ECharts + react-echarts | 数据可视化 |
-| 富文本 | TipTap | 病历文本编辑和标注 |
+| 富文本 | TipTap（v2.0 规划） | 病历文本编辑和标注（当前 v1.0 使用 Ant Design Input.TextArea） |
 
 ### 2.3 数据库设计（核心表）
 

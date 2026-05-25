@@ -23,7 +23,7 @@ const columns: ColumnsType<CodeItem> = [
       <Space size={4}>
         <Text code style={{ fontSize: 12 }}>{v}</Text>
         <CopyOutlined style={{ cursor: 'pointer', fontSize: 11, color: '#999' }}
-          onClick={() => { navigator.clipboard.writeText(v) }} />
+          onClick={() => { navigator.clipboard.writeText(v) }} aria-label={`复制编码 ${v}`} role="button" tabIndex={0} />
       </Space>
     ),
   },
@@ -63,7 +63,8 @@ export default function IcdCodingResult({ result, headerExtra, highlightColor = 
             <Descriptions.Item label="编码">
               <Text code style={{ fontSize: 14 }}>{result.primary_diagnosis.code}</Text>
               <CopyOutlined style={{ marginLeft: 6, cursor: 'pointer', fontSize: 11 }}
-                onClick={() => navigator.clipboard.writeText(result.primary_diagnosis!.code)} />
+                onClick={() => navigator.clipboard.writeText(result.primary_diagnosis!.code)}
+                aria-label={`复制编码 ${result.primary_diagnosis!.code}`} role="button" tabIndex={0} />
             </Descriptions.Item>
             <Descriptions.Item label="名称">{result.primary_diagnosis.name}</Descriptions.Item>
           </Descriptions>

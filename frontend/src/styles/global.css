@@ -107,6 +107,24 @@ body {
   letter-spacing: -0.5px;
 }
 
+/* Skip-to-content link for keyboard users */
+.skip-to-content {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  z-index: 9999;
+  padding: 8px 16px;
+  background: #0ea5e9;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 0 0 6px 6px;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+.skip-to-content:focus {
+  top: 0;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .ant-layout-content { margin: 8px !important; padding: 12px !important; }

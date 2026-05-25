@@ -1,51 +1,161 @@
-version: "3.8"
+# =============================================================================
+# MediCode Full-Stack Docker Compose (Development)
+# =============================================================================
+# Usage:
+#   docker compose up -d                  # backend + frontend only (Ollama external)
+#   docker compose --profile llm up -d    # include Ollama sidecar
+#   docker compose --profile full up -d   # full stack: postgres + ollama + app
+#   docker compose down -v                # tear down and remove volumes
+# =============================================================================
+
+name: medicode
 
 services:
+  # ======== PostgreSQL (production profile) ========
   postgres:
     image: postgres:16-alpine
     container_name: medicode-postgres
+    profiles: ["full", "prod"]
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: medicode
-      POSTGRES_PASSWORD: medicode
-      POSTGRES_DB: medicode
+      POSTGRES_USER: ${POSTGRES_USER:-medicode}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-medicode}
+      POSTGRES_DB: ${POSTGRES_DB:-medicode}
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U medicode"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-medicode} -d ${POSTGRES_DB:-medicode}"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 10s
+    networks:
+      - medicode-net
 
+  # ======== Ollama LLM (optional, requires GPU for good perf) ========
+  ollama:
+    image: ollama/ollama:0.9.0
+    container_name: medicode-ollama
+    profiles: ["llm", "full"]
+    restart: unless-stopped
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+      - OLLAMA_HOST=0.0.0.0
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:11434/api/tags || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - medicode-net
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        ollama serve &
+        sleep 5
+        ollama pull ${OLLAMA_MODEL:-qwen2.5:3b}
+        wait
+
+  # ======== Backend (FastAPI) ========
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: medicode-backend
-    command: uvicorn src.main:app --host 0.0.0.0 --port 8000
+    restart: unless-stopped
     volumes:
-      - ./backend:/app
-      - ./data:/app/data
+      # Mount source for hot-reload in development
+      - ./backend/src:/app/src:ro
+      # Persistent data (SQLite database, uploads, logs)
+      - medicode_data:/app/data
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql+asyncpg://medicode:medicode@postgres:5432/medicode
-      - DATABASE_SYNC_URL=postgresql://medicode:medicode@postgres:5432/medicode
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - DATABASE_URL=${DATABASE_URL:-sqlite+aiosqlite:///./data/medicode.db}
+      - DATABASE_SYNC_URL=${DATABASE_SYNC_URL:-sqlite:///./data/medicode.db}
+      - DEBUG=${DEBUG:-true}
+      - SECRET_KEY=${SECRET_KEY}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES:-60}
+      - LLM_MODEL=${LLM_MODEL:-qwen2.5:3b}
+      - LLM_BASE_URL=${LLM_BASE_URL:-http://localhost:11434}
+      - DRG_BASE_RATE=${DRG_BASE_RATE:-12000.0}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - DEMO_ADMIN_PASSWORD=${DEMO_ADMIN_PASSWORD:-MediCode@2025Demo#Admin}
+      - DEMO_CODER_PASSWORD=${DEMO_CODER_PASSWORD:-MediCode@2025Demo#Coder}
+      - DEMO_DOCTOR_PASSWORD=${DEMO_DOCTOR_PASSWORD:-MediCode@2025Demo#Doctor}
     depends_on:
       postgres:
         condition: service_healthy
+        required: false
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8000/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - medicode-net
+    # Dev mode: uvicorn with hot-reload
+    command:
+      - uvicorn
+      - src.main:app
+      - --host
+      - "0.0.0.0"
+      - --port
+      - "8000"
+      - --reload
+      - --log-level
+      - ${LOG_LEVEL:-info}
 
+  # ======== Frontend (Vite dev server for dev; Nginx for prod) ========
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      target: ${FRONTEND_TARGET:-production}
     container_name: medicode-frontend
+    restart: unless-stopped
     ports:
       - "5173:80"
+    environment:
+      - NODE_ENV=${ENVIRONMENT:-development}
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:80/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - medicode-net
 
 volumes:
   postgres_data:
+    name: medicode-postgres-data
+  medicode_data:
+    name: medicode-data
+  ollama_data:
+    name: medicode-ollama-data
+
+networks:
+  medicode-net:
+    name: medicode-net
+    driver: bridge

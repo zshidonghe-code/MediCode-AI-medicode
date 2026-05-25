@@ -3,11 +3,12 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
-from sqlalchemy import select, func
+from sqlalchemy import select, func, text
 from src.config.settings import get_settings
 from src.models import init_db  # registers all models on Base.metadata
-from src.models.database import async_session
+from src.models.database import async_session, engine
 from src.models.patient import Patient
+from src.models.icd import ICDCode
 from src.api.router import api_router
 
 logger = logging.getLogger(__name__)
@@ -19,9 +20,12 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response = await call_next(request)
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
-        response.headers["X-XSS-Protection"] = "1; mode=block"
-        if not settings.debug:
-            response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'"
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+        response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
+        response.headers["X-Permitted-Cross-Domain-Policies"] = "none"
         return response
 
 
@@ -30,11 +34,24 @@ async def lifespan(app: FastAPI):
     # Startup
     await init_db()
 
-    # Auto-seed demo data if database is empty (competition demo safety)
+    # Auto-seed ICD codes + demo data if database is empty (competition demo safety)
     try:
         async with async_session() as db:
-            count = (await db.execute(select(func.count()).select_from(Patient))).scalar() or 0
-        if count == 0:
+            icd_count = (await db.execute(select(func.count()).select_from(ICDCode))).scalar() or 0
+            patient_count = (await db.execute(select(func.count()).select_from(Patient))).scalar() or 0
+
+        if icd_count == 0:
+            logger.info("ICD codes empty, auto-seeding reference data...")
+            from src.scripts.seed_data import seed_icd_codes, seed_drg_groups, seed_qc_rules
+            await seed_icd_codes()
+            await seed_drg_groups()
+            await seed_qc_rules()
+            async with async_session() as db:
+                await db.execute(text("ANALYZE"))
+                await db.commit()
+            logger.info("Reference data seeded")
+
+        if patient_count == 0:
             logger.info("Database is empty, auto-seeding demo data...")
             from src.scripts.seed_pipeline_demo import seed_pipeline_demo
             await seed_pipeline_demo()
@@ -51,6 +68,8 @@ async def lifespan(app: FastAPI):
         logger.warning(f"LLM prewarm skipped: {e}")
     yield
     # Shutdown
+    await engine.dispose()
+    logger.info("Database engine disposed")
 
 
 app = FastAPI(
@@ -65,8 +84,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 app.include_router(api_router, prefix="/api/v1")

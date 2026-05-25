@@ -98,6 +98,7 @@ export default function DRGPage() {
                   value={primaryCode}
                   onChange={(e) => setPrimaryCode(e.target.value)}
                   placeholder="如 I10.x00"
+                  aria-label="主要诊断编码"
                 />
               </div>
               <div>
@@ -106,6 +107,7 @@ export default function DRGPage() {
                   value={secondaryCodes}
                   onChange={(e) => setSecondaryCodes(e.target.value)}
                   placeholder="如 E11.900, N18.3"
+                  aria-label="次要诊断编码"
                 />
               </div>
               <div>
@@ -114,17 +116,18 @@ export default function DRGPage() {
                   value={procedureCodes}
                   onChange={(e) => setProcedureCodes(e.target.value)}
                   placeholder="如 36.0700"
+                  aria-label="手术操作编码"
                 />
               </div>
               <Row gutter={12}>
                 <Col span={8}>
                   <Text strong>年龄</Text>
                   <InputNumber min={0} max={120} value={age}
-                    onChange={(v) => setAge(v ?? 65)} style={{ width: '100%' }} />
+                    onChange={(v) => setAge(v ?? 65)} style={{ width: '100%' }} aria-label="患者年龄" />
                 </Col>
                 <Col span={8}>
                   <Text strong>性别</Text>
-                  <Select value={gender} onChange={setGender} style={{ width: '100%' }}>
+                  <Select value={gender} onChange={setGender} style={{ width: '100%' }} aria-label="患者性别">
                     <Select.Option value="male">男</Select.Option>
                     <Select.Option value="female">女</Select.Option>
                   </Select>
@@ -132,7 +135,7 @@ export default function DRGPage() {
                 <Col span={8}>
                   <Text strong>住院天数</Text>
                   <InputNumber min={1} max={365} value={daysOfStay}
-                    onChange={(v) => setDaysOfStay(v ?? 1)} style={{ width: '100%' }} />
+                    onChange={(v) => setDaysOfStay(v ?? 1)} style={{ width: '100%' }} aria-label="住院天数" />
                 </Col>
               </Row>
               <Row gutter={12}>

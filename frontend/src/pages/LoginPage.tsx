@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card, Form, Input, Button, Typography, message, Space, Tag } from 'antd'
-import { MedicineBoxOutlined, ThunderboltOutlined, SafetyCertificateOutlined } from '@ant-design/icons'
+import { MedicineBoxOutlined, ThunderboltOutlined, SafetyCertificateOutlined, UserOutlined, LockOutlined } from '@ant-design/icons'
 import { useAuthStore } from '../services/authStore'
 
 const { Title, Text } = Typography
@@ -89,7 +89,7 @@ export default function LoginPage() {
               <Input
                 placeholder="用户名"
                 style={{ borderRadius: 8, height: 44 }}
-                prefix={<span style={{ color: '#94a3b8', marginRight: 8 }}>👤</span>}
+                prefix={<UserOutlined style={{ color: '#94a3b8' }} />}
               />
             </Form.Item>
             <Form.Item
@@ -100,7 +100,7 @@ export default function LoginPage() {
               <Input.Password
                 placeholder="密码"
                 style={{ borderRadius: 8, height: 44 }}
-                prefix={<span style={{ color: '#94a3b8', marginRight: 8 }}>🔒</span>}
+                prefix={<LockOutlined style={{ color: '#94a3b8' }} />}
               />
             </Form.Item>
             <Form.Item style={{ marginBottom: 0 }}>
@@ -131,7 +131,7 @@ export default function LoginPage() {
             border: '1px solid #e8edf2',
           }}>
             <Text type="secondary" style={{ fontSize: 12 }}>
-              演示账号 <Text code style={{ fontSize: 12 }}>admin</Text> / <Text code style={{ fontSize: 12 }}>medicode2024</Text>
+              演示账号 <Text code style={{ fontSize: 12 }}>admin</Text> / <Text code style={{ fontSize: 12 }}>MediCode@2025Demo#Admin</Text>
             </Text>
           </div>
         </Space>

@@ -314,7 +314,6 @@ class QCEngine:
         phase2_tasks.append(llm_engine.qc_check("QC-202", content=content, coded_diagnoses=[d for d in diagnoses]))
 
         # Execute both phases — phase2 can run concurrently with phase1
-        import asyncio
         all_tasks = phase1_tasks + phase2_tasks
         if all_tasks:
             results = await asyncio.gather(*all_tasks, return_exceptions=True)

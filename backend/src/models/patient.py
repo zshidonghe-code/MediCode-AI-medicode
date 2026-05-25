@@ -38,14 +38,14 @@ class MedicalRecord(Base):
     __tablename__ = "medical_records"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    patient_id: Mapped[int] = mapped_column(ForeignKey("patients.id"))
+    patient_id: Mapped[int] = mapped_column(ForeignKey("patients.id", ondelete="CASCADE"), index=True)
     record_type: Mapped[RecordType] = mapped_column(SAEnum(RecordType))
     title: Mapped[str] = mapped_column(String(256))
     content: Mapped[str] = mapped_column(Text)
-    department: Mapped[str] = mapped_column(String(128))
+    department: Mapped[str] = mapped_column(String(128), index=True)
     doctor_hash: Mapped[str] = mapped_column(String(128))
-    admission_date: Mapped[date] = mapped_column(Date, nullable=True)
-    discharge_date: Mapped[date] = mapped_column(Date, nullable=True)
+    admission_date: Mapped[date] = mapped_column(Date, nullable=True, index=True)
+    discharge_date: Mapped[date] = mapped_column(Date, nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     patient: Mapped[Patient] = relationship(back_populates="records")

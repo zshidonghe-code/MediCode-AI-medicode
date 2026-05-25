@@ -1,0 +1,21 @@
+# Gitleaks configuration for MediCode secret scanning
+# Run locally: gitleaks detect --config .gitleaks.toml
+
+title = "MediCode Gitleaks Config"
+
+[allowlist]
+  description = "Allowlist for MediCode demo credentials (dev only)"
+  paths = [
+    '''backend/\.env\.example''',
+    '''\.env\.example''',
+    '''backend/src/scripts/.*''',
+    '''scripts/.*''',
+    '''\.github/.*''',
+  ]
+
+  # Allow known demo credentials used in .env.example templates
+  regexes = [
+    '''medicode2024''',
+    '''code123''',
+    '''doc123''',
+  ]

@@ -20,6 +20,8 @@ dist/
 
 # Database
 *.db
+*.db-shm
+*.db-wal
 *.sqlite3
 *.sqlite
 
@@ -28,6 +30,7 @@ dist/
 .idea/
 *.swp
 *.swo
+*.tsbuildinfo
 
 # OS
 .DS_Store
@@ -39,7 +42,5 @@ ollama_pull_result.json
 
 # Generated outputs
 *.pdf
-*.pptx
-output/
 *.bak
-# Keep docx outputs for now - competition deliverables
+# output/ — kept: competition deliverables (.docx/.pptx)

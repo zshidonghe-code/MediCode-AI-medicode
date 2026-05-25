@@ -49,7 +49,7 @@ async def seed_icd_codes():
                 category=item.get("category", ""),
                 version=ICDVersion.ICD10_CLINICAL,
                 py_code=item.get("py", ""),
-                search_terms={"别名": item.get("aliases", [])},
+                search_terms={"alias": item.get("aliases", [])},
             ))
 
         for item in _load_icd_json("icd_procedures.json"):
@@ -58,7 +58,7 @@ async def seed_icd_codes():
                 category=item.get("category", "手术操作"),
                 version=ICDVersion.ICD9_CM3,
                 py_code=item.get("py", ""),
-                search_terms={"别名": item.get("aliases", [])},
+                search_terms={"alias": item.get("aliases", [])},
             ))
 
         session.add_all(codes)
@@ -303,6 +303,8 @@ async def seed_demo_patients():
         for p in demo_patients:
             patients.append(Patient(**p))
         session.add_all(patients)
+        await session.flush()
+        pid_map = {p.patient_id: p.id for p in patients}
 
         # Demo medical records
         demo_records = [
@@ -410,7 +412,9 @@ async def seed_demo_patients():
 
         records = []
         for r in demo_records:
-            records.append(MedicalRecord(**r))
+            r_copy = dict(r)
+            r_copy["patient_id"] = pid_map[r["patient_id"]]
+            records.append(MedicalRecord(**r_copy))
         session.add_all(records)
         await session.commit()
         print(f"[OK] Seeded {len(patients)} patients + {len(records)} medical records")

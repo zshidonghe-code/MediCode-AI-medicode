@@ -175,7 +175,7 @@ export default function AppLayout() {
           </Space>
         </Header>
 
-        <Content style={{ margin: 16, padding: 24, background: '#fff', borderRadius: 12, overflowY: 'auto', flex: 1, minHeight: 0 }}>
+        <Content id="main-content" style={{ margin: 16, padding: 24, background: '#fff', borderRadius: 12, overflowY: 'auto', flex: 1, minHeight: 0 }}>
           <Outlet />
         </Content>
       </Layout>

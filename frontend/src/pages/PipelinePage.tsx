@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import {
   Card, Row, Col, Input, Button, Select, Tag, Table, Statistic, Typography,
   Divider, Space, message, Spin, Steps, Progress, Descriptions, Upload, Tooltip,
-  Segmented,
+  Segmented, InputNumber
 } from 'antd'
 import {
   ThunderboltOutlined, UploadOutlined, SafetyCertificateOutlined,
@@ -107,6 +107,9 @@ export default function PipelinePage() {
   const [typingDone, setTypingDone] = useState(false)
   const [showCelebration, setShowCelebration] = useState(false)
   const [elapsedTime, setElapsedTime] = useState(0)
+  const [patientAge, setPatientAge] = useState<number | null>(null)
+  const [patientGender, setPatientGender] = useState<string>('male')
+  const [daysOfStay, setDaysOfStay] = useState<number | null>(null)
   const typewriterRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const startTimeRef = useRef(0)
 
@@ -147,11 +150,13 @@ export default function PipelinePage() {
       const procCodes = (coding.procedures || []).map((p: CodeItem) => p.code)
 
       const { data: drg } = await drgAPI.group({
-        patient_age: 68, patient_gender: 'male',
+        patient_age: patientAge ?? undefined,
+        patient_gender: patientGender,
         primary_diagnosis_code: primaryCode,
         secondary_diagnosis_codes: secCodes,
         procedure_codes: procCodes,
-        discharge_type: '1', days_of_stay: 13,
+        discharge_type: '1',
+        days_of_stay: daysOfStay ?? undefined,
       })
       setDrgResult(drg)
 
@@ -171,8 +176,8 @@ export default function PipelinePage() {
           drg_result: drg,
         })
         setQcResultIds(saved.qc_result_ids || [])
-      } catch {
-        // Silent fail – dashboard will still work with seeded data
+      } catch (e: any) {
+        console.warn('自动保存失败:', e?.response?.data || e?.message)
       }
 
       if (!demoRunning) message.success('全流程分析完成')
@@ -442,6 +447,14 @@ export default function PipelinePage() {
               <Select.Option value="discharge">出院小结</Select.Option>
               <Select.Option value="surgery">手术记录</Select.Option>
             </Select>
+            <Text type="secondary">年龄</Text>
+            <InputNumber min={0} max={120} value={patientAge} onChange={(v) => setPatientAge(v ?? null)} style={{ width: 72 }} disabled={demoRunning} placeholder="岁" />
+            <Select value={patientGender} onChange={setPatientGender} style={{ width: 72 }} disabled={demoRunning}>
+              <Select.Option value="male">男</Select.Option>
+              <Select.Option value="female">女</Select.Option>
+            </Select>
+            <Text type="secondary">住院</Text>
+            <InputNumber min={1} max={365} value={daysOfStay} onChange={(v) => setDaysOfStay(v ?? null)} style={{ width: 80 }} disabled={demoRunning} placeholder="天" />
             <Text type="secondary">支持 .txt / .docx / .pdf 格式</Text>
           </Space>
           {!demoMode && (

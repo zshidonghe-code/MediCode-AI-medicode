@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { Row, Col, Card, Statistic, Typography, Divider, Table, Spin, DatePicker, Space, Select, Alert, Button } from 'antd'
 import { RiseOutlined, FallOutlined, TrophyOutlined, ReloadOutlined } from '@ant-design/icons'
 import ReactECharts from 'echarts-for-react'
@@ -20,33 +20,49 @@ export default function DashboardPage() {
 
   useEffect(() => { fetchData() }, [days])
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true)
     setError(null)
-    try {
-      const [ovRes, rankRes, issueRes, qcRes, accRes, revRes] = await Promise.all([
-        dashboardAPI.getOverview({}),
-        dashboardAPI.getDepartmentRanking('cmi', 10),
-        dashboardAPI.getHighFrequencyIssues(days, 8),
-        dashboardAPI.getQCTrend(days),
-        dashboardAPI.getCodingAccuracy(days),
-        dashboardAPI.getRevenueAnalysis(days),
-      ])
-      setOverview(ovRes.data)
-      setRankings(rankRes.data.rankings || [])
-      setIssues(issueRes.data.issues || [])
-      setQcTrend(qcRes.data.trend || [])
-      setAccuracyTrend(accRes.data.accuracy_trend || [])
-      setRevenue(revRes.data)
-    } catch {
-      setError('数据加载失败，请检查后端服务是否正常运行')
-    } finally {
-      setLoading(false)
+    const results = await Promise.allSettled([
+      dashboardAPI.getOverview({}),
+      dashboardAPI.getDepartmentRanking('cmi', 10),
+      dashboardAPI.getHighFrequencyIssues(days, 8),
+      dashboardAPI.getQCTrend(days),
+      dashboardAPI.getCodingAccuracy(days),
+      dashboardAPI.getRevenueAnalysis(days),
+    ])
+
+    const [ovR, rankR, issueR, qcR, accR, revR] = results
+    let hasError = false
+
+    if (ovR.status === 'fulfilled') {
+      setOverview(ovR.value.data)
+    } else { hasError = true }
+    if (rankR.status === 'fulfilled') {
+      setRankings(rankR.value.data.rankings || [])
+    } else { hasError = true }
+    if (issueR.status === 'fulfilled') {
+      setIssues(issueR.value.data.issues || [])
+    } else { hasError = true }
+    if (qcR.status === 'fulfilled') {
+      setQcTrend(qcR.value.data.trend || [])
+    } else { hasError = true }
+    if (accR.status === 'fulfilled') {
+      setAccuracyTrend(accR.value.data.accuracy_trend || [])
+    } else { hasError = true }
+    if (revR.status === 'fulfilled') {
+      setRevenue(revR.value.data)
+    } else { hasError = true }
+
+    if (hasError) {
+      setError('部分数据加载失败，已显示可用数据')
     }
-  }
+    setLoading(false)
+  }, [days])
 
   // === Chart options derived from API data ===
-  const cmiOvernightOption = {
+  const cmiOvernightOption = useMemo(() => ({
+    aria: { enabled: true, decal: { show: true } },
     tooltip: { trigger: 'axis' },
     legend: { data: ['CMI趋势', '质控评分'] },
     grid: { left: 60, right: 60, top: 40, bottom: 30 },
@@ -72,9 +88,10 @@ export default function DashboardPage() {
         smooth: true, itemStyle: { color: '#52c41a' },
       },
     ],
-  }
+  }), [qcTrend])
 
-  const accuracyOption = {
+  const accuracyOption = useMemo(() => ({
+    aria: { enabled: true },
     tooltip: { trigger: 'axis' },
     legend: { data: ['AI编码准确率'] },
     grid: { left: 60, right: 30, top: 40, bottom: 30 },
@@ -92,9 +109,10 @@ export default function DashboardPage() {
         itemStyle: { color: '#1677ff' },
       },
     ],
-  }
+  }), [accuracyTrend])
 
-  const revenueOption = {
+  const revenueOption = useMemo(() => ({
+    aria: { enabled: true },
     tooltip: { trigger: 'axis' },
     legend: { data: ['预期收入'] },
     grid: { left: 80, right: 20, top: 20, bottom: 30 },
@@ -107,9 +125,9 @@ export default function DashboardPage() {
     series: [
       { name: '预期收入', type: 'bar', data: (revenue?.trend || []).map((d) => d.expected), itemStyle: { color: '#1677ff' } },
     ],
-  }
+  }), [revenue])
 
-  const deptColumns = [
+  const deptColumns = useMemo(() => [
     { title: '排名', dataIndex: 'rank', key: 'rank', width: 60,
       render: (v: number) => <span style={{ fontWeight: v <= 3 ? 'bold' : 'normal', color: v === 1 ? '#faad14' : v === 2 ? '#999' : v === 3 ? '#c47f3c' : undefined }}>{v}</span> },
     { title: '科室', dataIndex: 'dept', key: 'dept' },
@@ -124,7 +142,7 @@ export default function DashboardPage() {
       ),
     },
     { title: '均住院日', dataIndex: 'avg_days', key: 'avg_days', render: (v: number) => v?.toFixed(1) + '天' },
-  ]
+  ], [])
 
   const { total_cases, cmi, total_weight, avg_stay_days, cost_consumption_index, time_consumption_index } = overview
 
@@ -146,7 +164,7 @@ export default function DashboardPage() {
             style={{ width: 100 }}
           />
           <DatePicker.RangePicker />
-          <ReloadOutlined onClick={fetchData} style={{ cursor: 'pointer', fontSize: 18 }} />
+          <ReloadOutlined onClick={fetchData} style={{ cursor: 'pointer', fontSize: 18 }} aria-label="刷新数据" role="button" tabIndex={0} />
         </Space>
       </div>
 

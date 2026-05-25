@@ -32,8 +32,8 @@ class CodingResult(Base):
     __tablename__ = "coding_results"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    record_id: Mapped[int] = mapped_column(ForeignKey("medical_records.id"))
-    coder_type: Mapped[str] = mapped_column(String(32))           # "ai" / "human" / "ai_reviewed"
+    record_id: Mapped[int] = mapped_column(ForeignKey("medical_records.id", ondelete="CASCADE"), index=True)
+    coder_type: Mapped[str] = mapped_column(String(32), index=True)  # "ai" / "human" / "ai_reviewed"
     codes: Mapped[dict] = mapped_column(JSON)                     # {"primary": "I10.x00", "secondary": [...], "procedures": [...]}
     confidence_scores: Mapped[dict] = mapped_column(JSON, nullable=True)
     suggestions: Mapped[dict] = mapped_column(JSON, nullable=True)  # AI推荐的候选编码列表

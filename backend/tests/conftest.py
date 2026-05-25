@@ -1,28 +1,31 @@
 """Shared fixtures for API integration tests."""
 import pytest
 import httpx
-import asyncio
 
-BASE_URL = "http://localhost:8000"
+BASE_URL = "http://localhost:8001"
+
+# Cache token to avoid hitting the login rate limiter (5 req/60s per IP)
+_cached_token: str | None = None
 
 
-@pytest.fixture(scope="session")
-def event_loop():
-    loop = asyncio.new_event_loop()
-    yield loop
-    loop.close()
+async def _login() -> str:
+    global _cached_token
+    if _cached_token is not None:
+        return _cached_token
+    async with httpx.AsyncClient(base_url=BASE_URL, timeout=10) as c:
+        r = await c.post("/api/v1/auth/login", data={
+            "username": "admin",
+            "password": "MediCode@2025Demo#Admin",
+        })
+        assert r.status_code == 200, f"Login failed: {r.text}"
+        _cached_token = r.json()["access_token"]
+        return _cached_token
 
 
 @pytest.fixture
 async def auth_token():
-    """Login and return a valid Bearer token for test requests."""
-    async with httpx.AsyncClient(base_url=BASE_URL, timeout=10) as c:
-        r = await c.post("/api/v1/auth/login", data={
-            "username": "admin",
-            "password": "medicode2024",
-        })
-        assert r.status_code == 200, f"Login failed: {r.text}"
-        return r.json()["access_token"]
+    """Login and return a valid Bearer token for test requests (cached)."""
+    return await _login()
 
 
 @pytest.fixture

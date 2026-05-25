@@ -1,13 +1,12 @@
 """仪表盘数据接口 — 从数据库查询真实运营数据"""
 
 from datetime import datetime, timedelta, date
-from fastapi import APIRouter, Query, Depends
-from sqlalchemy import select, func, text, and_
+from fastapi import APIRouter, Depends
+from sqlalchemy import select, func
 from src.api.v1.endpoints.auth import get_current_user
-from sqlalchemy.ext.asyncio import AsyncSession
 from src.models.database import async_session
-from src.models.patient import Patient, MedicalRecord
-from src.models.icd import CodingResult, DRGGroup
+from src.models.patient import MedicalRecord
+from src.models.icd import CodingResult
 from src.models.qc import QCResult
 from src.config.settings import get_settings
 
@@ -21,8 +20,7 @@ def _days_ago(days: int) -> date:
 
 
 @router.get("/overview")
-async def get_overview(hospital_id: str = "", start_date: str = "", end_date: str = "",
-                        user: dict = Depends(get_current_user)):
+async def get_overview(user: dict = Depends(get_current_user)):
     """全院DRG运营概览"""
     async with async_session() as db:
         # Total cases
@@ -74,7 +72,7 @@ async def get_overview(hospital_id: str = "", start_date: str = "", end_date: st
             select(
                 func.avg(
                     (func.julianday(MedicalRecord.discharge_date) - func.julianday(MedicalRecord.admission_date))
-                    / (func.json_extract(CodingResult.codes, '$.drg_weight') * 3.5)
+                    / func.nullif(func.json_extract(CodingResult.codes, '$.drg_weight') * 3.5, 0)
                 )
             ).select_from(MedicalRecord).join(CodingResult, CodingResult.record_id == MedicalRecord.id)
             .where(
@@ -94,7 +92,7 @@ async def get_overview(hospital_id: str = "", start_date: str = "", end_date: st
         "cmi": cmi,
         "avg_cost": avg_cost,
         "avg_stay_days": avg_stay_days,
-        "cost_consumption_index": round(avg_cost / settings.drg_base_rate / max(cmi, 0.1), 2),
+        "cost_consumption_index": round(avg_cost / max(settings.drg_base_rate, 1.0) / max(cmi, 0.1), 2),
         "time_consumption_index": time_consumption_index,
         "low_risk_mortality_rate": low_risk_mortality_rate,
         "ai_coding_rate": ai_coding_rate,
@@ -103,9 +101,9 @@ async def get_overview(hospital_id: str = "", start_date: str = "", end_date: st
 
 
 @router.get("/department-ranking")
-async def get_department_ranking(metric: str = "cmi", limit: int = 10,
+async def get_department_ranking(limit: int = 10,
                                  user: dict = Depends(get_current_user)):
-    """科室排名 — 按CMI、病例数、平均住院日等指标"""
+    """科室排名 — 按CMI降序"""
     async with async_session() as db:
         # Join MedicalRecord → CodingResult to get DRG weight per record, then group by department
         dept_r = await db.execute(
@@ -142,7 +140,7 @@ async def get_department_ranking(metric: str = "cmi", limit: int = 10,
 
         # Apply limit and optional metric sort
         rankings = rankings[:limit]
-    return {"metric": metric, "rankings": rankings}
+    return {"rankings": rankings}
 
 
 @router.get("/qc-trend")

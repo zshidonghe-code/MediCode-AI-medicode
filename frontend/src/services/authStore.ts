@@ -1,11 +1,29 @@
 import { create } from 'zustand'
-import axios from 'axios'
-import { setApiAuth } from './api'
+import { setApiAuth, api } from './api'
 
 interface User {
   username: string
   role: string
   name: string
+}
+
+function _isTokenExpired(token: string): boolean {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]))
+    return payload.exp * 1000 < Date.now()
+  } catch {
+    return true
+  }
+}
+
+function _loadInitialToken(): string | null {
+  const token = localStorage.getItem('medicode_token')
+  if (token && !_isTokenExpired(token)) {
+    setApiAuth(token)
+    return token
+  }
+  localStorage.removeItem('medicode_token')
+  return null
 }
 
 interface AuthState {
@@ -18,7 +36,7 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
-  token: localStorage.getItem('medicode_token'),
+  token: _loadInitialToken(),
   isAuthenticated: !!localStorage.getItem('medicode_token'),
 
   login: async (username: string, password: string) => {
@@ -26,9 +44,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     formData.append('username', username)
     formData.append('password', password)
 
-    const { data } = await axios.post('/api/v1/auth/login', formData)
+    const { data } = await api.post('/auth/login', formData)
     localStorage.setItem('medicode_token', data.access_token)
-    axios.defaults.headers.common['Authorization'] = `Bearer ${data.access_token}`
     setApiAuth(data.access_token)
     set({
       token: data.access_token,
@@ -39,15 +56,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   logout: () => {
     localStorage.removeItem('medicode_token')
-    delete axios.defaults.headers.common['Authorization']
     setApiAuth(null)
     set({ user: null, token: null, isAuthenticated: false })
   },
 }))
-
-// Defer to setApiAuth — it handles both global axios + api instance
-const token = localStorage.getItem('medicode_token')
-if (token) {
-  axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-  setApiAuth(token)
-}
