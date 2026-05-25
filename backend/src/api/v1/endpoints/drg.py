@@ -17,8 +17,8 @@ ICD_PATTERN = re.compile(r"^[A-Z]\d{2}(\.\w{1,5})?$")
 
 
 class DRGRequest(BaseModel):
-    patient_age: int = Field(..., ge=0, le=150)
-    patient_gender: Literal["male", "female"]
+    patient_age: int = Field(default=50, ge=0, le=150)
+    patient_gender: Literal["male", "female"] = "male"
     primary_diagnosis_code: str = Field(..., min_length=3, max_length=16)
     secondary_diagnosis_codes: list[str] = Field(default=[], max_length=30)
     procedure_codes: list[str] = Field(default=[], max_length=30)
