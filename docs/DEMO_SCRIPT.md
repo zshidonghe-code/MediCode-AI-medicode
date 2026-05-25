@@ -51,13 +51,13 @@ dir medicode.db
 #### 步骤3：启动后端服务
 
 ```bash
-uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+uvicorn src.main:app --reload --host 0.0.0.0 --port 8001
 ```
 
 **预期成功输出**（关键行）：
 
 ```
-INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
 INFO:     Started reloader process
 INFO:     Started server process
 INFO:     Waiting for application startup.
@@ -65,7 +65,7 @@ INFO:     LLM backend: ollama  (或 rule-based，都不影响演示)
 INFO:     Application startup complete.
 ```
 
-**确认方式**：打开浏览器访问 `http://localhost:8000/health`，看到 `{"status":"ok"}`。
+**确认方式**：打开浏览器访问 `http://localhost:8001/health`，看到 `{"status":"ok"}`。
 
 #### 步骤4：检查Ollama状态
 
@@ -73,7 +73,7 @@ INFO:     Application startup complete.
 curl http://localhost:11434/api/tags
 ```
 
-或直接访问 `http://localhost:8000/health/llm`，看到：
+或直接访问 `http://localhost:8001/health/llm`，看到：
 
 ```json
 {"llm_available": true, "llm_backend": "ollama"}
@@ -110,9 +110,9 @@ npm run dev
 在浏览器中依次完成以下检查（建议比赛前15分钟做）：
 
 - [ ] `http://localhost:5173` → 显示登录页，蓝色渐变背景，中间白色卡片，有"码医 MediCode"标志
-- [ ] `http://localhost:8000/health` → `{"status":"ok"}`
-- [ ] `http://localhost:8000/health/llm` → 确认LLM状态（在线或离线，心中要有数）
-- [ ] 登录系统：用户名 `admin`，密码 `medicode2024`，能正常进入智能流水线页面
+- [ ] `http://localhost:8001/health` → `{"status":"ok"}`
+- [ ] `http://localhost:8001/health/llm` → 确认LLM状态（在线或离线，心中要有数）
+- [ ] 登录系统：用户名 `admin`，密码 `MediCode@2025Demo#Admin`，能正常进入智能流水线页面
 - [ ] 点击左侧菜单第1项"智能流水线" → 页面正常显示，有"快速演示"和"完整演示"两个按钮
 - [ ] **【关键】预热Dashboard**：点击左侧菜单第5项"数据驾驶舱"，等待所有图表加载完成（约3-5秒，6个API并行请求）。然后切回"智能流水线"。该标签页保持打开在后台——Dashboard首次加载最慢，预热后切过去秒开。
 
@@ -167,7 +167,7 @@ npm run dev
 2. 演讲者开始说话时，光标放在"用户名"输入框上做好准备。
 3. 听到演讲者说"各位评委好"的时候，开始输入。
 4. 输入用户名：`admin`
-5. 按Tab键跳到密码框，输入密码：`medicode2024`
+5. 按Tab键跳到密码框，输入密码：`MediCode@2025Demo#Admin`
 6. 点击蓝色"进入系统"按钮（或直接按Enter键）。
 
 **预期结果**：页面跳转到 `http://localhost:5173/pipeline`（智能流水线页面）。
@@ -450,7 +450,7 @@ npm run dev
 3. 重新执行启动命令：
 
    ```bash
-   uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+   uvicorn src.main:app --reload --host 0.0.0.0 --port 8001
    ```
 
 4. 等待看到 `Application startup complete.`。
@@ -464,7 +464,7 @@ npm run dev
 del medicode.db
 
 # 3. 重新启动后端（会自动重建数据库并播种演示数据）
-uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+uvicorn src.main:app --reload --host 0.0.0.0 --port 8001
 ```
 
 **时间成本**：约15-20秒。
@@ -517,7 +517,7 @@ uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
    # 终端1：启动后端
    cd C:\Users\Donghe\Desktop\码医-MediCode\backend
    .venv\Scripts\activate
-   uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+   uvicorn src.main:app --reload --host 0.0.0.0 --port 8001
 
    # 终端2：启动前端
    cd C:\Users\Donghe\Desktop\码医-MediCode\frontend
@@ -584,7 +584,7 @@ echo ====== 码医 MediCode 赛前检查 ======
 echo.
 
 echo [1/4] 检查后端...
-curl -s http://localhost:8000/health 2>nul
+curl -s http://localhost:8001/health 2>nul
 if %errorlevel% neq 0 (
     echo [FAIL] 后端未运行！请启动后端。
 ) else (
@@ -593,7 +593,7 @@ if %errorlevel% neq 0 (
 echo.
 
 echo [2/4] 检查LLM...
-curl -s http://localhost:8000/health/llm 2>nul
+curl -s http://localhost:8001/health/llm 2>nul
 echo.
 echo.
 
@@ -638,4 +638,4 @@ pause
 > 2. **每次排练都计时**——目标5分钟整，允许±15秒误差。超过5分30秒就砍内容。
 > 3. **录制排练视频**——回看时你会发现很多问题（鼠标抖了、点错了、页面加载时出现了尴尬的空白）。
 > 4. **比赛前一天不要改代码**——任何"小优化"都可能导致演示当天出bug。锁定版本。
-> 5. **准备两套登录凭据**——如果admin账号登不进去（极小概率），用coder/code123或doctor/doc123作为备用。
+> 5. **准备两套登录凭据**——如果admin账号登不进去（极小概率），用 `coder` / `MediCode@2025Demo#Coder` 或 `doctor` / `MediCode@2025Demo#Doctor` 作为备用。
