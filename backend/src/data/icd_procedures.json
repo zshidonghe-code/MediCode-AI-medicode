@@ -5,7 +5,9 @@
     "category": "神经外科手术",
     "version": "ICD9_CM3",
     "py": "ncccs",
-    "aliases": []
+    "aliases": [
+      "脑池穿刺"
+    ]
   },
   {
     "code": "01.0900",
@@ -14,6 +16,8 @@
     "version": "ICD9_CM3",
     "py": "",
     "aliases": [
+      "脑室引流",
+      "脑室穿刺引流",
       "脑血肿清除术"
     ]
   },
@@ -32,7 +36,9 @@
     "version": "ICD9_CM3",
     "py": "KLTSS",
     "aliases": [
-      "开颅手术"
+      "开颅手术",
+      "开颅探查",
+      "颅骨切开术"
     ]
   },
   {
@@ -41,7 +47,10 @@
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "NMQKS",
-    "aliases": []
+    "aliases": [
+      "硬脑膜切开",
+      "脑膜切开"
+    ]
   },
   {
     "code": "01.3900",
@@ -49,7 +58,32 @@
     "category": "神经外科手术",
     "version": "ICD9_CM3",
     "py": "nqks",
-    "aliases": []
+    "aliases": [
+      "脑切开",
+      "颅内切开"
+    ]
+  },
+  {
+    "code": "01.5100",
+    "name": "颅内动脉瘤夹闭术",
+    "category": "神经系统手术",
+    "py": "lndmljbs",
+    "aliases": [
+      "动脉瘤夹闭",
+      "颅内动脉瘤手术",
+      "开颅动脉瘤夹闭"
+    ]
+  },
+  {
+    "code": "01.5900",
+    "name": "颅内血肿清除术",
+    "category": "神经系统手术",
+    "py": "lnxzqcs",
+    "aliases": [
+      "脑内血肿清除",
+      "颅内血肿清除",
+      "颅内血肿引流"
+    ]
   },
   {
     "code": "02.0200",
@@ -57,7 +91,10 @@
     "category": "神经外科手术",
     "version": "ICD9_CM3",
     "py": "lggzfws",
-    "aliases": []
+    "aliases": [
+      "颅骨整复",
+      "颅骨骨折复位"
+    ]
   },
   {
     "code": "02.0500",
@@ -65,7 +102,10 @@
     "category": "神经外科手术",
     "version": "ICD9_CM3",
     "py": "lgxbs",
-    "aliases": []
+    "aliases": [
+      "颅骨修补",
+      "颅骨成形"
+    ]
   },
   {
     "code": "02.1200",
@@ -73,7 +113,21 @@
     "category": "神经外科手术",
     "version": "ICD9_CM3",
     "py": "nmxbs",
-    "aliases": []
+    "aliases": [
+      "硬脑膜修补",
+      "脑膜修补"
+    ]
+  },
+  {
+    "code": "02.3100",
+    "name": "颅骨去骨瓣减压术",
+    "category": "神经系统手术",
+    "py": "lgqgbjys",
+    "aliases": [
+      "去骨瓣减压",
+      "去骨瓣",
+      "颅骨减压"
+    ]
   },
   {
     "code": "02.3400",
@@ -81,7 +135,22 @@
     "category": "神经外科手术",
     "version": "ICD9_CM3",
     "py": "",
-    "aliases": []
+    "aliases": [
+      "VP分流",
+      "脑室-腹腔分流",
+      "脑室腹腔分流"
+    ]
+  },
+  {
+    "code": "02.3900",
+    "name": "颅骨成形术",
+    "category": "神经系统手术",
+    "py": "lgcxs",
+    "aliases": [
+      "颅骨修补术",
+      "钛网修补",
+      "颅骨重建"
+    ]
   },
   {
     "code": "03.0100",
@@ -89,7 +158,9 @@
     "category": "神经外科手术",
     "version": "ICD9_CM3",
     "py": "cgnywqcs",
-    "aliases": []
+    "aliases": [
+      "椎管异物取出"
+    ]
   },
   {
     "code": "03.0900",
@@ -97,7 +168,10 @@
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "ZBQCS",
-    "aliases": []
+    "aliases": [
+      "椎板减压",
+      "椎管减压"
+    ]
   },
   {
     "code": "03.3100",
@@ -106,7 +180,9 @@
     "version": "ICD9_CM3",
     "py": "jsccs",
     "aliases": [
-      "腰椎穿刺术"
+      "腰椎穿刺",
+      "腰椎穿刺术",
+      "腰穿"
     ]
   },
   {
@@ -115,7 +191,19 @@
     "category": "神经外科手术",
     "version": "ICD9_CM3",
     "py": "jshjmqcs",
-    "aliases": []
+    "aliases": [
+      "椎管内肿瘤切除",
+      "脊髓肿瘤切除"
+    ]
+  },
+  {
+    "code": "03.5200",
+    "name": "脊柱融合术",
+    "category": "神经系统手术",
+    "py": "jzrhs",
+    "aliases": [
+      "脊柱固定"
+    ]
   },
   {
     "code": "03.5300",
@@ -132,6 +220,17 @@
     "version": "ICD9_CM3",
     "py": "jszlsjs",
     "aliases": []
+  },
+  {
+    "code": "03.9000",
+    "name": "脊柱内镜下手术",
+    "category": "神经系统手术",
+    "py": "jznjsxsh",
+    "aliases": [
+      "脊柱内镜",
+      "椎间孔镜手术",
+      "脊柱微创"
+    ]
   },
   {
     "code": "03.9400",
@@ -190,12 +289,27 @@
     "aliases": []
   },
   {
+    "code": "06.2000",
+    "name": "甲状腺切除术",
+    "category": "内分泌手术",
+    "aliases": [
+      "单侧甲状腺切除",
+      "甲状腺全切",
+      "甲状腺切除",
+      "甲状腺叶切除",
+      "甲状腺癌根治"
+    ]
+  },
+  {
     "code": "06.3100",
     "name": "甲状腺峡部切除术",
     "category": "普外科手术",
     "version": "ICD9_CM3",
     "py": "jzxxbqcs",
-    "aliases": []
+    "aliases": [
+      "甲状腺结节切除",
+      "甲状腺部分切除"
+    ]
   },
   {
     "code": "06.3900",
@@ -204,7 +318,9 @@
     "version": "ICD9_CM3",
     "py": "JZXBFQCS",
     "aliases": [
-      "甲状腺切除术"
+      "甲状腺切除术",
+      "甲状腺大部切除",
+      "甲状腺次全切除"
     ]
   },
   {
@@ -223,7 +339,10 @@
     "category": "普外科手术",
     "version": "ICD9_CM3",
     "py": "jzpxtcs",
-    "aliases": []
+    "aliases": [
+      "甲状旁腺切除",
+      "甲状旁腺探查"
+    ]
   },
   {
     "code": "06.8100",
@@ -331,7 +450,24 @@
     "category": "眼科手术",
     "version": "ICD9_CM3",
     "py": "jztnqks",
-    "aliases": []
+    "aliases": [
+      "Phaco",
+      "phaco",
+      "白内障手术",
+      "白内障摘除",
+      "白内障超声乳化"
+    ]
+  },
+  {
+    "code": "13.1100",
+    "name": "白内障超声乳化吸除术",
+    "category": "眼科手术",
+    "py": "bnzcrhxcs",
+    "aliases": [
+      "白内障超声乳化",
+      "超乳",
+      "Phaco"
+    ]
   },
   {
     "code": "13.1900",
@@ -358,7 +494,20 @@
     "version": "ICD9_CM3",
     "py": "",
     "aliases": [
+      "Phaco+IOL",
+      "白内障IOL植入",
+      "白内障超声乳化+人工晶体植入",
       "白内障超声乳化术"
+    ]
+  },
+  {
+    "code": "13.7000",
+    "name": "人工晶体植入术",
+    "category": "眼科手术",
+    "py": "rgjtzrs",
+    "aliases": [
+      "IOL植入",
+      "人工晶体置入"
     ]
   },
   {
@@ -368,6 +517,18 @@
     "version": "ICD9_CM3",
     "py": "bltccs",
     "aliases": []
+  },
+  {
+    "code": "14.2000",
+    "name": "视网膜光凝术",
+    "category": "眼科手术",
+    "py": "swmgns",
+    "aliases": [
+      "眼底激光",
+      "PRP",
+      "全视网膜光凝",
+      "激光光凝"
+    ]
   },
   {
     "code": "14.7000",
@@ -454,6 +615,17 @@
     "aliases": []
   },
   {
+    "code": "21.1000",
+    "name": "鼻息肉切除术",
+    "category": "耳鼻咽喉手术",
+    "py": "bxrqcs",
+    "aliases": [
+      "鼻息肉摘除",
+      "鼻息肉切除",
+      "鼻内镜息肉切除"
+    ]
+  },
+  {
     "code": "21.3100",
     "name": "鼻息肉切除术",
     "category": "耳鼻喉手术",
@@ -484,6 +656,18 @@
     "version": "ICD9_CM3",
     "py": "bdccs",
     "aliases": []
+  },
+  {
+    "code": "22.2000",
+    "name": "鼻内镜下鼻窦开放术",
+    "category": "耳鼻咽喉手术",
+    "py": "bnjbdkfs",
+    "aliases": [
+      "FESS",
+      "鼻窦开放",
+      "鼻内镜鼻窦手术",
+      "鼻窦炎手术"
+    ]
   },
   {
     "code": "22.4200",
@@ -531,7 +715,10 @@
     "category": "耳鼻喉手术",
     "version": "ICD9_CM3",
     "py": "",
-    "aliases": []
+    "aliases": [
+      "扁桃体切除",
+      "扁桃体摘除"
+    ]
   },
   {
     "code": "28.3000",
@@ -547,7 +734,10 @@
     "category": "耳鼻喉手术",
     "version": "ICD9_CM3",
     "py": "xytqcs",
-    "aliases": []
+    "aliases": [
+      "腺样体切除",
+      "腺样体刮除"
+    ]
   },
   {
     "code": "29.0000",
@@ -556,6 +746,17 @@
     "version": "ICD9_CM3",
     "py": "ybss",
     "aliases": []
+  },
+  {
+    "code": "30.0100",
+    "name": "喉镜下声带息肉切除术",
+    "category": "耳鼻咽喉手术",
+    "py": "hxsdxrqcs",
+    "aliases": [
+      "声带息肉切除",
+      "声带息肉摘除",
+      "声带小结切除"
+    ]
   },
   {
     "code": "30.0900",
@@ -613,7 +814,12 @@
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "XQJFQQCS",
-    "aliases": []
+    "aliases": [
+      "VATS肺叶切除",
+      "肺叶切除",
+      "肺叶切除术",
+      "胸腔镜肺叶切除"
+    ]
   },
   {
     "code": "32.2100",
@@ -646,7 +852,10 @@
     "version": "ICD9_CM3",
     "py": "",
     "aliases": [
-      "肺切除术"
+      "肺切除术",
+      "肺楔切",
+      "肺楔形切除",
+      "胸腔镜肺楔形切除"
     ]
   },
   {
@@ -686,6 +895,17 @@
     ]
   },
   {
+    "code": "33.4800",
+    "name": "支气管镜下肺泡灌洗术",
+    "category": "呼吸系统手术",
+    "py": "zqgjfpgxs",
+    "aliases": [
+      "BAL",
+      "肺泡灌洗",
+      "支气管肺泡灌洗"
+    ]
+  },
+  {
     "code": "33.5000",
     "name": "肺移植术",
     "category": "胸科手术",
@@ -707,7 +927,12 @@
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "XQBSYLS",
-    "aliases": []
+    "aliases": [
+      "胸穿",
+      "胸管",
+      "胸腔引流",
+      "胸腔闭式引流"
+    ]
   },
   {
     "code": "34.0900",
@@ -723,7 +948,11 @@
     "category": "胸科手术",
     "version": "ICD9_CM3",
     "py": "",
-    "aliases": []
+    "aliases": [
+      "VATS",
+      "胸腔镜",
+      "胸腔镜检查"
+    ]
   },
   {
     "code": "34.3000",
@@ -788,7 +1017,10 @@
     "version": "ICD9_CM3",
     "py": "ejbcxs",
     "aliases": [
-      "二尖瓣修复"
+      "二尖瓣修复",
+      "二尖瓣成形",
+      "二尖瓣手术",
+      "二尖瓣置换"
     ]
   },
   {
@@ -813,7 +1045,15 @@
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "ZDMZHHS",
-    "aliases": []
+    "aliases": [
+      "TAVI",
+      "TAVR",
+      "主动脉瓣修复",
+      "主动脉瓣成形",
+      "主动脉瓣手术",
+      "主动脉瓣置换",
+      "经导管主动脉瓣置换"
+    ]
   },
   {
     "code": "35.2300",
@@ -850,16 +1090,45 @@
     ]
   },
   {
+    "code": "36.0600",
+    "name": "冠状动脉支架植入术",
+    "category": "心血管手术",
+    "aliases": [
+      "PCI",
+      "PCI术",
+      "PTCA",
+      "冠状动脉介入治疗",
+      "冠脉介入",
+      "冠脉支架",
+      "冠脉支架植入",
+      "球囊扩张",
+      "经皮冠状动脉介入",
+      "经皮冠状动脉介入治疗"
+    ]
+  },
+  {
     "code": "36.0700",
     "name": "冠状动脉药物洗脱支架植入",
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "GZDZYWXTZJZR",
     "aliases": [
-      "冠状动脉支架植入术",
+      "DES",
       "PCI",
       "PCI术",
-      "经皮冠状动脉介入治疗"
+      "冠状动脉支架植入术",
+      "冠脉支架植入",
+      "经皮冠状动脉介入治疗",
+      "药物洗脱支架"
+    ]
+  },
+  {
+    "code": "36.0900",
+    "name": "冠状动脉其他支架植入",
+    "category": "心血管系统手术",
+    "py": "gzdmqtzjzr",
+    "aliases": [
+      "冠脉其他支架"
     ]
   },
   {
@@ -869,7 +1138,12 @@
     "version": "ICD9_CM3",
     "py": "GZDZDQS",
     "aliases": [
-      "冠脉搭桥术"
+      "CABG",
+      "冠状动脉旁路移植",
+      "冠脉搭桥",
+      "冠脉搭桥术",
+      "冠脉旁路移植",
+      "搭桥"
     ]
   },
   {
@@ -881,12 +1155,43 @@
     "aliases": []
   },
   {
+    "code": "36.1200",
+    "name": "二根冠状动脉搭桥术",
+    "category": "心血管系统手术",
+    "py": "rggzdmdqs",
+    "aliases": [
+      "双支搭桥",
+      "两根搭桥"
+    ]
+  },
+  {
+    "code": "36.1300",
+    "name": "三根冠状动脉搭桥术",
+    "category": "心血管系统手术",
+    "py": "sggzdmdqs",
+    "aliases": [
+      "三支搭桥"
+    ]
+  },
+  {
+    "code": "36.1400",
+    "name": "四根及以上冠状动脉搭桥术",
+    "category": "心血管系统手术",
+    "py": "sgjysgzdmdqs",
+    "aliases": [
+      "四支搭桥"
+    ]
+  },
+  {
     "code": "36.1500",
     "name": "单支乳内动脉搭桥术",
     "category": "心血管手术",
     "version": "ICD9_CM3",
     "py": "dzrndmdqs",
-    "aliases": []
+    "aliases": [
+      "双乳内动脉搭桥",
+      "双侧IMA搭桥"
+    ]
   },
   {
     "code": "36.1900",
@@ -918,7 +1223,11 @@
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "XDGJCS",
-    "aliases": []
+    "aliases": [
+      "CAG",
+      "冠状动脉造影",
+      "冠脉造影"
+    ]
   },
   {
     "code": "37.2400",
@@ -967,7 +1276,12 @@
     "version": "ICD9_CM3",
     "py": "",
     "aliases": [
-      "射频消融术"
+      "RFCA",
+      "室上速消融",
+      "射频消融",
+      "射频消融术",
+      "房颤消融",
+      "电生理检查+射频消融"
     ]
   },
   {
@@ -985,6 +1299,16 @@
     "version": "ICD9_CM3",
     "py": "xzfzzzzrs",
     "aliases": []
+  },
+  {
+    "code": "37.5100",
+    "name": "心脏移植术",
+    "category": "心血管系统手术",
+    "py": "xzyzs",
+    "aliases": [
+      "心脏移植",
+      "同种异体心脏移植"
+    ]
   },
   {
     "code": "37.7000",
@@ -1008,7 +1332,10 @@
     "category": "心血管手术",
     "version": "ICD9_CM3",
     "py": "qbqzhs",
-    "aliases": []
+    "aliases": [
+      "临时起搏",
+      "临时起搏器"
+    ]
   },
   {
     "code": "37.7500",
@@ -1025,8 +1352,59 @@
     "version": "ICD9_CM3",
     "py": "QBQZRS",
     "aliases": [
+      "PPM",
       "永久性心脏起搏器植入术",
+      "永久起搏",
+      "永久起搏器",
+      "起搏器植入",
       "起搏器植入术"
+    ]
+  },
+  {
+    "code": "37.8300",
+    "name": "起搏器植入术",
+    "category": "心血管手术",
+    "aliases": [
+      "DDD起搏器",
+      "双腔起搏器",
+      "心脏起搏器植入",
+      "起搏器更换",
+      "起搏器置入术"
+    ]
+  },
+  {
+    "code": "37.9400",
+    "name": "埋藏式心脏复律除颤器置入",
+    "category": "心血管系统手术",
+    "py": "mcszflccqzr",
+    "aliases": [
+      "ICD置入",
+      "除颤器",
+      "埋藏式除颤器",
+      "ICD植入"
+    ]
+  },
+  {
+    "code": "37.9500",
+    "name": "心脏再同步化治疗起搏器置入",
+    "category": "心血管系统手术",
+    "py": "xztbhlqbzr",
+    "aliases": [
+      "CRT",
+      "CRT-P",
+      "CRT置入",
+      "三腔起搏器",
+      "再同步化治疗"
+    ]
+  },
+  {
+    "code": "37.9600",
+    "name": "心脏再同步化治疗除颤器置入",
+    "category": "心血管系统手术",
+    "py": "xztbhlccqzr",
+    "aliases": [
+      "CRT-D",
+      "CRTD置入"
     ]
   },
   {
@@ -1052,6 +1430,16 @@
     "version": "ICD9_CM3",
     "py": "jndmnmbts",
     "aliases": []
+  },
+  {
+    "code": "38.1200",
+    "name": "颈动脉内膜剥脱术",
+    "category": "血管手术",
+    "py": "jdnmbts",
+    "aliases": [
+      "CEA",
+      "颈动脉内膜切除"
+    ]
   },
   {
     "code": "38.3100",
@@ -1096,6 +1484,17 @@
     "aliases": []
   },
   {
+    "code": "38.8000",
+    "name": "下肢静脉曲张激光闭合术",
+    "category": "血管手术",
+    "py": "xzjmqbjgbhs",
+    "aliases": [
+      "EVLA",
+      "激光闭合",
+      "静脉曲张激光"
+    ]
+  },
+  {
     "code": "38.8100",
     "name": "颅内动脉瘤夹闭术",
     "category": "神经外科手术",
@@ -1117,7 +1516,12 @@
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "ZXJMZGS",
-    "aliases": []
+    "aliases": [
+      "PICC",
+      "PICC置管",
+      "中心静脉置管",
+      "经外周中心静脉置管"
+    ]
   },
   {
     "code": "39.0000",
@@ -1183,7 +1587,11 @@
     "category": "血管手术",
     "version": "ICD9_CM3",
     "py": "xgcxs",
-    "aliases": []
+    "aliases": [
+      "PTA",
+      "球囊血管成形",
+      "血管成形"
+    ]
   },
   {
     "code": "39.5900",
@@ -1196,12 +1604,25 @@
     ]
   },
   {
+    "code": "39.6600",
+    "name": "经皮冠状动脉血流储备分数检查",
+    "category": "心血管系统手术",
+    "py": "jpgzdmxlcbfsjc",
+    "aliases": [
+      "FFR",
+      "血流储备分数"
+    ]
+  },
+  {
     "code": "39.7200",
     "name": "血管内支架植入术",
     "category": "血管手术",
     "version": "ICD9_CM3",
     "py": "xgnzjzrs",
     "aliases": [
+      "IVC滤器",
+      "下腔静脉滤器",
+      "腔静脉滤器置入",
       "血管支架"
     ]
   },
@@ -1212,7 +1633,10 @@
     "version": "ICD9_CM3",
     "py": "xgnqss",
     "aliases": [
-      "取栓术"
+      "取栓术",
+      "外周血管支架",
+      "血管内支架",
+      "血管支架"
     ]
   },
   {
@@ -1301,7 +1725,11 @@
     "category": "普外科手术",
     "version": "ICD9_CM3",
     "py": "sgbsqcs",
-    "aliases": []
+    "aliases": [
+      "食管切除",
+      "食管癌切除",
+      "食管肿瘤切除"
+    ]
   },
   {
     "code": "42.4000",
@@ -1336,6 +1764,28 @@
     "aliases": []
   },
   {
+    "code": "43.3000",
+    "name": "胃造口术",
+    "category": "消化系统手术",
+    "py": "wzks",
+    "aliases": [
+      "胃造瘘",
+      "PEG",
+      "经皮胃造瘘"
+    ]
+  },
+  {
+    "code": "43.4100",
+    "name": "胃镜下胃病变切除术",
+    "category": "消化系统手术",
+    "py": "wjxwbbqcs",
+    "aliases": [
+      "胃镜下胃息肉切除",
+      "胃早癌ESD",
+      "胃ESD"
+    ]
+  },
+  {
     "code": "43.4200",
     "name": "胃镜下胃息肉切除术",
     "category": "普外科手术",
@@ -1351,7 +1801,11 @@
     "category": "普外科手术",
     "version": "ICD9_CM3",
     "py": "wbfqc+sgwhs",
-    "aliases": []
+    "aliases": [
+      "胃大部切除",
+      "胃次全切除",
+      "远端胃切除"
+    ]
   },
   {
     "code": "43.7000",
@@ -1360,7 +1814,9 @@
     "version": "ICD9_CM3",
     "py": "wqbqcs",
     "aliases": [
-      "全胃切除"
+      "全胃切除",
+      "根治性全胃切除",
+      "胃癌根治"
     ]
   },
   {
@@ -1391,6 +1847,15 @@
     "aliases": []
   },
   {
+    "code": "44.3200",
+    "name": "胃镜下十二指肠病变切除术",
+    "category": "消化系统手术",
+    "py": "wjxzebqcs",
+    "aliases": [
+      "十二指肠息肉切除"
+    ]
+  },
+  {
     "code": "44.3800",
     "name": "胃镜下胃造口术",
     "category": "手术操作",
@@ -1405,6 +1870,15 @@
     "version": "ICD9_CM3",
     "py": "wcwhs",
     "aliases": []
+  },
+  {
+    "code": "44.4100",
+    "name": "胃穿孔修补术",
+    "category": "消化系统手术",
+    "aliases": [
+      "胃溃疡穿孔修补",
+      "胃穿孔修补"
+    ]
   },
   {
     "code": "44.4200",
@@ -1447,6 +1921,28 @@
     "aliases": []
   },
   {
+    "code": "45.2300",
+    "name": "肠镜下结肠病变切除术",
+    "category": "消化系统手术",
+    "py": "cxjcbbqcs",
+    "aliases": [
+      "结肠息肉切除",
+      "结肠ESD",
+      "EMR"
+    ]
+  },
+  {
+    "code": "45.4200",
+    "name": "肠镜下大肠息肉切除术",
+    "category": "消化系统手术",
+    "py": "cxdczxrqcs",
+    "aliases": [
+      "大肠息肉切除",
+      "肠镜下息肉切除术",
+      "结肠镜息肉摘除"
+    ]
+  },
+  {
     "code": "45.6000",
     "name": "肠切除术",
     "category": "普外手术",
@@ -1468,7 +1964,11 @@
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "XCBFQCS",
-    "aliases": []
+    "aliases": [
+      "小肠切除术",
+      "小肠部分切除",
+      "肠切除"
+    ]
   },
   {
     "code": "45.7000",
@@ -1492,7 +1992,11 @@
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "YBJCQCS",
-    "aliases": []
+    "aliases": [
+      "右半结肠切除",
+      "右半结肠癌根治",
+      "结肠癌根治术"
+    ]
   },
   {
     "code": "45.7400",
@@ -1572,7 +2076,10 @@
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "JCZKS",
-    "aliases": []
+    "aliases": [
+      "结肠造口",
+      "结肠造瘘"
+    ]
   },
   {
     "code": "46.1100",
@@ -1581,6 +2088,15 @@
     "version": "ICD9_CM3",
     "py": "jczkbhs",
     "aliases": []
+  },
+  {
+    "code": "46.2000",
+    "name": "回肠造口术",
+    "category": "消化系统手术",
+    "py": "hczks",
+    "aliases": [
+      "回肠造瘘"
+    ]
   },
   {
     "code": "46.3900",
@@ -1607,6 +2123,16 @@
     "aliases": []
   },
   {
+    "code": "46.7900",
+    "name": "肠穿孔修补术",
+    "category": "消化系统手术",
+    "aliases": [
+      "肠修补",
+      "肠破裂修补",
+      "肠穿孔修补"
+    ]
+  },
+  {
     "code": "46.8000",
     "name": "肠粘连松解术",
     "category": "普外科手术",
@@ -1620,7 +2146,11 @@
     "category": "普外手术",
     "version": "ICD9_CM3",
     "py": "",
-    "aliases": []
+    "aliases": [
+      "LA",
+      "微创阑尾切除",
+      "腹腔镜阑尾切除"
+    ]
   },
   {
     "code": "47.0900",
@@ -1629,7 +2159,19 @@
     "version": "ICD9_CM3",
     "py": "LWQCS",
     "aliases": [
+      "阑尾切除",
+      "阑尾切除术",
       "阑尾炎手术"
+    ]
+  },
+  {
+    "code": "47.0901",
+    "name": "阑尾切除术（开腹）",
+    "category": "消化系统手术",
+    "aliases": [
+      "开腹阑尾切除",
+      "阑尾周围脓肿切除",
+      "阑尾脓肿切除"
     ]
   },
   {
@@ -1657,6 +2199,16 @@
     "aliases": []
   },
   {
+    "code": "48.3600",
+    "name": "直肠息肉切除术",
+    "category": "消化系统手术",
+    "aliases": [
+      "内镜下直肠息肉切除",
+      "直肠息肉切除",
+      "肠镜下息肉切除"
+    ]
+  },
+  {
     "code": "48.5000",
     "name": "经腹会阴直肠切除术",
     "category": "普外科手术",
@@ -1674,6 +2226,18 @@
     "py": "zcqqcs",
     "aliases": [
       "Dixon手术"
+    ]
+  },
+  {
+    "code": "48.6300",
+    "name": "直肠切除术",
+    "category": "消化系统手术",
+    "aliases": [
+      "Dixon手术",
+      "Miles手术",
+      "直肠切除",
+      "直肠癌根治",
+      "直肠癌根治术"
     ]
   },
   {
@@ -1731,6 +2295,10 @@
     "version": "ICD9_CM3",
     "py": "ZCQCS",
     "aliases": [
+      "PPH",
+      "混合痔切除",
+      "痔上黏膜环切",
+      "痔切除",
       "痔切除术"
     ]
   },
@@ -1756,7 +2324,10 @@
     "category": "普外科手术",
     "version": "ICD9_CM3",
     "py": "gqkyls",
-    "aliases": []
+    "aliases": [
+      "肝活检",
+      "肝脏穿刺活检"
+    ]
   },
   {
     "code": "50.1200",
@@ -1774,7 +2345,24 @@
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "GBFQCS",
-    "aliases": []
+    "aliases": [
+      "肝叶切除",
+      "肝段切除",
+      "肝癌切除",
+      "肝部分切除"
+    ]
+  },
+  {
+    "code": "50.2400",
+    "name": "肝脏射频消融术",
+    "category": "消化系统手术",
+    "py": "gzspxrs",
+    "aliases": [
+      "肝癌射频消融",
+      "肝癌消融",
+      "RFA",
+      "肝肿瘤消融"
+    ]
   },
   {
     "code": "50.2900",
@@ -1790,7 +2378,10 @@
     "category": "普外科手术",
     "version": "ICD9_CM3",
     "py": "gyqcs",
-    "aliases": []
+    "aliases": [
+      "肝囊肿开窗",
+      "肝囊肿引流"
+    ]
   },
   {
     "code": "50.5100",
@@ -1830,7 +2421,11 @@
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "DNQCS",
-    "aliases": []
+    "aliases": [
+      "OC",
+      "开腹胆囊切除",
+      "胆囊切除"
+    ]
   },
   {
     "code": "51.2300",
@@ -1838,7 +2433,13 @@
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "FQJDNQCS",
-    "aliases": []
+    "aliases": [
+      "LC",
+      "微创胆囊切除",
+      "胆囊切除术",
+      "胆囊摘除",
+      "腹腔镜胆囊切除"
+    ]
   },
   {
     "code": "51.2400",
@@ -1847,6 +2448,17 @@
     "version": "ICD9_CM3",
     "py": "fqjdnbfqcs",
     "aliases": []
+  },
+  {
+    "code": "51.2500",
+    "name": "肝移植术",
+    "category": "消化系统手术",
+    "py": "gyzs",
+    "aliases": [
+      "肝移植",
+      "肝脏移植",
+      "同种异体肝移植"
+    ]
   },
   {
     "code": "51.3100",
@@ -1862,7 +2474,11 @@
     "category": "普外科手术",
     "version": "ICD9_CM3",
     "py": "dzgtcs",
-    "aliases": []
+    "aliases": [
+      "胆总管切开取石",
+      "胆总管探查",
+      "胆道探查"
+    ]
   },
   {
     "code": "51.4200",
@@ -1878,7 +2494,11 @@
     "category": "普外科手术",
     "version": "ICD9_CM3",
     "py": "dzgtc+gyls",
-    "aliases": []
+    "aliases": [
+      "T管引流",
+      "胆总管引流",
+      "胆总管探查引流"
+    ]
   },
   {
     "code": "51.6200",
@@ -1997,7 +2617,11 @@
     "version": "ICD9_CM3",
     "py": "FGGSXBS",
     "aliases": [
-      "疝修补术"
+      "无张力疝修补",
+      "疝修补",
+      "疝修补术",
+      "疝补片",
+      "腹股沟疝修补"
     ]
   },
   {
@@ -2030,7 +2654,10 @@
     "category": "普外科手术",
     "version": "ICD9_CM3",
     "py": "fbsxbs",
-    "aliases": []
+    "aliases": [
+      "脐疝修补",
+      "脐疝补片"
+    ]
   },
   {
     "code": "53.6100",
@@ -2038,7 +2665,23 @@
     "category": "普外科手术",
     "version": "ICD9_CM3",
     "py": "fggsbpxbs",
-    "aliases": []
+    "aliases": [
+      "切口疝修补",
+      "切口疝补片",
+      "腹壁疝修补"
+    ]
+  },
+  {
+    "code": "53.7100",
+    "name": "腹腔镜下腹股沟疝修补术",
+    "category": "消化系统手术",
+    "py": "fxfsgqsb",
+    "aliases": [
+      "TAPP",
+      "TEP",
+      "腹腔镜疝修补",
+      "腹腔镜疝补片"
+    ]
   },
   {
     "code": "53.9000",
@@ -2062,7 +2705,10 @@
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "KFTSS",
-    "aliases": []
+    "aliases": [
+      "剖腹探查",
+      "开腹探查"
+    ]
   },
   {
     "code": "54.1900",
@@ -2089,6 +2735,16 @@
     "aliases": []
   },
   {
+    "code": "54.5100",
+    "name": "腹腔镜下肠粘连松解术",
+    "category": "消化系统手术",
+    "py": "fjxczlsjs",
+    "aliases": [
+      "肠粘连松解",
+      "腹腔镜肠粘连松解"
+    ]
+  },
+  {
     "code": "54.7200",
     "name": "腹壁缝合术",
     "category": "普外科手术",
@@ -2110,7 +2766,10 @@
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "SZKS",
-    "aliases": []
+    "aliases": [
+      "肾造口",
+      "肾造瘘"
+    ]
   },
   {
     "code": "55.0200",
@@ -2170,7 +2829,12 @@
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "SQCS",
-    "aliases": []
+    "aliases": [
+      "根治性肾切除",
+      "肾全切",
+      "肾切除",
+      "肾癌根治"
+    ]
   },
   {
     "code": "55.5200",
@@ -2210,7 +2874,11 @@
     "category": "泌尿手术",
     "version": "ICD9_CM3",
     "py": "",
-    "aliases": []
+    "aliases": [
+      "URS",
+      "输尿管镜",
+      "输尿管镜检查"
+    ]
   },
   {
     "code": "56.1000",
@@ -2226,7 +2894,11 @@
     "category": "泌尿外科手术",
     "version": "ICD9_CM3",
     "py": "sngsjs",
-    "aliases": []
+    "aliases": [
+      "URS碎石",
+      "输尿管镜取石",
+      "输尿管镜碎石"
+    ]
   },
   {
     "code": "56.4100",
@@ -2292,7 +2964,10 @@
     "category": "泌尿外科手术",
     "version": "ICD9_CM3",
     "py": "jndpgsss",
-    "aliases": []
+    "aliases": [
+      "膀胱镜",
+      "膀胱镜检查"
+    ]
   },
   {
     "code": "57.1200",
@@ -2359,6 +3034,18 @@
     "aliases": [
       "经尿道膀胱肿瘤切除术",
       "膀胱肿瘤电切术"
+    ]
+  },
+  {
+    "code": "57.5900",
+    "name": "经尿道前列腺激光切除术",
+    "category": "泌尿系统手术",
+    "py": "jndqlxjgqcs",
+    "aliases": [
+      "前列腺激光",
+      "HoLEP",
+      "前列腺钬激光",
+      "绿激光前列腺"
     ]
   },
   {
@@ -2489,7 +3176,12 @@
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "SNGZJZRS",
-    "aliases": []
+    "aliases": [
+      "ESWL",
+      "体外冲击波碎石",
+      "体外碎石",
+      "冲击波碎石"
+    ]
   },
   {
     "code": "60.0000",
@@ -2683,7 +3375,23 @@
     "category": "妇产科手术",
     "version": "ICD9_CM3",
     "py": "lcnztcs",
-    "aliases": []
+    "aliases": [
+      "卵巢囊肿切除",
+      "卵巢囊肿剔除",
+      "卵巢囊肿剥除",
+      "卵巢囊肿手术"
+    ]
+  },
+  {
+    "code": "65.2900",
+    "name": "卵巢切除术",
+    "category": "妇产科手术",
+    "aliases": [
+      "单侧附件切除",
+      "卵巢切除",
+      "输卵管卵巢切除",
+      "附件切除"
+    ]
   },
   {
     "code": "65.3000",
@@ -2774,6 +3482,18 @@
     "aliases": []
   },
   {
+    "code": "66.2200",
+    "name": "输卵管通液术",
+    "category": "女性生殖系统手术",
+    "py": "slgtys",
+    "aliases": [
+      "输卵管通液",
+      "HSG",
+      "输卵管造影",
+      "输卵管复通"
+    ]
+  },
+  {
     "code": "66.3200",
     "name": "输卵管切除术",
     "category": "妇产科手术",
@@ -2840,6 +3560,18 @@
     "aliases": []
   },
   {
+    "code": "67.3200",
+    "name": "宫颈锥形切除术",
+    "category": "妇产科手术",
+    "aliases": [
+      "LEEP",
+      "宫颈电环切除",
+      "宫颈病变切除",
+      "宫颈锥切",
+      "宫颈锥形切除"
+    ]
+  },
+  {
     "code": "67.4200",
     "name": "宫颈缝合术",
     "category": "妇产科手术",
@@ -2903,7 +3635,13 @@
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "ZGJLQCS",
-    "aliases": []
+    "aliases": [
+      "子宫肌瘤切除",
+      "子宫肌瘤剔除",
+      "子宫肌瘤剥除",
+      "子宫肌瘤挖出",
+      "肌瘤剔除"
+    ]
   },
   {
     "code": "68.3000",
@@ -2920,6 +3658,18 @@
     "version": "ICD9_CM3",
     "py": "",
     "aliases": []
+  },
+  {
+    "code": "68.4100",
+    "name": "子宫切除术",
+    "category": "妇产科手术",
+    "aliases": [
+      "全子宫切除",
+      "子宫全切",
+      "子宫切除",
+      "根治性子宫切除",
+      "筋膜外子宫切除"
+    ]
   },
   {
     "code": "68.4900",
@@ -2944,6 +3694,17 @@
     "version": "ICD9_CM3",
     "py": "fqjqzgqcs",
     "aliases": []
+  },
+  {
+    "code": "68.5900",
+    "name": "子宫脱垂手术",
+    "category": "妇产科手术",
+    "aliases": [
+      "子宫悬吊",
+      "子宫脱垂手术",
+      "子宫脱垂矫正",
+      "盆底重建"
+    ]
   },
   {
     "code": "68.6000",
@@ -3003,7 +3764,13 @@
     "category": "妇产科手术",
     "version": "ICD9_CM3",
     "py": "xygglcs",
-    "aliases": []
+    "aliases": [
+      "人工流产",
+      "人流",
+      "刮宫",
+      "吸宫",
+      "清宫"
+    ]
   },
   {
     "code": "70.0000",
@@ -3091,7 +3858,12 @@
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "PGCS",
-    "aliases": []
+    "aliases": [
+      "C-section",
+      "剖宫产",
+      "剖腹产",
+      "子宫下段剖宫产"
+    ]
   },
   {
     "code": "74.1000",
@@ -3165,7 +3937,11 @@
     "category": "骨科手术",
     "version": "ICD9_CM3",
     "py": "gbsqcs",
-    "aliases": []
+    "aliases": [
+      "骨囊肿刮除",
+      "骨肿瘤切除",
+      "骨肿瘤刮除"
+    ]
   },
   {
     "code": "77.7000",
@@ -3216,7 +3992,10 @@
     "version": "ICD9_CM3",
     "py": "gzngdqcs",
     "aliases": [
-      "取内固定"
+      "ORIF",
+      "切开复位内固定",
+      "取内固定",
+      "骨折内固定"
     ]
   },
   {
@@ -3252,6 +4031,15 @@
     "aliases": []
   },
   {
+    "code": "79.0500",
+    "name": "桡骨骨折闭合复位术",
+    "category": "肌肉骨骼系统手术",
+    "py": "rggzbhfws",
+    "aliases": [
+      "桡骨骨折复位"
+    ]
+  },
+  {
     "code": "79.1000",
     "name": "骨折闭合复位内固定术",
     "category": "骨科手术",
@@ -3265,7 +4053,11 @@
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "GZBHQWS",
-    "aliases": []
+    "aliases": [
+      "空心钉内固定",
+      "股骨颈内固定",
+      "股骨颈骨折内固定"
+    ]
   },
   {
     "code": "79.2000",
@@ -3291,7 +4083,11 @@
     "category": "骨科手术",
     "version": "ICD9_CM3",
     "py": "gggzqkfwngds",
-    "aliases": []
+    "aliases": [
+      "肱骨ORIF",
+      "肱骨干骨折内固定",
+      "肱骨骨折内固定"
+    ]
   },
   {
     "code": "79.3200",
@@ -3307,7 +4103,14 @@
     "category": "骨科手术",
     "version": "ICD9_CM3",
     "py": "gggzqkfwngds",
-    "aliases": []
+    "aliases": [
+      "DHS",
+      "PFNA",
+      "股骨ORIF",
+      "股骨干骨折内固定",
+      "股骨骨折内固定",
+      "股骨髓内钉"
+    ]
   },
   {
     "code": "79.3600",
@@ -3315,7 +4118,12 @@
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "GZQKFWNGDS",
-    "aliases": []
+    "aliases": [
+      "IMN",
+      "胫骨ORIF",
+      "胫骨干骨折内固定",
+      "胫骨骨折内固定"
+    ]
   },
   {
     "code": "79.3700",
@@ -3405,7 +4213,14 @@
     "category": "骨科手术",
     "version": "ICD9_CM3",
     "py": "cjphxrjs",
-    "aliases": []
+    "aliases": [
+      "MED",
+      "PLDD",
+      "椎间孔镜",
+      "椎间盘切除",
+      "腰椎间盘摘除",
+      "髓核摘除"
+    ]
   },
   {
     "code": "80.5100",
@@ -3421,7 +4236,12 @@
     "category": "骨科手术",
     "version": "ICD9_CM3",
     "py": "",
-    "aliases": []
+    "aliases": [
+      "关节镜半月板手术",
+      "半月板切除",
+      "半月板成形",
+      "半月板部分切除"
+    ]
   },
   {
     "code": "80.7000",
@@ -3453,7 +4273,14 @@
     "category": "骨科手术",
     "version": "ICD9_CM3",
     "py": "",
-    "aliases": []
+    "aliases": [
+      "Cage植入",
+      "PLIF",
+      "TLIF",
+      "椎间融合",
+      "脊柱融合",
+      "腰椎融合"
+    ]
   },
   {
     "code": "81.1000",
@@ -3472,6 +4299,15 @@
     "aliases": []
   },
   {
+    "code": "81.3000",
+    "name": "脊柱融合+内固定术",
+    "category": "肌肉骨骼系统手术",
+    "py": "jzrhngds",
+    "aliases": [
+      "脊柱融合内固定"
+    ]
+  },
+  {
     "code": "81.4000",
     "name": "髋关节成形术",
     "category": "骨科手术",
@@ -3480,13 +4316,28 @@
     "aliases": []
   },
   {
+    "code": "81.4500",
+    "name": "前交叉韧带重建术",
+    "category": "骨科手术",
+    "aliases": [
+      "ACL重建",
+      "交叉韧带重建",
+      "前交叉韧带重建",
+      "韧带重建术"
+    ]
+  },
+  {
     "code": "81.5100",
     "name": "全髋关节置换术",
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "QKGZHHS",
     "aliases": [
-      "全髋关节置换"
+      "THA",
+      "人工髋关节",
+      "全髋关节置换",
+      "全髋置换",
+      "髋关节置换术"
     ]
   },
   {
@@ -3514,7 +4365,12 @@
     "version": "ICD9_CM3",
     "py": "QXGZHHS",
     "aliases": [
-      "全膝关节置换"
+      "TKA",
+      "TKR",
+      "人工膝关节",
+      "全膝关节置换",
+      "全膝置换",
+      "膝关节置换术"
     ]
   },
   {
@@ -3548,6 +4404,9 @@
     "version": "ICD9_CM3",
     "py": "yzjprhs",
     "aliases": [
+      "人工股骨头置换",
+      "半髋置换",
+      "股骨头置换",
       "腰椎融合术"
     ]
   },
@@ -3712,6 +4571,16 @@
     "aliases": []
   },
   {
+    "code": "83.3200",
+    "name": "关节镜下肩袖修复术",
+    "category": "肌肉骨骼系统手术",
+    "py": "gjxjyjxxfs",
+    "aliases": [
+      "关节镜肩袖修复",
+      "关节镜肩袖修补"
+    ]
+  },
+  {
     "code": "83.4200",
     "name": "肌腱切除术",
     "category": "骨科手术",
@@ -3773,7 +4642,10 @@
     "category": "骨科手术",
     "version": "ICD9_CM3",
     "py": "",
-    "aliases": []
+    "aliases": [
+      "下肢截肢",
+      "小腿截肢"
+    ]
   },
   {
     "code": "84.1200",
@@ -3821,7 +4693,13 @@
     "category": "普外科手术",
     "version": "ICD9_CM3",
     "py": "rxcchj",
-    "aliases": []
+    "aliases": [
+      "Mammotome",
+      "乳腺活检",
+      "乳腺穿刺",
+      "乳腺粗针穿刺",
+      "麦默通"
+    ]
   },
   {
     "code": "85.2000",
@@ -3837,7 +4715,11 @@
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "RXBFQCS",
-    "aliases": []
+    "aliases": [
+      "乳腺肿块切除",
+      "乳腺肿物切除",
+      "乳腺良性肿瘤切除"
+    ]
   },
   {
     "code": "85.2200",
@@ -3864,6 +4746,17 @@
     "aliases": []
   },
   {
+    "code": "85.3300",
+    "name": "前哨淋巴结活检术",
+    "category": "乳腺手术",
+    "py": "qslbjjcs",
+    "aliases": [
+      "SLNB",
+      "前哨淋巴结",
+      "前哨淋巴结活检"
+    ]
+  },
+  {
     "code": "85.3500",
     "name": "乳腺下垂矫正术",
     "category": "普外科手术",
@@ -3885,7 +4778,11 @@
     "category": "普外科手术",
     "version": "ICD9_CM3",
     "py": "blpfdrxqcs",
-    "aliases": []
+    "aliases": [
+      "乳腺切除",
+      "全乳切除",
+      "单纯乳房切除"
+    ]
   },
   {
     "code": "85.4300",
@@ -3893,7 +4790,13 @@
     "category": "手术操作",
     "version": "ICD9_CM3",
     "py": "RXQQCS",
-    "aliases": []
+    "aliases": [
+      "Auchincloss手术",
+      "乳癌根治",
+      "乳腺癌改良根治",
+      "乳腺癌根治",
+      "改良根治"
+    ]
   },
   {
     "code": "85.4400",
@@ -3965,7 +4868,11 @@
     "category": "普外科手术",
     "version": "ICD9_CM3",
     "py": "pzxnzqcs",
-    "aliases": []
+    "aliases": [
+      "植皮",
+      "皮片移植",
+      "皮肤移植"
+    ]
   },
   {
     "code": "86.4000",
@@ -3991,7 +4898,11 @@
     "category": "普外科手术",
     "version": "ICD9_CM3",
     "py": "pbyzs",
-    "aliases": []
+    "aliases": [
+      "带蒂皮瓣",
+      "皮瓣移植",
+      "皮瓣转移"
+    ]
   },
   {
     "code": "86.8100",
@@ -4007,7 +4918,12 @@
     "category": "普外科手术",
     "version": "ICD9_CM3",
     "py": "xzs",
-    "aliases": []
+    "aliases": [
+      "体型雕塑",
+      "吸脂",
+      "抽脂",
+      "脂肪抽吸"
+    ]
   },
   {
     "code": "86.8400",
@@ -4624,114 +5540,5 @@
     "version": "ICD9_CM3",
     "py": "zcmz",
     "aliases": []
-  },
-  {
-    "code": "37.8300",
-    "name": "起搏器植入术",
-    "category": "心血管手术",
-    "aliases": [
-      "心脏起搏器植入",
-      "起搏器置入术"
-    ]
-  },
-  {
-    "code": "36.0600",
-    "name": "冠状动脉支架植入术",
-    "category": "心血管手术",
-    "aliases": [
-      "冠脉支架植入",
-      "PCI术",
-      "经皮冠状动脉介入治疗"
-    ]
-  },
-  {
-    "code": "81.4500",
-    "name": "前交叉韧带重建术",
-    "category": "骨科手术",
-    "aliases": [
-      "ACL重建",
-      "交叉韧带重建"
-    ]
-  },
-  {
-    "code": "48.6300",
-    "name": "直肠切除术",
-    "category": "消化系统手术",
-    "aliases": [
-      "直肠切除"
-    ]
-  },
-  {
-    "code": "06.2000",
-    "name": "甲状腺切除术",
-    "category": "内分泌手术",
-    "aliases": [
-      "甲状腺切除"
-    ]
-  },
-  {
-    "code": "44.4100",
-    "name": "胃穿孔修补术",
-    "category": "消化系统手术",
-    "aliases": [
-      "胃穿孔修补"
-    ]
-  },
-  {
-    "code": "46.7900",
-    "name": "肠穿孔修补术",
-    "category": "消化系统手术",
-    "aliases": [
-      "肠穿孔修补"
-    ]
-  },
-  {
-    "code": "48.3600",
-    "name": "直肠息肉切除术",
-    "category": "消化系统手术",
-    "aliases": [
-      "直肠息肉切除"
-    ]
-  },
-  {
-    "code": "67.3200",
-    "name": "宫颈锥形切除术",
-    "category": "妇产科手术",
-    "aliases": [
-      "宫颈锥切",
-      "宫颈锥形切除"
-    ]
-  },
-  {
-    "code": "68.4100",
-    "name": "子宫切除术",
-    "category": "妇产科手术",
-    "aliases": [
-      "子宫切除"
-    ]
-  },
-  {
-    "code": "65.2900",
-    "name": "卵巢切除术",
-    "category": "妇产科手术",
-    "aliases": [
-      "卵巢切除"
-    ]
-  },
-  {
-    "code": "68.5900",
-    "name": "子宫脱垂手术",
-    "category": "妇产科手术",
-    "aliases": [
-      "子宫脱垂矫正"
-    ]
-  },
-  {
-    "code": "47.0901",
-    "name": "阑尾切除术（开腹）",
-    "category": "消化系统手术",
-    "aliases": [
-      "开腹阑尾切除"
-    ]
   }
 ]

@@ -130,6 +130,18 @@ class QCEngine:
                 "params": {},
                 "suggestion": "手术记录必须包含手术名称且与编码一致",
             },
+            {
+                "id": "QC-007",
+                "name": "手术记录完整性-关键字段集合",
+                "type": RuleType.COMPLETENESS,
+                "severity": Severity.MAJOR,
+                "check_fn": self._check_surgery_record_completeness,
+                "params": {
+                    "required_fields": ["手术名称", "手术日期"],
+                    "recommended_fields": ["手术者", "麻醉方式", "手术经过", "术前诊断", "术后诊断"],
+                },
+                "suggestion": "手术记录关键字段缺失，将直接影响手术编码准确率和DRG分组",
+            },
             # ===== 逻辑一致性检查 =====
             {
                 "id": "QC-101",
@@ -331,6 +343,7 @@ class QCEngine:
         "QC-001": {"discharge"}, "QC-002": {"discharge"},
         "QC-003": {"discharge"}, "QC-004": {"discharge"},
         "QC-005": {"surgery"}, "QC-006": {"surgery"},
+        "QC-007": {"surgery"},
         "QC-102": {"surgery", "discharge"},  # surgery-diag consistency: needs procedure data
         "QC-301": {"admission"},
         "QC-302": {"surgery"},
@@ -392,6 +405,48 @@ class QCEngine:
                 suggestion=rule["suggestion"],
             )
         return None
+
+    def _check_surgery_record_completeness(self, content, coding_result, patient_info, rule) -> list[QCIssue] | None:
+        """检查手术记录关键字段完整性 —— 编码前置质量门。
+
+        如果手术记录缺失关键字段（手术名称/日期/入路/麻醉等），编码员无法准确编码，
+        导致手术编码 F1 大幅下降。此规则在编码之前即暴露缺陷，避免盲编。
+        """
+        if "手术" not in content:
+            return None
+
+        required_fields = rule["params"].get("required_fields", [])
+        recommended_fields = rule["params"].get("recommended_fields", [])
+
+        # Field pattern map: field name -> (regex, severity)
+        field_patterns = {
+            "手术名称": (r"手术\s*名\s*称[：:]", Severity.CRITICAL),
+            "手术日期": (r"手术\s*日\s*期[：:]?\s*\d{4}", Severity.MAJOR),
+            "手术者": (r"手术\s*者[：:]", Severity.MINOR),
+            "麻醉方式": (r"麻醉\s*(方式|方法)[：:]", Severity.MINOR),
+            "手术经过": (r"手术\s*(经过|过程|情况)[：:]", Severity.MAJOR),
+            "术前诊断": (r"术前\s*诊\s*断[：:]", Severity.MAJOR),
+            "术后诊断": (r"术后\s*诊\s*断[：:]", Severity.MAJOR),
+        }
+
+        issues = []
+        for field in required_fields + recommended_fields:
+            if field in field_patterns:
+                pattern, severity = field_patterns[field]
+                if not re.search(pattern, content):
+                    is_required = field in required_fields
+                    level = severity if is_required else Severity.MINOR
+                    issues.append(QCIssue(
+                        rule_id=rule["id"],
+                        rule_name=rule["name"],
+                        rule_type=rule["type"],
+                        severity=level,
+                        description=f"手术记录缺少{'必须' if is_required else '建议'}字段「{field}」"
+                                    f"{'，将影响手术编码准确性' if is_required else ''}",
+                        suggestion=rule["suggestion"],
+                    ))
+
+        return issues if issues else None
 
     def _check_diagnosis_gender_consistency(self, content, coding_result, patient_info, rule) -> QCIssue | None:
         if not patient_info or not coding_result:
