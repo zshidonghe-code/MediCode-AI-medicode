@@ -44,7 +44,7 @@ export default function DRGPage() {
         .filter(Boolean)
 
       const { data } = await drgAPI.group({
-        patient_age: age ?? 0,
+        patient_age: age ?? 50,
         patient_gender: gender,
         primary_diagnosis_code: primaryCode.trim(),
         secondary_diagnosis_codes: secCodes,
