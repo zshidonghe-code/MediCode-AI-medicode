@@ -62,7 +62,7 @@ def _parse_docx(content: bytes) -> tuple[str, int]:
 
 def _parse_pdf(content: bytes) -> tuple[str, int]:
     """解析PDF文件，返回(文本内容, 页数)"""
-    from PyPDF2 import PdfReader
+    from pypdf import PdfReader  # pypdf is the actively-maintained successor to PyPDF2 (drop-in compatible API)
 
     reader = PdfReader(io.BytesIO(content))
     pages = []

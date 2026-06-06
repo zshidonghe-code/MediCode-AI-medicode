@@ -15,7 +15,10 @@ from src.config.settings import get_settings
 router = APIRouter()
 settings = get_settings()
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Use pbkdf2_sha256 instead of bcrypt to avoid passlib + bcrypt 4.x compatibility
+# warning. pbkdf2_sha256 is a NIST-recommended key derivation function, supported
+# natively by passlib with no C extension dependencies.
+pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 # Simple in-memory rate limiter for login endpoint (async-safe via lock)

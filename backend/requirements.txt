@@ -17,7 +17,7 @@ pydantic-settings==2.3.4
 
 # ---- Document Parsing ----
 python-docx==1.1.2
-PyPDF2==3.0.1
+pypdf==5.1.0  # actively-maintained successor to PyPDF2 (which is deprecated)
 python-multipart==0.0.9
 
 # ---- Authentication ----
