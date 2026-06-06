@@ -1,149 +1,115 @@
-# GitHub Pages 部署指南 · 码医 MediCode
+﻿# GitHub Pages 閮ㄧ讲鎸囧崡 路 鐮佸尰 MediCode
 
-> 5 分钟把 `index.html` 部署到 `username.github.io/medicode/`，比赛评委/留学推荐人/投资人扫个码就能看。
-
+> 5 鍒嗛挓鎶?`index.html` 閮ㄧ讲鍒?`username.github.io/medicode/`锛屾瘮璧涜瘎濮?鐣欏鎺ㄨ崘浜?鎶曡祫浜烘壂涓爜灏辫兘鐪嬨€?
 ---
 
-## 一、文件位置说明
-
-我们刚才生成的 `index.html` 放在**项目根目录**：
-
+## 涓€銆佹枃浠朵綅缃鏄?
+鎴戜滑鍒氭墠鐢熸垚鐨?`index.html` 鏀惧湪**椤圭洰鏍圭洰褰?*锛?
 ```
-码医-MediCode/
-├── index.html              ← 项目官网（landing page）
-├── README.md
-├── backend/
-├── frontend/
-├── docs/
-└── ...
+鐮佸尰-MediCode/
+鈹溾攢鈹€ index.html              鈫?椤圭洰瀹樼綉锛坙anding page锛?鈹溾攢鈹€ README.md
+鈹溾攢鈹€ backend/
+鈹溾攢鈹€ frontend/
+鈹溾攢鈹€ docs/
+鈹斺攢鈹€ ...
 ```
 
-`index.html` 是 GitHub Pages 默认查找的文件名，放在根目录最省事。
-
+`index.html` 鏄?GitHub Pages 榛樿鏌ユ壘鐨勬枃浠跺悕锛屾斁鍦ㄦ牴鐩綍鏈€鐪佷簨銆?
 ---
 
-## 二、部署步骤（5 分钟）
-
-### 步骤 1：把 index.html 提交到 GitHub
+## 浜屻€侀儴缃叉楠わ紙5 鍒嗛挓锛?
+### 姝ラ 1锛氭妸 index.html 鎻愪氦鍒?GitHub
 
 ```powershell
-# 在项目根目录执行
-cd "C:\Users\Donghe\Desktop\码医-MediCode"
+# 鍦ㄩ」鐩牴鐩綍鎵ц
+cd "C:\Users\Donghe\Desktop\鐮佸尰-MediCode"
 
-# 提交
+# 鎻愪氦
 git add index.html README.md
-git commit -m "feat: 项目官网 landing page + README SEO 改版"
+git commit -m "feat: 椤圭洰瀹樼綉 landing page + README SEO 鏀圭増"
 git push origin master
 ```
 
-> ⚠️ **需要先配 GitHub 远端**。如果还没配：
-> ```powershell
-> # 1. 在 GitHub 网页上创建空仓库 MediCode-AI/medicode
-> # 2. 然后：
-> git remote add origin https://github.com/MediCode-AI/medicode.git
+> 鈿狅笍 **闇€瑕佸厛閰?GitHub 杩滅**銆傚鏋滆繕娌￠厤锛?> ```powershell
+> # 1. 鍦?GitHub 缃戦〉涓婂垱寤虹┖浠撳簱 zshidonghe-code/MediCode-AI-medicode
+> # 2. 鐒跺悗锛?> git remote add origin https://github.com/zshidonghe-code/MediCode-AI-medicode.git
 > git push -u origin master
 > ```
 
-### 步骤 2：开启 GitHub Pages
+### 姝ラ 2锛氬紑鍚?GitHub Pages
 
-1. 打开 GitHub 仓库页面 → **Settings** → **Pages**
-2. **Source**：选 `Deploy from a branch`
-3. **Branch**：选 `master`（或 `main`，看你用什么） + `/ (root)`
-4. 点击 **Save**
-5. 等 30 秒 - 2 分钟，刷新页面会显示：
+1. 鎵撳紑 GitHub 浠撳簱椤甸潰 鈫?**Settings** 鈫?**Pages**
+2. **Source**锛氶€?`Deploy from a branch`
+3. **Branch**锛氶€?`master`锛堟垨 `main`锛岀湅浣犵敤浠€涔堬級 + `/ (root)`
+4. 鐐瑰嚮 **Save**
+5. 绛?30 绉?- 2 鍒嗛挓锛屽埛鏂伴〉闈細鏄剧ず锛?
+> 鉁?Your site is live at `https://zshidonghe-code.github.io/MediCode-AI-medicode/`
 
-> ✅ Your site is live at `https://medicode-ai.github.io/medicode/`
+### 姝ラ 3锛氳嚜瀹氫箟鍩熷悕锛堝彲閫夛級
 
-### 步骤 3：自定义域名（可选）
-
-如果你有自己的域名 `medicode.cn`：
-
-1. 在 `docs/` 同级创建 `CNAME` 文件：
-   ```
+濡傛灉浣犳湁鑷繁鐨勫煙鍚?`medicode.cn`锛?
+1. 鍦?`docs/` 鍚岀骇鍒涘缓 `CNAME` 鏂囦欢锛?   ```
    medicode.cn
    ```
-2. 在域名 DNS 添加 CNAME 记录：`www` → `medicode-ai.github.io`
-3. 在 GitHub Pages 设置填入 `medicode.cn`
-4. 等待 DNS 生效（10 分钟 - 24 小时）
-
+2. 鍦ㄥ煙鍚?DNS 娣诲姞 CNAME 璁板綍锛歚www` 鈫?`zshidonghe-code.github.io`
+3. 鍦?GitHub Pages 璁剧疆濉叆 `medicode.cn`
+4. 绛夊緟 DNS 鐢熸晥锛?0 鍒嗛挓 - 24 灏忔椂锛?
 ---
 
-## 三、部署后必做验证
+## 涓夈€侀儴缃插悗蹇呭仛楠岃瘉
 
-### 3.1 基础检查
+### 3.1 鍩虹妫€鏌?
+- [ ] 娴忚鍣ㄦ墦寮€ `https://zshidonghe-code.github.io/MediCode-AI-medicode/`
+- [ ] 椤甸潰姝ｅ父鏄剧ず锛圚ero / 鍔熻兘 / 瀵规瘮琛?/ FAQ / CTA锛?- [ ] GitHub badges 姝ｅ父鏄剧ず
+- [ ] 鎵€鏈夐摼鎺ュ彲鐐瑰嚮
 
-- [ ] 浏览器打开 `https://medicode-ai.github.io/medicode/`
-- [ ] 页面正常显示（Hero / 功能 / 对比表 / FAQ / CTA）
-- [ ] GitHub badges 正常显示
-- [ ] 所有链接可点击
+### 3.2 SEO 楠岃瘉锛堝叧閿紒锛?
+#### Google 鏀跺綍妫€鏌?
+1. 鎵撳紑 [Google Search Console](https://search.google.com/search-console/)
+2. 娣诲姞浣犵殑 GitHub Pages 鍩熷悕
+3. 绛?1-3 澶?Google 鎶撳彇
+4. 鎼滅储 `site:zshidonghe-code.github.io/MediCode-AI-medicode` 楠岃瘉鏀跺綍
 
-### 3.2 SEO 验证（关键！）
+#### Schema.org 楠岃瘉
 
-#### Google 收录检查
+1. 鎵撳紑 [Schema Markup Validator](https://validator.schema.org/)
+2. 杈撳叆 URL锛歚https://zshidonghe-code.github.io/MediCode-AI-medicode/`
+3. 搴旇鐪嬪埌 2 涓?schema锛?   - `SoftwareApplication` 鉁?   - `FAQPage` 鉁?
+#### AI 寮曟搸寮曠敤娴嬭瘯
 
-1. 打开 [Google Search Console](https://search.google.com/search-console/)
-2. 添加你的 GitHub Pages 域名
-3. 等 1-3 天 Google 抓取
-4. 搜索 `site:medicode-ai.github.io/medicode` 验证收录
+1. **ChatGPT**锛堝紑浜?web browsing锛夛細
+   > 闂細"鏈夊摢浜?AI 鍖荤枟 DRG 缂栫爜鐨勫紑婧愰」鐩紵"
+   > 鐪嬫槸鍚﹀紩鐢ㄤ綘鐨勯〉闈?
+2. **Perplexity AI**锛?   > 鎼?"MediCode 鐮佸尰 AI 鍖荤枟缂栫爜"
+   > 鐪嬫悳绱㈢粨鏋滄槸鍚﹀寘鍚?
+3. **Google AI Overview**锛?   > 鎼?"AI 鍖荤枟 ICD 缂栫爜 鍑嗙‘鐜?
+   > 鐪?AI 鎽樿鏄惁寮曠敤
 
-#### Schema.org 验证
-
-1. 打开 [Schema Markup Validator](https://validator.schema.org/)
-2. 输入 URL：`https://medicode-ai.github.io/medicode/`
-3. 应该看到 2 个 schema：
-   - `SoftwareApplication` ✅
-   - `FAQPage` ✅
-
-#### AI 引擎引用测试
-
-1. **ChatGPT**（开了 web browsing）：
-   > 问："有哪些 AI 医疗 DRG 编码的开源项目？"
-   > 看是否引用你的页面
-
-2. **Perplexity AI**：
-   > 搜 "MediCode 码医 AI 医疗编码"
-   > 看搜索结果是否包含
-
-3. **Google AI Overview**：
-   > 搜 "AI 医疗 ICD 编码 准确率"
-   > 看 AI 摘要是否引用
-
-> 💡 **AI 引用不是立刻生效**，通常需要 2-4 周持续生产内容（博客、技术文章）才能建立 domain authority。
-
-### 3.3 移动端测试
-
-- [ ] iPhone Safari 打开正常
-- [ ] Android Chrome 打开正常
-- [ ] 按钮可点击（不重叠）
-- [ ] 字体不溢出
-
+> 馃挕 **AI 寮曠敤涓嶆槸绔嬪埢鐢熸晥**锛岄€氬父闇€瑕?2-4 鍛ㄦ寔缁敓浜у唴瀹癸紙鍗氬銆佹妧鏈枃绔狅級鎵嶈兘寤虹珛 domain authority銆?
+### 3.3 绉诲姩绔祴璇?
+- [ ] iPhone Safari 鎵撳紑姝ｅ父
+- [ ] Android Chrome 鎵撳紑姝ｅ父
+- [ ] 鎸夐挳鍙偣鍑伙紙涓嶉噸鍙狅級
+- [ ] 瀛椾綋涓嶆孩鍑?
 ---
 
-## 四、可选增强
+## 鍥涖€佸彲閫夊寮?
+### 4.1 鍔?OG 鍥剧墖锛堢ぞ浜ゅ垎浜缉鐣ュ浘锛?
+GitHub 浠撳簱鐨?`og-image.png` 寮曠敤浜?`zshidonghe-code.github.io/MediCode-AI-medicode/og-image.png`锛?*蹇呴』瀛樺湪**鎵嶈兘姝ｅ父鏄剧ず銆?
+**鐢熸垚鏂规硶**锛?
+1. 鎵撳紑 [https://www.bannerbear.com/](https://www.bannerbear.com/) 鎴?[https://www.canva.com/](https://www.canva.com/)
+2. 鐢ㄦā鏉跨敓鎴?1200脳630 PNG
+3. 鏀惧埌 `og-image.png`锛堥」鐩牴鐩綍锛?4. 閲嶆柊 push
 
-### 4.1 加 OG 图片（社交分享缩略图）
-
-GitHub 仓库的 `og-image.png` 引用了 `medicode-ai.github.io/medicode/og-image.png`，**必须存在**才能正常显示。
-
-**生成方法**：
-
-1. 打开 [https://www.bannerbear.com/](https://www.bannerbear.com/) 或 [https://www.canva.com/](https://www.canva.com/)
-2. 用模板生成 1200×630 PNG
-3. 放到 `og-image.png`（项目根目录）
-4. 重新 push
-
-**简易替代**：
-
+**绠€鏄撴浛浠?*锛?
 ```powershell
-# 用 PowerPoint 做一个 1200x630 封面，导出 PNG
-# 或用 ffmpeg 从你的 demo GIF 截一帧
-ffmpeg -i assets/demo-30s.gif -ss 00:00:10 -vframes 1 -y og-image.png
+# 鐢?PowerPoint 鍋氫竴涓?1200x630 灏侀潰锛屽鍑?PNG
+# 鎴栫敤 ffmpeg 浠庝綘鐨?demo GIF 鎴竴甯?ffmpeg -i assets/demo-30s.gif -ss 00:00:10 -vframes 1 -y og-image.png
 ```
 
-### 4.2 加 Google Analytics（流量分析）
+### 4.2 鍔?Google Analytics锛堟祦閲忓垎鏋愶級
 
-在 `index.html` 的 `</head>` 前加：
-
+鍦?`index.html` 鐨?`</head>` 鍓嶅姞锛?
 ```html
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
@@ -155,67 +121,52 @@ ffmpeg -i assets/demo-30s.gif -ss 00:00:10 -vframes 1 -y og-image.png
 </script>
 ```
 
-> 把 `G-XXXXXXXXXX` 换成你的 GA4 ID。
+> 鎶?`G-XXXXXXXXXX` 鎹㈡垚浣犵殑 GA4 ID銆?
+### 4.3 鍔?favicon
 
-### 4.3 加 favicon
-
-1. 用 [favicon.io](https://favicon.io/) 生成 32×32 ICO
-2. 放到 `favicon.ico`（项目根目录）
-3. 在 `index.html` 的 `<head>` 加：
+1. 鐢?[favicon.io](https://favicon.io/) 鐢熸垚 32脳32 ICO
+2. 鏀惧埌 `favicon.ico`锛堥」鐩牴鐩綍锛?3. 鍦?`index.html` 鐨?`<head>` 鍔狅細
    ```html
    <link rel="icon" href="/favicon.ico" />
    ```
 
 ---
 
-## 五、SEO 长期策略（不只 README）
-
-| 频率 | 动作 | 工具 |
+## 浜斻€丼EO 闀挎湡绛栫暐锛堜笉鍙?README锛?
+| 棰戠巼 | 鍔ㄤ綔 | 宸ュ叿 |
 |------|------|------|
-| 每周 | 发 1 篇技术博客（知乎/CSDN/掘金）| Markdown + 外链回主页 |
-| 每月 | 更新 1 次 BENCHMARK 报告 | 跑测试 → 更新数据 |
-| 每月 | 申请 1 个外链（医疗行业网站/媒体）| 媒体投稿/采访 |
-| 每季 | 申请 1 次媒体报道 | 36 氪 / 虎嗅 / 动脉网 |
+| 姣忓懆 | 鍙?1 绡囨妧鏈崥瀹紙鐭ヤ箮/CSDN/鎺橀噾锛墊 Markdown + 澶栭摼鍥炰富椤?|
+| 姣忔湀 | 鏇存柊 1 娆?BENCHMARK 鎶ュ憡 | 璺戞祴璇?鈫?鏇存柊鏁版嵁 |
+| 姣忔湀 | 鐢宠 1 涓閾撅紙鍖荤枟琛屼笟缃戠珯/濯掍綋锛墊 濯掍綋鎶曠/閲囪 |
+| 姣忓 | 鐢宠 1 娆″獟浣撴姤閬?| 36 姘?/ 铏庡梾 / 鍔ㄨ剦缃?|
 
-> ⏱️ **见效时间**：3-6 个月后 ChatGPT/Perplexity 会主动引用你。
-
+> 鈴憋笍 **瑙佹晥鏃堕棿**锛?-6 涓湀鍚?ChatGPT/Perplexity 浼氫富鍔ㄥ紩鐢ㄤ綘銆?
 ---
 
-## 六、紧急情况
+## 鍏€佺揣鎬ユ儏鍐?
+### 閮ㄧ讲鍚庨〉闈?404
 
-### 部署后页面 404
+1. 妫€鏌?GitHub Pages Settings 閲岀殑 Source 鏄惁姝ｇ‘
+2. 妫€鏌ュ垎鏀悕锛坢aster vs main锛?3. 绛?5 鍒嗛挓锛孏itHub 缂撳瓨
+4. 寮哄埗鍒锋柊娴忚鍣紙Ctrl+Shift+R锛?
+### 閮ㄧ讲鍚庢牱寮忎贡鎺?
+- 妫€鏌?`index.html` 鏄惁瀹屾暣涓婁紶
+- 娴忚鍣?F12 鈫?Console 鐪嬫湁娌℃湁 404
+- 妫€鏌?GitHub Pages URL 鏄惁甯?trailing slash
 
-1. 检查 GitHub Pages Settings 里的 Source 是否正确
-2. 检查分支名（master vs main）
-3. 等 5 分钟，GitHub 缓存
-4. 强制刷新浏览器（Ctrl+Shift+R）
+### 鎯虫崲鍥?docs/landing/
 
-### 部署后样式乱掉
-
-- 检查 `index.html` 是否完整上传
-- 浏览器 F12 → Console 看有没有 404
-- 检查 GitHub Pages URL 是否带 trailing slash
-
-### 想换回 docs/landing/
-
-如果觉得 `index.html` 在根目录碍事，移走：
+濡傛灉瑙夊緱 `index.html` 鍦ㄦ牴鐩綍纰嶄簨锛岀Щ璧帮細
 ```powershell
 mkdir docs/landing
 move index.html docs/landing/
-# GitHub Pages Settings → Source 改成 /docs
+# GitHub Pages Settings 鈫?Source 鏀规垚 /docs
 ```
 
 ---
 
-## 七、产出清单
-
-- [ ] `index.html`（已完成，根目录）
-- [ ] `README.md` 改版（已完成，SEO 增强）
-- [ ] `og-image.png`（待生成）
-- [ ] `favicon.ico`（可选）
-- [ ] GitHub 远端配置（待配置）
-- [ ] GitHub Pages 开启（待操作）
-- [ ] Google Search Console 验证（待提交）
-
-> 完成后把这个 URL 发到：留学申请材料、比赛报名表、投资人邮件、社交媒体个人简介。
-
+## 涓冦€佷骇鍑烘竻鍗?
+- [ ] `index.html`锛堝凡瀹屾垚锛屾牴鐩綍锛?- [ ] `README.md` 鏀圭増锛堝凡瀹屾垚锛孲EO 澧炲己锛?- [ ] `og-image.png`锛堝緟鐢熸垚锛?- [ ] `favicon.ico`锛堝彲閫夛級
+- [ ] GitHub 杩滅閰嶇疆锛堝緟閰嶇疆锛?- [ ] GitHub Pages 寮€鍚紙寰呮搷浣滐級
+- [ ] Google Search Console 楠岃瘉锛堝緟鎻愪氦锛?
+> 瀹屾垚鍚庢妸杩欎釜 URL 鍙戝埌锛氱暀瀛︾敵璇锋潗鏂欍€佹瘮璧涙姤鍚嶈〃銆佹姇璧勪汉閭欢銆佺ぞ浜ゅ獟浣撲釜浜虹畝浠嬨€?
