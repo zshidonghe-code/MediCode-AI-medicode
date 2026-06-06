@@ -44,3 +44,10 @@ ollama_pull_result.json
 *.pdf
 *.bak
 # output/ — kept: competition deliverables (.docx/.pptx)
+
+# Local dev logs
+.dev.log
+
+# Materials/ — local-only competition materials (webm videos, large docs)
+# Synced via cloud drive, not git
+materials/

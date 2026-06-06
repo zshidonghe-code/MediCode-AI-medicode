@@ -1,6 +1,9 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'
-import { Row, Col, Card, Statistic, Typography, Divider, Table, Spin, DatePicker, Space, Select, Alert, Button } from 'antd'
-import { RiseOutlined, FallOutlined, TrophyOutlined, ReloadOutlined } from '@ant-design/icons'
+﻿import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
+import { Row, Col, Card, Statistic, Tag, Typography, Divider, Table, Spin, DatePicker, Space, Select, Alert, Button } from 'antd'
+import {
+  RiseOutlined, FallOutlined, TrophyOutlined, ReloadOutlined,
+  ThunderboltOutlined, CheckCircleOutlined, LoadingOutlined,
+} from '@ant-design/icons'
 import ReactECharts from 'echarts-for-react'
 import { dashboardAPI } from '../services/api'
 import type { OverviewData, DepartmentRanking, QcTrendItem, AccuracyTrendItem, HighFrequencyIssue, RevenueData } from '../types/dashboard'
@@ -17,6 +20,10 @@ export default function DashboardPage() {
   const [accuracyTrend, setAccuracyTrend] = useState<AccuracyTrendItem[]>([])
   const [revenue, setRevenue] = useState<RevenueData | null>(null)
   const [days, setDays] = useState(30)
+
+  // Demo state
+  const [demoMode, setDemoMode] = useState(false)
+  const demoActiveRef = useRef(false)
 
   useEffect(() => { fetchData() }, [days])
 
@@ -59,6 +66,23 @@ export default function DashboardPage() {
     }
     setLoading(false)
   }, [days])
+
+  // Demo handlers
+  const startDemo = useCallback(() => {
+    setDemoMode(true)
+    demoActiveRef.current = true
+    fetchData()
+  }, [fetchData])
+
+  // Celebration when loading completes in demo mode
+  useEffect(() => {
+    if (!demoActiveRef.current || loading) return
+    demoActiveRef.current = false
+  }, [loading])
+
+  useEffect(() => {
+    return () => { demoActiveRef.current = false }
+  }, [])
 
   // === Chart options derived from API data ===
   const cmiOvernightOption = useMemo(() => ({
@@ -148,23 +172,57 @@ export default function DashboardPage() {
 
   return (
     <div>
+
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <Title level={3}><TrophyOutlined /> 数据驾驶舱</Title>
           <Text type="secondary">全院DRG运营概览与质控分析</Text>
         </div>
-        <Space>
-          <Select value={days} onChange={setDays}
-            options={[
-              { value: 7, label: '近7天' },
-              { value: 30, label: '近30天' },
-              { value: 90, label: '近90天' },
-              { value: 180, label: '近半年' },
-            ]}
-            style={{ width: 100 }}
-          />
-          <DatePicker.RangePicker />
-          <ReloadOutlined onClick={fetchData} style={{ cursor: 'pointer', fontSize: 18 }} aria-label="刷新数据" role="button" tabIndex={0} />
+        <Space direction="vertical" align="end" size={4}>
+          <Space>
+            {!demoMode ? (
+              <Button
+                type="primary"
+                icon={<ThunderboltOutlined />}
+                onClick={startDemo}
+                style={{
+                  background: 'linear-gradient(135deg, #6366f1, #0ea5e9)',
+                  border: 'none', borderRadius: 8, fontWeight: 600,
+                  boxShadow: '0 4px 14px rgba(99, 102, 241, 0.4)',
+                }}
+              >
+                快速演示
+              </Button>
+            ) : (
+              <Button
+                icon={<ReloadOutlined />}
+                onClick={startDemo}
+                style={{ background: 'linear-gradient(135deg, #6366f1, #0ea5e9)', border: 'none', color: '#fff' }}
+              >
+                重新演示
+              </Button>
+            )}
+            <Select value={days} onChange={setDays}
+              options={[
+                { value: 7, label: '近7天' },
+                { value: 30, label: '近30天' },
+                { value: 90, label: '近90天' },
+                { value: 180, label: '近半年' },
+              ]}
+              style={{ width: 100 }}
+              disabled={demoMode}
+            />
+            <DatePicker.RangePicker />
+            <ReloadOutlined onClick={fetchData} style={{ cursor: 'pointer', fontSize: 18 }} aria-label="刷新数据" role="button" tabIndex={0} />
+          </Space>
+          {demoMode && (
+            <Tag
+              color={loading ? 'processing' : 'success'}
+              icon={loading ? <LoadingOutlined /> : <CheckCircleOutlined />}
+            >
+              {loading ? '数据加载中...' : '演示完成'}
+            </Tag>
+          )}
         </Space>
       </div>
 

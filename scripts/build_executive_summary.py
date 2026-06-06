@@ -96,6 +96,11 @@ add_run(p, '。传统人工编码主要诊断错误率高达15%，手术操作�
 add_run(p, '100亿元', size=10.5, color=DARK, bold=True)
 add_run(p, '。编码错了，医院少收钱、医保多花钱、患者数据失真。', size=10.5, color=DARK)
 
+# Gap hook
+p = new_para(doc, spacing_after=4)
+add_run(p, '然而，这个百亿刚需市场至今没有出现真正好用的产品。', size=10.5, color=DARK, bold=True)
+add_run(p, '不是市场不行——是每个潜在供给方都有结构性障碍：HIS大厂能做但不想做（编码不是战略重心），AI创业公司想做但做不动（合规+高销售成本），医院信息科想用但不会做（不养开发团队），一线编码员最痛但最无力（不懂技术商业）。这个价值空白区正是码医的切入点。', size=10.5, color=DARK)
+
 # ─── SOLUTION ───────────────────────────────────────────────────────────────
 
 p = new_para(doc, spacing_after=2)
@@ -129,7 +134,7 @@ table.alignment = WD_TABLE_ALIGNMENT.CENTER
 table.style = 'Table Grid'
 
 metrics = [
-    ('AI编码准确率', '95.2%', '超越人工\n15个百分点'),
+    ('AI编码准确率', '94.1%', '超越人工\n15个百分点'),
     ('质控规则覆盖', '47条', '完整性/逻辑/编码\n6大维度'),
     ('DRG分组', 'CHS-DRG 1.2', '26 MDC\n800+ ADRG'),
     ('响应速度', '<2秒', 'NLP+检索\n无需LLM也可用'),
@@ -182,10 +187,11 @@ p = new_para(doc, spacing_after=2)
 add_run(p, '▎竞争优势', bold=True, size=13, color=BLUE)
 
 edges = [
-    ('唯一的三合一方案', '市场中尚无竞品同时覆盖编码、DRG分组和AI质控三大环节'),
+    ('唯一的三合一方案', '市场中尚无竞品同时覆盖编码、DRG分组和AI质控三大环节。大厂200万/家封顶三甲，码医8-25万/年打开1万家二级医院'),
     ('国家标准合规', '严格遵循CHS-DRG 1.2国家分组标准，非私有分组逻辑'),
     ('轻量化可落地', 'Docker一键部署，2核4G服务器即可运行，适配基层医院IT条件'),
     ('AI可解释性', '每条编码推荐附带溯源依据（原文片段+ICD规则），避免黑盒决策'),
+    ('市场窗口', '四大驱动力同时汇聚：DRG/DIP全国强制推行(2025-26高峰) + LLM编码准确率跨过可用门槛 + API调用成本降90% + 市场已被先行者教育5年'),
 ]
 for title, desc in edges:
     p = new_para(doc, spacing_after=1)
@@ -201,12 +207,12 @@ add_run(p, '━' * 60, size=6, color=GRAY)
 p = new_para(doc, alignment=WD_ALIGN_PARAGRAPH.CENTER, spacing_after=0)
 add_run(p, '码医团队 · 上海对外经贸大学 · 2026年5月', size=9, color=GRAY)
 p = new_para(doc, alignment=WD_ALIGN_PARAGRAPH.CENTER)
-add_run(p, '联系方式：[团队负责人] · 邮箱：[待填写] · 电话：[待填写]', size=8, color=GRAY)
+add_run(p, '联系方式：郑诗东和 · 邮箱：1975790036@qq.com · 电话：15800565959', size=8, color=GRAY)
 
 # ─── Save ───────────────────────────────────────────────────────────────────
 
 output_dir = os.path.join(os.path.dirname(__file__), '..', 'output')
 os.makedirs(output_dir, exist_ok=True)
-output_path = os.path.join(output_dir, '码医_MediCode_执行摘要.docx')
+output_path = os.path.join(output_dir, '码医_MediCode_执行摘要_v2.docx')
 doc.save(output_path)
 print(f'Executive summary saved to: {output_path}')

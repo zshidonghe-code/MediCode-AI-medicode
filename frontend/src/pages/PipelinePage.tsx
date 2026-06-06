@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+﻿import { useState, useEffect, useRef, useCallback } from 'react'
 import {
   Card, Row, Col, Input, Button, Select, Tag, Table, Statistic, Typography,
   Divider, Space, message, Spin, Steps, Progress, Descriptions, Upload, Tooltip,
@@ -10,10 +10,9 @@ import {
   CheckCircleOutlined, LoadingOutlined, PlayCircleOutlined,
   PauseCircleOutlined, ReloadOutlined, TrophyOutlined,
 } from '@ant-design/icons'
-import { codingAPI, qcAPI, drgAPI, pipelineAPI } from '../services/api'
+import { codingAPI, qcAPI, drgAPI, pipelineAPI, api } from '../services/api'
 import IcdCodingResult from '../components/IcdCodingResult'
 import AnimatedCounter from '../components/AnimatedCounter'
-import CelebrationOverlay from '../components/CelebrationOverlay'
 import type { CodeItem, CodingResultData } from '../components/IcdCodingResult'
 
 const { TextArea } = Input
@@ -55,6 +54,17 @@ const SAMPLE_CASES = [
 治疗经过：入院后完善检查，在腰硬联合麻醉下行左侧人工全髋关节置换术，手术顺利。术后预防性抗感染、抗凝及康复功能锻炼指导。
 出院诊断：左股骨颈骨折，全髋关节置换术后，骨质疏松症，高血压病。`,
   },
+  {
+    name: '⭐ 边界病例 · 腹痛待查（AI不确定）',
+    content: `主诉：反复上腹部隐痛不适2月，加重伴嗳气3天。
+现病史：患者2月来无明显诱因反复出现上腹部隐痛，进食后加重。近3天疼痛加重，伴嗳气反酸。自服"斯达舒"效果不佳。
+既往史：高血压病3年。否认糖尿病史。吸烟20年，每日半包。
+查体：T 36.4℃，P 76次/分，BP 142/86mmHg。腹软，上腹部轻压痛，Murphy征阴性，麦氏点无压痛。
+辅助检查：胃镜示慢性浅表性胃炎伴糜烂，Hp(+)。幽门螺杆菌呼气试验阳性。
+初步诊断：慢性浅表性胃炎，幽门螺杆菌感染，高血压病。
+治疗经过：予四联疗法根除Hp（阿莫西林+克拉霉素+奥美拉唑+枸橼酸铋钾），抑酸护胃等对症治疗。
+出院诊断：慢性浅表性胃炎，幽门螺杆菌感染，高血压病1级。`,
+  },
 ]
 
 const SPEED_MAP: Record<string, number> = { fast: 12, normal: 28, slow: 55 }
@@ -94,6 +104,10 @@ export default function PipelinePage() {
   } | null>(null)
 
   const [drgResult, setDrgResult] = useState<DRGResult | null>(null)
+  const [rejectionResult, setRejectionResult] = useState<{
+    overall_risk: string; risk_score: number; preventable_amount: number
+    risks: { rule_id: string; rule_name: string; risk_level: string; description: string; suggestion: string; estimated_loss: number }[]
+  } | null>(null)
 
   // Persisted QC result IDs for accept/reject
   const [qcResultIds, setQcResultIds] = useState<{ id: number; severity: string }[]>([])
@@ -105,7 +119,6 @@ export default function PipelinePage() {
   const [demoSpeed, setDemoSpeed] = useState<string>('fast')
   const [fastMode, setFastMode] = useState(true)  // 快速模式：跳过打字机，1秒出结果
   const [typingDone, setTypingDone] = useState(false)
-  const [showCelebration, setShowCelebration] = useState(false)
   const [elapsedTime, setElapsedTime] = useState(0)
   const [patientAge, setPatientAge] = useState<number | null>(null)
   const [patientGender, setPatientGender] = useState<string>('male')
@@ -124,6 +137,7 @@ export default function PipelinePage() {
     setCodingResult(null)
     setQcResult(null)
     setDrgResult(null)
+    setRejectionResult(null)
     startTimeRef.current = Date.now()
     setElapsedTime(0)
 
@@ -160,8 +174,24 @@ export default function PipelinePage() {
       })
       setDrgResult(drg)
 
-      // Step 4: Done
+      // Step 4: Rejection Risk Assessment
       setCurrentStep(3)
+      try {
+        const priDiag = coding.primary_diagnosis
+        const { data: rejection } = await api.post('/rejection/assess', {
+          primary_diagnosis: priDiag ? { code: priDiag.code, name: priDiag.name } : null,
+          secondary_diagnoses: (coding.secondary_diagnoses || []).map((d: CodeItem) => ({ code: d.code, name: d.name })),
+          procedures: (coding.procedures || []).map((p: CodeItem) => ({ code: p.code, name: p.name })),
+          drg_result: { drg_code: drg.drg_code || '', drg_name: drg.drg_name || '', weight: drg.weight || 1, avg_los: drg.avg_days || 7 },
+          patient_info: { age: patientAge || 0, gender: patientGender || '', days_of_stay: daysOfStay || 0 },
+          content: text,
+          hospital_cost: 0,
+        })
+        setRejectionResult(rejection)
+      } catch { /* rejection is optional, don't block */ }
+
+      // Done
+      setCurrentStep(4)
       if (startTimeRef.current) {
         setElapsedTime(Date.now() - startTimeRef.current)
       }
@@ -201,10 +231,10 @@ export default function PipelinePage() {
 
   const startDemo = useCallback(() => {
     setDemoMode(true)
-    setShowCelebration(false)
     setCodingResult(null)
     setQcResult(null)
     setDrgResult(null)
+    setRejectionResult(null)
     setCurrentStep(-1)
     setElapsedTime(0)
 
@@ -256,19 +286,16 @@ export default function PipelinePage() {
     const timeout = setTimeout(() => {
       handleStart(text)
     }, 500)
-    return () => clearTimeout(timeout)
   }, [typingDone, demoRunning, caseIdx, handleStart])
 
   const demoRunningRef = useRef(demoRunning)
   demoRunningRef.current = demoRunning
 
-  // Celebration when DRG result arrives in demo mode
+  // Completion message when DRG result arrives in demo mode
   useEffect(() => {
     if (!demoRunningRef.current || !drgResult) return
     setDemoRunning(false)
-    setShowCelebration(true)
-    const timeout = setTimeout(() => setShowCelebration(false), 4000)
-    return () => clearTimeout(timeout)
+    message.success('全流程分析完成')
   }, [drgResult])
 
   // ─── Static data ────────────────────────────────────────────────────────
@@ -278,14 +305,13 @@ export default function PipelinePage() {
     { title: '质控检查', icon: <SafetyCertificateOutlined />, desc: '完整性 + 逻辑校验' },
     { title: 'DRG分组', icon: <MedicineBoxOutlined />, desc: 'CHS-DRG 1.2分组' },
     { title: '费用预估', icon: <DollarOutlined />, desc: '医保支付测算' },
+    { title: '拒付预测', icon: <ThunderboltOutlined />, desc: '医保审核风险扫描' },
   ]
 
   // ─── Render ─────────────────────────────────────────────────────────────
 
   return (
     <div>
-      <CelebrationOverlay visible={showCelebration} onDismiss={() => setShowCelebration(false)} />
-
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
           <Title level={3}><ThunderboltOutlined /> 智能编码流水线</Title>
@@ -352,7 +378,7 @@ export default function PipelinePage() {
                   {fastMode ? '重新演示' : '重新演示'}
                 </Button>
               )}
-              <Button size="small" onClick={() => { setDemoMode(false); stopDemo(); setContent(''); setCodingResult(null); setQcResult(null); setDrgResult(null); setCurrentStep(-1); }}>
+              <Button size="small" onClick={() => { setDemoMode(false); stopDemo(); setContent(''); setCodingResult(null); setQcResult(null); setDrgResult(null); setRejectionResult(null); setCurrentStep(-1); }}>
                 退出
               </Button>
             </Space>
@@ -661,6 +687,80 @@ export default function PipelinePage() {
               </Card>
             </Col>
           </Row>
+        )}
+
+        {/* Step 5: Rejection Risk */}
+        {rejectionResult && (
+          <Card
+            title={
+              <Space>
+                <ThunderboltOutlined style={{ color: rejectionResult.overall_risk === 'high' ? '#ff4d4f' : rejectionResult.overall_risk === 'medium' ? '#faad14' : '#52c41a' }} />
+                医保拒付风险预测
+              </Space>
+            }
+            extra={
+              <Space>
+                <Tag color={rejectionResult.overall_risk === 'high' ? 'red' : rejectionResult.overall_risk === 'medium' ? 'orange' : 'green'}>
+                  {rejectionResult.overall_risk === 'high' ? '高风险' : rejectionResult.overall_risk === 'medium' ? '中风险' : '低风险'}
+                </Tag>
+                <Text type="secondary">风险评分: {rejectionResult.risk_score}/100</Text>
+              </Space>
+            }
+            style={{
+              marginTop: 16,
+              borderColor: rejectionResult.overall_risk === 'high' ? '#ffccc7' : rejectionResult.overall_risk === 'medium' ? '#ffe58f' : '#d9f7be',
+            }}
+          >
+            {/* Risk summary */}
+            <Row gutter={16} style={{ marginBottom: 16 }}>
+              <Col span={8}>
+                <Statistic
+                  title="风险评分"
+                  value={rejectionResult.risk_score}
+                  suffix="/ 100"
+                  valueStyle={{ color: rejectionResult.overall_risk === 'high' ? '#ff4d4f' : rejectionResult.overall_risk === 'medium' ? '#faad14' : '#52c41a' }}
+                />
+              </Col>
+              <Col span={8}>
+                <Statistic title="风险项" value={rejectionResult.risks.length} suffix="条" />
+              </Col>
+              <Col span={8}>
+                <Statistic
+                  title="可规避金额"
+                  value={rejectionResult.preventable_amount}
+                  prefix="¥"
+                  precision={0}
+                  valueStyle={{ color: '#ff4d4f' }}
+                />
+              </Col>
+            </Row>
+
+            {/* Risk items */}
+            {rejectionResult.risks.length > 0 && (
+              <Table
+                dataSource={rejectionResult.risks.map((r, i) => ({ ...r, key: i }))}
+                columns={[
+                  {
+                    title: '级别', dataIndex: 'risk_level', width: 80,
+                    render: (v: string) => (
+                      <Tag color={v === 'high' ? 'red' : v === 'medium' ? 'orange' : 'blue'}>
+                        {v === 'high' ? '严重' : v === 'medium' ? '重要' : '提示'}
+                      </Tag>
+                    ),
+                  },
+                  { title: '检查项', dataIndex: 'rule_name', width: 160 },
+                  { title: '问题描述', dataIndex: 'description', ellipsis: true },
+                  { title: '修正建议', dataIndex: 'suggestion', ellipsis: true },
+                  {
+                    title: '预估损失', dataIndex: 'estimated_loss', width: 110,
+                    render: (v: number) => v > 0 ? <Text type="danger">¥{v.toLocaleString()}</Text> : '-',
+                  },
+                ]}
+                pagination={false}
+                size="small"
+              />
+            )}
+          </Card>
         )}
 
         {/* Empty state */}

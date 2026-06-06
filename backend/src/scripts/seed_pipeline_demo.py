@@ -343,10 +343,10 @@ async def seed_pipeline_demo():
         total_qc = 0
         patient_idx = 0
 
-        # Duplicate template pool to reach ~100 entries
-        expanded_pool = CASE_TEMPLATES * 4  # 28 × 4 = 112 templates
+        # Duplicate template pool to reach ~500 entries
+        expanded_pool = CASE_TEMPLATES * 20  # 28 × 20 = 560 templates
         random.shuffle(expanded_pool)
-        expanded_pool = expanded_pool[:100]  # Take exactly 100
+        expanded_pool = expanded_pool[:500]  # Take exactly 500
 
         for tmpl in expanded_pool:
             dept, gender_pref, age_range, title, content, pri_code, pri_name, secs, procs, drg_code, drg_weight, days_range = tmpl
@@ -370,8 +370,8 @@ async def seed_pipeline_demo():
             db.add(patient)
             await db.flush()
 
-            # Random admission date within Mar-May 2026
-            adm_date = _random_date_in_range(date(2026, 3, 1), date(2026, 5, 20))
+            # Random admission date within Jan 2025 - Jun 2026 (18-month spread)
+            adm_date = _random_date_in_range(date(2025, 1, 1), date(2026, 6, 4))
             stay_days = _rng_days(days_range)
             dis_date = adm_date + timedelta(days=stay_days)
 
@@ -388,11 +388,12 @@ async def seed_pipeline_demo():
             db.add(record)
             await db.flush()
 
-            # Coding result with slight confidence variation
-            confidence = round(random.uniform(0.85, 0.99), 2)
+            # Coding result: ~80% AI, 20% manual for realism
+            coder_type = "ai" if random.random() < 0.8 else "manual"
+            confidence = round(random.uniform(0.78, 0.99), 2)
             coding = CodingResult(
                 record_id=record.id,
-                coder_type="ai",
+                coder_type=coder_type,
                 codes={
                     "primary": {"code": pri_code, "name": pri_name},
                     "secondary": [{"code": c, "name": n} for c, n in secs],
@@ -408,8 +409,8 @@ async def seed_pipeline_demo():
             db.add(coding)
             total_coding += 1 + len(secs) + len(procs)
 
-            # ~20% of records get QC issues
-            if random.random() < 0.20:
+            # ~45% QC issue rate (realistic for hospital data)
+            if random.random() < 0.45:
                 num_issues = random.randint(1, 2)
                 chosen = random.sample(QC_ISSUE_POOL, min(num_issues, len(QC_ISSUE_POOL)))
                 for d in chosen:

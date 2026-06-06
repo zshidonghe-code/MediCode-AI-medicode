@@ -221,7 +221,49 @@ add_text_box(slide2, Inches(1), Inches(5.9), Inches(11.3), Inches(0.4),
              '编码错了，医院少收钱，医保多花钱，患者数据失真',
              14, LIGHT_GRAY, alignment=PP_ALIGN.CENTER)
 
-# ─── SLIDE 3 - Solution Overview ─────────────────────────────────────────────
+# ─── SLIDE 3 - Market Gap (价值空白区分析) ─────────────────────────────────────
+
+slide3_gap = prs.slides.add_slide(prs.slide_layouts[6])
+dark_slide(slide3_gap)
+add_slide_title(slide3_gap, '刚需市场，为什么没有好产品？',
+                '四个阵营各有结构性"死穴"——市场在等一个捅破窗户纸的人')
+
+# Four deadlock categories as cards
+gap_data = [
+    ('HIS大厂', '东软/卫宁等', '能做\n不想做', '编码只是子功能\nDRG不是战略重心\n投入产出比不划算', BRAND_BLUE),
+    ('AI创业公司', '森亿/左手医生等', '想做\n做不动', '合规门槛2-3年\n销售成本极高\n被定制化拖成项目制', BRAND_PURPLE),
+    ('医院信息科', '5-15人编制', '想用\n不会做', '不养开发团队\n薪资招不到工程师\n失败=丢饭碗', ORANGE),
+    ('一线编码员', '最真实的需求方', '最痛\n最无力', '不懂技术不懂商业\n无法把痛点\n变成产品', RED),
+]
+
+for i, (name, examples, verdict, reason, color) in enumerate(gap_data):
+    x = Inches(0.8 + i * 3.15)
+    y = Inches(1.8)
+    # Card
+    add_card(slide3_gap, x, y, Inches(2.9), Inches(4.6), CARD_BG)
+    # Category name
+    add_text_box(slide3_gap, x + Inches(0.15), y + Inches(0.15), Inches(2.6), Inches(0.35),
+                 name, 20, color, bold=True)
+    add_text_box(slide3_gap, x + Inches(0.15), y + Inches(0.55), Inches(2.6), Inches(0.25),
+                 examples, 11, LIGHT_GRAY)
+    # Verdict box
+    v_shape = slide3_gap.shapes.add_shape(
+        MSO_SHAPE.ROUNDED_RECTANGLE, x + Inches(0.15), y + Inches(1.0), Inches(2.6), Inches(0.7))
+    v_shape.fill.solid()
+    v_shape.fill.fore_color.rgb = color
+    v_shape.line.fill.background()
+    add_text_box(slide3_gap, x + Inches(0.15), y + Inches(1.05), Inches(2.6), Inches(0.6),
+                 verdict, 16, WHITE, bold=True, alignment=PP_ALIGN.CENTER)
+    # Reason
+    add_text_box(slide3_gap, x + Inches(0.2), y + Inches(1.9), Inches(2.5), Inches(2.2),
+                 reason, 12, LIGHT_GRAY)
+
+# Bottom hook
+add_text_box(slide3_gap, Inches(1), Inches(6.7), Inches(11.3), Inches(0.35),
+             '价值空白区 = 大厂不想做 × 创业做不动 × 医院不会做 × 一线无力做 -> 码医的主战场',
+             13, BRAND_GREEN, bold=True, alignment=PP_ALIGN.CENTER)
+
+# ─── SLIDE 4 - Solution Overview ─────────────────────────────────────────────
 
 slide3 = prs.slides.add_slide(prs.slide_layouts[6])
 dark_slide(slide3)
@@ -264,34 +306,72 @@ for i, p in enumerate(points):
 slide4 = prs.slides.add_slide(prs.slide_layouts[6])
 dark_slide(slide4)
 add_slide_title(slide4, '双层 AI 引擎 — 规则 + 语义双模质控',
-                'NLP 语义理解 + 医学知识图谱 + LLM 推理 + 规则引擎')
+                '底层规则引擎保底线 + 上层LLM语义突破天花板 = 双保险架构')
 
-# Three-layer architecture
-layers = [
-    ('输出层', ['编码推荐', 'DRG 分组', '质控报告', '费用测算'], BRAND_GREEN),
-    ('AI 引擎层', ['NLP 实体识别', '医学知识图谱', 'LLM 推理', '规则引擎'], BRAND_BLUE),
-    ('数据输入层', ['病历文本', 'ICD 编码库', 'CHS-DRG 分组器', '医保费率'], LIGHT_GRAY),
-]
-for li, (layer_name, items, color) in enumerate(layers):
-    y = Inches(1.8 + li * 1.6)
-    # Layer label
-    add_text_box(slide4, Inches(0.8), y, Inches(2.0), Inches(0.4),
-                 layer_name, 14, WHITE, bold=True)
-    # Items
-    for ii, item in enumerate(items):
-        x = Inches(2.5 + ii * 2.6)
-        shape = slide4.shapes.add_shape(
-            MSO_SHAPE.ROUNDED_RECTANGLE, x, y, Inches(2.3), Inches(0.9))
-        shape.fill.solid()
-        shape.fill.fore_color.rgb = color
-        shape.line.fill.background()
-        add_text_box(slide4, x, y + Inches(0.2), Inches(2.3), Inches(0.5),
-                     item, 15, WHITE if li < 2 else DEEP_BG_START,
-                     bold=True, alignment=PP_ALIGN.CENTER)
+# Vertical architecture: Data -> AI (dual-engine) -> Output
+# ── OUTPUT LAYER (top) ──
+out_items = ['编码推荐', 'DRG 分组', '质控报告', '费用测算']
+for i, item in enumerate(out_items):
+    x = Inches(1.5 + i * 2.8)
+    y = Inches(1.6)
+    shape = slide4.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x, y, Inches(2.3), Inches(0.9))
+    shape.fill.solid(); shape.fill.fore_color.rgb = BRAND_GREEN; shape.line.fill.background()
+    add_text_box(slide4, x, y + Inches(0.2), Inches(2.3), Inches(0.5),
+                 item, 16, WHITE, bold=True, alignment=PP_ALIGN.CENTER)
+add_text_box(slide4, Inches(0.5), Inches(1.8), Inches(1.0), Inches(0.4),
+             '输出层', 13, BRAND_GREEN, bold=True)
 
-add_text_box(slide4, Inches(1), Inches(6.5), Inches(11.3), Inches(0.4),
-             '规则引擎保证底线，LLM 语义理解突破天花板',
-             14, LIGHT_GRAY, alignment=PP_ALIGN.CENTER)
+# Down arrows from output to engine
+for i in range(4):
+    ax = Inches(2.65 + i * 2.8)
+    arrow = slide4.shapes.add_shape(MSO_SHAPE.DOWN_ARROW, ax, Inches(2.55), Inches(0.3), Inches(0.4))
+    arrow.fill.solid(); arrow.fill.fore_color.rgb = BRAND_BLUE; arrow.line.fill.background()
+
+# ── AI ENGINE LAYER (middle, split into two sub-engines) ──
+# Left: 规则引擎 (底线)
+add_card(slide4, Inches(1.2), Inches(3.1), Inches(5.2), Inches(2.0), RGBColor(0x15, 0x3E, 0x75))
+add_text_box(slide4, Inches(1.5), Inches(3.2), Inches(4.5), Inches(0.4),
+             '规则引擎 — 保底线', 18, BRAND_BLUE, bold=True)
+add_text_box(slide4, Inches(1.5), Inches(3.7), Inches(4.5), Inches(0.3),
+             '任何时候都能用，不依赖GPU/网络/AI大模型', 11, LIGHT_GRAY)
+rule_items = ['NLP实体识别', '医学知识图谱', '47条质控规则', 'CHS-DRG 1.2分组器']
+for ri, item in enumerate(rule_items):
+    rx = Inches(1.4 + ri * 1.25)
+    add_text_box(slide4, rx, Inches(4.2), Inches(1.2), Inches(0.5),
+                 item, 11, WHITE, bold=False, alignment=PP_ALIGN.CENTER)
+
+# Right: LLM引擎 (天花板)
+add_card(slide4, Inches(6.9), Inches(3.1), Inches(5.2), Inches(2.0), RGBColor(0x3B, 0x1F, 0x6E))
+add_text_box(slide4, Inches(7.2), Inches(3.2), Inches(4.5), Inches(0.4),
+             'LLM引擎 — 突破天花板', 18, BRAND_PURPLE, bold=True)
+add_text_box(slide4, Inches(7.2), Inches(3.7), Inches(4.5), Inches(0.3),
+             'Qwen2.5本地部署，理解医学语义，处理复杂多诊断', 11, LIGHT_GRAY)
+llm_items = ['语义向量检索', 'LLM推理推荐', '诊断-手术一致性', '编码置信度评分']
+for li, item in enumerate(llm_items):
+    lx = Inches(7.1 + li * 1.25)
+    add_text_box(slide4, lx, Inches(4.2), Inches(1.2), Inches(0.5),
+                 item, 11, WHITE, bold=False, alignment=PP_ALIGN.CENTER)
+
+# Vertical divider between sub-engines
+add_text_box(slide4, Inches(6.2), Inches(3.8), Inches(0.8), Inches(0.5),
+             '+', 28, BRAND_BLUE, bold=True, alignment=PP_ALIGN.CENTER)
+
+# ── DATA LAYER (bottom) ──
+data_items = ['病历文本\n(.txt/.docx/.pdf)', 'ICD编码库\n(920诊断+571手术)', 'CHS-DRG分组器\n(26MDC/628ADRG)', '医保费率表\n(权重+支付标准)']
+for i, item in enumerate(data_items):
+    x = Inches(1.5 + i * 2.8); y = Inches(5.4)
+    shape = slide4.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x, y, Inches(2.3), Inches(1.1))
+    shape.fill.solid(); shape.fill.fore_color.rgb = CARD_BG; shape.line.color.rgb = LIGHT_GRAY; shape.line.width = Pt(0.5)
+    add_text_box(slide4, x, y + Inches(0.15), Inches(2.3), Inches(0.8),
+                 item, 11, LIGHT_GRAY, bold=False, alignment=PP_ALIGN.CENTER)
+add_text_box(slide4, Inches(0.5), Inches(5.7), Inches(1.0), Inches(0.4),
+             '数据层', 13, LIGHT_GRAY, bold=True)
+
+# Up arrows from data to engine
+for i in range(2):
+    ax = Inches(3.8 + i * 6.5)
+    arrow = slide4.shapes.add_shape(MSO_SHAPE.UP_ARROW, ax, Inches(2.9), Inches(0.3), Inches(0.3))
+    arrow.fill.solid(); arrow.fill.fore_color.rgb = LIGHT_GRAY; arrow.line.fill.background()
 
 # ─── SLIDE 5 - Product Demo Preview ──────────────────────────────────────────
 
@@ -338,12 +418,12 @@ for title, desc, x, y in highlights:
 
 slide6 = prs.slides.add_slide(prs.slide_layouts[6])
 light_slide(slide6)
-add_slide_title(slide6, '编码准确率达 95.2%，超越人工平均水平',
-                '基于真实病历数据的 AI vs 人工编码对比测试', dark=False)
+add_slide_title(slide6, '编码准确率达 94.1%，超越人工平均水平',
+                '基于203份真实病历(8科室)的AI vs 人工编码对比测试', dark=False)
 
 # Big numbers - left side
 metrics = [
-    ('95.2%', 'AI 编码准确率', BRAND_BLUE),
+    ('94.1%', 'AI 编码准确率', BRAND_BLUE),
     ('82.7%', '人工编码准确率', LIGHT_GRAY),
     ('12.5pp', '准确率提升', BRAND_GREEN),
 ]
@@ -367,7 +447,7 @@ for i, val in enumerate(chart_bars[:3]):
     bar.line.fill.background()
 
 add_text_box(slide6, Inches(6.5), Inches(5.5), Inches(5), Inches(0.3),
-             '基于500份真实出院病历测试数据', 11, LIGHT_GRAY)
+             '基于203份真实病历测试数据(8科室)', 11, LIGHT_GRAY)
 
 # ─── SLIDE 7 - QC Capability ─────────────────────────────────────────────────
 
@@ -433,8 +513,8 @@ add_text_box(slide8, Inches(1.5), Inches(4.3), Inches(10), Inches(0.4),
 
 slide9 = prs.slides.add_slide(prs.slide_layouts[6])
 dark_slide(slide9)
-add_slide_title(slide9, '为什么是码医 — 市场上的唯一三合一方案',
-                '编码 + DRG 分组 + 质控，打通数据孤岛')
+add_slide_title(slide9, '竞争格局 — 我们在哪里？',
+                '高AI能力×低成本 = 无人占领的右下角  |  竞品50-200万/家，码医8-25万/年')
 
 # Competitive comparison table headers
 headers = ['功能', '码医', '东软望海', '国新健康', '森亿智能']
@@ -486,6 +566,14 @@ for ri, row_data in enumerate(rows_data):
                      cell, 14, cell_color, bold=True if ci == 1 else False,
                      alignment=PP_ALIGN.CENTER)
 
+# Positioning quadrant text below table
+add_text_box(slide9, Inches(1.5), Inches(6.1), Inches(10.3), Inches(0.35),
+             '定位：高AI能力 × 低成本 → 右下角无人区。大厂200万/家封顶三甲，码医8万/年打开1万家二级医院。',
+             12, BRAND_GREEN, bold=False, alignment=PP_ALIGN.CENTER)
+add_text_box(slide9, Inches(1.5), Inches(6.5), Inches(10.3), Inches(0.3),
+             '2025-26 DRG全面覆盖 + AI技术成熟 + 调用成本降90% = 前所未有的时间窗口',
+             11, LIGHT_GRAY, alignment=PP_ALIGN.CENTER)
+
 # ─── SLIDE 10 - Business Model ───────────────────────────────────────────────
 
 slide10 = prs.slides.add_slide(prs.slide_layouts[6])
@@ -532,14 +620,14 @@ for i, (phase, desc) in enumerate(customers):
 
 slide11 = prs.slides.add_slide(prs.slide_layouts[6])
 dark_slide(slide11)
-add_slide_title(slide11, '一支能打硬仗的团队',
-                '技术 + 医疗 + 商业 — 三驾马车')
+add_slide_title(slide11, '核心创始人 + AI协作模式',
+                '一人+AI两月完成全栈开发，效率超过传统3-5人团队')
 
 # Team members
 team = [
-    ('[负责人]', '项目负责人/商业', '物流管理专业\n统筹项目战略与商业落地'),
-    ('[技术]', '技术负责人', '全栈开发 + AI工程\nPython / React / LLM'),
-    ('[医疗]', '医学顾问', '临床医学专业\n保证产品医学准确性'),
+    ('[创始人]', '项目负责人 & 全栈开发', '人+AI协作模式\n2月完成90+文件全栈系统\n效率超过传统3-5人团队'),
+    ('[医疗]', '医学顾问（对接中）', '临床医学背景\n编码规则审核与质控验证\n预计省赛前确定'),
+    ('[商业]', '商业顾问（对接中）', '医疗SaaS/信息化背景\n商业模式打磨与资源对接\n预计省赛前确定'),
 ]
 for i, (avatar, role, bio) in enumerate(team):
     x = Inches(1.5 + i * 3.8)

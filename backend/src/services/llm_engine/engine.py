@@ -19,6 +19,9 @@ from src.services.llm_engine.prompts import (
     QC_CODE_TEXT_MATCH, QC_CODE_TEXT_MATCH_BATCH, QC_MISSED_DIAGNOSIS,
     DRG_ANALYSIS_PROMPT,
 )
+from src.services.llm_engine.medical_rules import (
+    SURGERY_DIAG_PAIRS, SYMPTOM_CODES, COMMON_MISSED, MCC_KEYWORDS,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -170,23 +173,6 @@ class RuleBasedBackend:
         """QC-102: 手术与诊断一致性检查（规则版）"""
         results = []
 
-        # 硬编码规则
-        SURGERY_DIAG_PAIRS = {
-            "阑尾": ["阑尾炎", "阑尾"],
-            "胆囊": ["胆囊炎", "胆囊结石", "胆囊"],
-            "剖宫": ["妊娠", "分娩", "剖宫产", "胎儿"],
-            "子宫": ["子宫", "肌瘤", "妊娠"],
-            "卵巢": ["卵巢", "囊肿", "妊娠"],
-            "前列腺": ["前列腺", "增生"],
-            "甲状腺": ["甲状腺", "结节", "甲亢"],
-            "冠状动脉": ["冠心病", "心绞痛", "心肌梗死", "冠状动脉"],
-            "全髋": ["髋", "股骨头", "骨折"],
-            "全膝": ["膝", "骨关节炎", "骨折"],
-            "胃": ["胃癌", "胃溃疡", "胃"],
-            "肺叶": ["肺癌", "肺结节", "肺"],
-            "PCI": ["冠心病", "心绞痛", "心肌梗死", "冠状动脉"],
-        }
-
         for surgery in surgeries:
             matched = False
             for key, diag_keywords in SURGERY_DIAG_PAIRS.items():
@@ -213,12 +199,6 @@ class RuleBasedBackend:
     def qc_primary_diagnosis_validity(self, content: str, primary_diag: str, all_diags: list[str]) -> list[LLMQCResult]:
         """QC-103: 主要诊断选择正确性（规则版）"""
         results = []
-
-        SYMPTOM_CODES = {
-            "发热": "R50", "咳嗽": "R05", "头痛": "R51", "腹痛": "R10",
-            "胸痛": "R07", "头晕": "R42", "乏力": "R53", "消瘦": "R63",
-            "恶心": "R11", "呕吐": "R11",
-        }
 
         for symptom, code_prefix in SYMPTOM_CODES.items():
             if symptom in primary_diag and symptom in content:
@@ -263,20 +243,6 @@ class RuleBasedBackend:
         """QC-202: 漏编次要诊断检查（规则版）"""
         results = []
 
-        # 常见易漏诊断关键词
-        COMMON_MISSED = {
-            "高血压": ("I10.x00", "原发性高血压"),
-            "糖尿病": ("E11.900", "2型糖尿病"),
-            "高脂血症": ("E78.500", "高脂血症"),
-            "脂肪肝": ("K76.000", "脂肪肝"),
-            "慢性胃炎": ("K29.500", "慢性胃炎"),
-            "骨质疏松": ("M81.900", "骨质疏松"),
-            "前列腺增生": ("N40.000", "前列腺增生"),
-            "贫血": ("D64.900", "贫血"),
-            "慢性肾病": ("N18.900", "慢性肾脏病"),
-            "肝功能异常": ("R94.500", "肝功能异常"),
-        }
-
         for keyword, (code, name) in COMMON_MISSED.items():
             if keyword in content and not any(keyword in d for d in coded_diags):
                 results.append(LLMQCResult(
@@ -293,17 +259,7 @@ class RuleBasedBackend:
         """DRG优化建议（规则版）"""
         suggestions = []
 
-        # 检查有无MCC遗漏
-        mcc_keywords = {
-            "心力衰竭": ("I50.900", "心力衰竭", "MCC"),
-            "呼吸衰竭": ("J96.900", "呼吸衰竭", "MCC"),
-            "肾功能衰竭": ("N17.900", "急性肾损伤", "MCC"),
-            "肝功能衰竭": ("K72.900", "肝功能衰竭", "MCC"),
-            "败血症": ("A41.900", "败血症", "MCC"),
-            "急性心肌梗死": ("I21.900", "急性心肌梗死", "MCC"),
-        }
-
-        for kw, (code, name, cc_type) in mcc_keywords.items():
+        for kw, (code, name, cc_type) in MCC_KEYWORDS.items():
             if kw in str(diagnoses) and not any(code in str(d) for d in diagnoses):
                 suggestions.append(LLMDRGSuggestion(
                     type="add_diagnosis",

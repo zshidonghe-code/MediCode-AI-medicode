@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react'
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
-import { Layout, Menu, Button, Dropdown, Space, Typography, Tooltip, Badge } from 'antd'
+import { Layout, Menu, Button, Dropdown, Space, Typography } from 'antd'
 import {
   FileTextOutlined,
   MedicineBoxOutlined,
@@ -9,10 +8,7 @@ import {
   LogoutOutlined,
   UserOutlined,
   NodeIndexOutlined,
-  ThunderboltOutlined,
-  ReadOutlined,
   SettingOutlined,
-  ApiOutlined,
 } from '@ant-design/icons'
 import { useAuthStore } from '../services/authStore'
 
@@ -23,26 +19,20 @@ export default function AppLayout() {
   const navigate = useNavigate()
   const location = useLocation()
   const { user, logout } = useAuthStore()
-  const [llmOnline, setLlmOnline] = useState<boolean | null>(null)
 
-  useEffect(() => {
-    fetch('/health/llm')
-      .then(r => r.json())
-      .then(d => setLlmOnline(d.llm_available))
-      .catch(() => setLlmOnline(false))
-  }, [])
+  const isAdmin = user?.role === 'admin'
 
-  const menuItems = [
-    { key: '/pipeline', icon: <NodeIndexOutlined />, label: '智能流水线' },
-    { key: '/coding', icon: <FileTextOutlined />, label: '编码工作台' },
-    { key: '/drg', icon: <MedicineBoxOutlined />, label: 'DRG分组' },
-    { key: '/qc', icon: <SafetyCertificateOutlined />, label: '质控中心' },
-    { key: '/dashboard', icon: <DashboardOutlined />, label: '数据驾驶舱' },
-    { key: '/guide', icon: <ReadOutlined />, label: '使用指南' },
-    ...(user?.role === 'admin'
-      ? [{ key: '/admin', icon: <SettingOutlined />, label: '系统管理' } as const]
-      : []),
-  ]
+  const menuItems = isAdmin
+    ? [
+        { key: '/dashboard', icon: <DashboardOutlined />, label: '数据驾驶舱' },
+        { key: '/admin', icon: <SettingOutlined />, label: '系统管理' },
+      ]
+    : [
+        { key: '/pipeline', icon: <NodeIndexOutlined />, label: '智能流水线' },
+        { key: '/coding', icon: <FileTextOutlined />, label: '编码工作台' },
+        { key: '/drg', icon: <MedicineBoxOutlined />, label: 'DRG分组' },
+        { key: '/qc', icon: <SafetyCertificateOutlined />, label: '质控中心' },
+      ]
 
   const roleMap: Record<string, string> = {
     admin: '管理员', coder: '编码员', doctor: '医生',
@@ -108,39 +98,15 @@ export default function AppLayout() {
           onClick={({ key }) => navigate(key)}
         />
 
-        {/* Bottom badge */}
+        {/* Bottom version badge */}
         <div style={{
           position: 'absolute', bottom: 16, left: 16, right: 16,
-          padding: '12px 16px',
-          background: 'rgba(14,165,233,0.08)',
+          padding: '10px 16px',
           borderRadius: 10,
-          border: '1px solid rgba(14,165,233,0.12)',
         }}>
-          <Space direction="vertical" size={4}>
-            <Space size={6}>
-              <Tooltip title={llmOnline ? 'Ollama 在线' : llmOnline === null ? '检测中...' : 'Ollama 离线，使用规则引擎'}>
-                <Badge
-                  status={llmOnline ? 'success' : 'error'}
-                  style={llmOnline === null ? { opacity: 0.5 } : undefined}
-                />
-              </Tooltip>
-              <Text style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11 }}>
-                AI {llmOnline ? '在线' : llmOnline === null ? '检测中' : '离线'}
-              </Text>
-            </Space>
-            <Text style={{ color: 'rgba(255,255,255,0.3)', fontSize: 10 }}>
-              CHS-DRG 1.2 · ICD-10
-            </Text>
-            <Button
-              type="link"
-              size="small"
-              icon={<ApiOutlined />}
-              onClick={() => window.open('/docs', '_blank')}
-              style={{ color: 'rgba(255,255,255,0.4)', padding: 0, fontSize: 10, height: 20 }}
-            >
-              API 文档
-            </Button>
-          </Space>
+          <Text style={{ color: 'rgba(255,255,255,0.25)', fontSize: 10 }}>
+            CHS-DRG 1.2 · ICD-10
+          </Text>
         </div>
       </Sider>
 

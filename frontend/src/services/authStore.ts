@@ -40,11 +40,14 @@ export const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: !!localStorage.getItem('medicode_token'),
 
   login: async (username: string, password: string) => {
-    const formData = new FormData()
-    formData.append('username', username)
-    formData.append('password', password)
+    // OAuth2PasswordRequestForm requires application/x-www-form-urlencoded
+    const params = new URLSearchParams()
+    params.append('username', username)
+    params.append('password', password)
 
-    const { data } = await api.post('/auth/login', formData)
+    const { data } = await api.post('/auth/login', params, {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    })
     localStorage.setItem('medicode_token', data.access_token)
     setApiAuth(data.access_token)
     set({

@@ -51,9 +51,9 @@ class Settings(BaseSettings):
             else:
                 raise ValueError("SECRET_KEY must be set in production (non-debug mode)")
         if not self.demo_admin_password and self.debug:
-            self.demo_admin_password = "MediCode@2025Demo#Admin"
-            self.demo_coder_password = "MediCode@2025Demo#Coder"
-            self.demo_doctor_password = "MediCode@2025Demo#Doctor"
+            self.demo_admin_password = "123456"
+            self.demo_coder_password = "123456"
+            self.demo_doctor_password = "123456"
         return self
 
     model_config = {"env_file": ".env"}

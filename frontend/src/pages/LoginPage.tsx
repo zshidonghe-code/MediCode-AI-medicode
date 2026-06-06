@@ -131,7 +131,7 @@ export default function LoginPage() {
             border: '1px solid #e8edf2',
           }}>
             <Text type="secondary" style={{ fontSize: 12 }}>
-              演示账号 <Text code style={{ fontSize: 12 }}>admin</Text> / <Text code style={{ fontSize: 12 }}>MediCode@2025Demo#Admin</Text>
+              演示账号 <Text code style={{ fontSize: 12 }}>coder</Text> / <Text code style={{ fontSize: 12 }}>123456</Text>
             </Text>
           </div>
         </Space>

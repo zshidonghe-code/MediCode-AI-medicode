@@ -12,6 +12,11 @@ from enum import Enum
 import re
 import asyncio
 
+from src.services.llm_engine.medical_rules import (
+    PROC_DIAG_MAP, FEMALE_ONLY, MALE_ONLY, SYMPTOM_KEYWORDS, INFORMAL_TERMS,
+    COMMON_MISSED,
+)
+
 logger = logging.getLogger(__name__)
 
 
@@ -451,10 +456,8 @@ class QCEngine:
         if not patient_info or not coding_result:
             return None
         gender = patient_info.get("gender", "")
-        # 女性专有诊断的性别检查
-        female_only = ["卵巢", "子宫", "输卵管", "阴道", "宫颈", "乳腺", "妊娠", "分娩", "产褥"]
         if gender == "male":
-            for term in female_only:
+            for term in FEMALE_ONLY:
                 if term in content:
                     return QCIssue(
                         rule_id=rule["id"],
@@ -464,9 +467,8 @@ class QCEngine:
                         description=f"病历中包含女性特有诊断描述'{term}'，与患者性别(男)不符",
                         suggestion=rule["suggestion"],
                     )
-        male_only = ["前列腺", "睾丸", "阴茎", "附睾"]
         if gender == "female":
-            for term in male_only:
+            for term in MALE_ONLY:
                 if term in content:
                     return QCIssue(
                         rule_id=rule["id"],
@@ -492,29 +494,10 @@ class QCEngine:
             diag_codes.add(primary.get("code", "").replace(".", ""))
         for d in coding_result.get("secondary_diagnoses", []):
             diag_codes.add(d.get("code", "").replace(".", ""))
-        # Anatomical body-system mapping: procedure prefix -> expected diagnosis prefix
-        proc_diag_map = [
-            # Cardiovascular procedures -> circulatory diagnoses
-            ("35", "I"), ("36", "I"), ("37", "I"), ("38", "I"), ("39", "I"),
-            # Neuro procedures -> neuro diagnoses
-            ("01", "G"), ("02", "G"), ("03", "G"),
-            # Respiratory procedures -> respiratory diagnoses
-            ("30", "J"), ("31", "J"), ("32", "J"), ("33", "J"), ("34", "J"),
-            # GI procedures -> digestive diagnoses
-            ("42", "K"), ("43", "K"), ("44", "K"), ("45", "K"), ("46", "K"),
-            ("47", "K"), ("48", "K"), ("49", "K"), ("50", "K"), ("51", "K"),
-            ("52", "K"), ("53", "K"), ("54", "K"),
-            # Urinary procedures -> genitourinary diagnoses
-            ("55", "N"), ("56", "N"), ("57", "N"), ("58", "N"), ("59", "N"),
-            # Orthopedic procedures -> musculoskeletal diagnoses
-            ("78", "M"), ("79", "M"), ("80", "M"), ("81", "M"),
-            # OB/GYN procedures -> pregnancy/gynecology diagnoses
-            ("65", "O"), ("66", "O"), ("67", "O"), ("68", "O"),
-            ("69", "O"), ("70", "O"), ("71", "O"), ("74", "O"),
-        ]
+        # Check against shared anatomical body-system mapping
         for proc in procedures:
             proc_code = proc.get("code", "").replace(".", "")
-            for proc_prefix, diag_prefix in proc_diag_map:
+            for proc_prefix, diag_prefix in PROC_DIAG_MAP:
                 if proc_code.startswith(proc_prefix):
                     if not any(d.startswith(diag_prefix) for d in diag_codes):
                         return QCIssue(
@@ -595,19 +578,6 @@ class QCEngine:
                     )
         return None
 
-    # Common chronic conditions worth flagging if present but uncoded
-    _CHECKABLE_CHRONIC: dict[str, str] = {
-        "高血压": "I10", "糖尿病": "E11",
-        "冠心病": "I25.1", "心肌梗死": "I21",
-        "心房颤动": "I48", "房颤": "I48",
-        "心力衰竭": "I50", "心衰": "I50",
-        "高脂血症": "E78", "高尿酸血症": "E79",
-        "哮喘": "J45", "慢阻肺": "J44",
-        "肝硬化": "K74", "慢性肾病": "N18",
-        "脑卒中": "I64", "贫血": "D64",
-        "骨质疏松": "M81",
-    }
-
     def _check_missing_secondary_diagnosis(self, content, coding_result, patient_info, rule) -> list[QCIssue] | None:
         """检查病历中提及的常见慢性病是否已编码，返回所有漏编项"""
         if not coding_result:
@@ -619,7 +589,7 @@ class QCEngine:
         for d in coding_result.get("secondary_diagnoses", []):
             coded_names.add(d.get("name", ""))
         issues = []
-        for keyword, expected_code in self._CHECKABLE_CHRONIC.items():
+        for keyword, (expected_code, _expected_name) in COMMON_MISSED.items():
             if keyword in content:
                 # 否认/排除/无 pattern negates the condition
                 neg_match = re.search(rf"(?:否认|排除|未见|无|未及|不伴).{{0,5}}{keyword}", content)
@@ -670,14 +640,13 @@ class QCEngine:
 
     def _check_primary_is_etiology(self, content, coding_result, patient_info, rule) -> QCIssue | None:
         """检查主要诊断是否为病因诊断而非症状"""
-        symptom_keywords = ["发热", "咳嗽", "头痛", "腹痛", "胸痛", "乏力", "恶心", "呕吐", "腹泻", "水肿", "黄疸"]
         primary = coding_result.get("primary_diagnosis") if coding_result else None
         if primary:
             primary_name = primary.get("name", "")
             primary_code = primary.get("code", "")
             # Check if the primary diagnosis name or code indicates a symptom rather than etiology
             combined = f"{primary_name} {primary_code}"
-            for keyword in symptom_keywords:
+            for keyword in SYMPTOM_KEYWORDS:
                 if keyword in combined:
                     return QCIssue(
                         rule_id=rule["id"],
@@ -690,8 +659,7 @@ class QCEngine:
         return None
 
     def _check_diagnosis_naming(self, content, coding_result, patient_info, rule) -> QCIssue | None:
-        informal_pairs = [("感冒", "上呼吸道感染"), ("拉肚子", "腹泻"), ("发烧", "发热")]
-        for slang, formal in informal_pairs:
+        for slang, formal in INFORMAL_TERMS:
             if slang in content:
                 return QCIssue(
                     rule_id=rule["id"], rule_name=rule["name"],
