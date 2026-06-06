@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>码医 MediCode — 离线演示备用</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0c1929;color:#fff;font-family:'Microsoft YaHei',sans-serif}
+.slide{width:1920px;height:1080px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:80px 120px}
+h1{font-size:56px;font-weight:700;margin-bottom:16px}
+h2{font-size:36px;font-weight:700;margin-bottom:12px;color:#0ea5e9}
+h3{font-size:20px;font-weight:400;color:#94a3b8;margin-bottom:40px}
+.row{display:flex;gap:24px;justify-content:center;flex-wrap:wrap}
+.card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:40px;width:500px;text-align:center}
+.num{font-size:64px;font-weight:700;margin-bottom:8px}
+.tag{display:inline-block;padding:4px 16px;border-radius:20px;font-size:14px;margin:4px}
+.blue{color:#0ea5e9}.red{color:#ff4d4f}.green{color:#10b981}.orange{color:#fa8c16}.gray{color:#94a3b8}
+.flow{display:flex;align-items:center;gap:32px}
+.flow-item{background:rgba(14,165,233,0.15);border:1px solid rgba(14,165,233,0.3);border-radius:12px;padding:24px 36px;text-align:center;font-size:18px}
+.arrow{font-size:28px;color:#0ea5e9}
+table{border-collapse:collapse;width:100%;max-width:1600px}
+th{background:rgba(14,165,233,0.2);padding:12px 16px;text-align:left;font-size:16px}
+td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.06);font-size:15px}
+.bar{background:rgba(255,255,255,0.04);padding:24px 40px;border-radius:12px;font-size:18px;line-height:1.8;max-width:1400px}
+.accent{border-left:3px solid #0ea5e9;padding-left:20px}
+</style>
+</head>
+<body>
+
+<!-- Slide 1: Cover -->
+<div class="slide" style="background:linear-gradient(135deg,#0c1929,#0f2744,#162d50)">
+  <h1>码医 MediCode</h1>
+  <h3 style="font-size:28px;color:#0ea5e9">AI 驱动的 DRG 智能编码与病历质控系统</h3>
+  <div style="margin-top:40px">
+    <span class="tag" style="background:rgba(14,165,233,0.2);color:#0ea5e9">AI驱动</span>
+    <span class="tag" style="background:rgba(14,165,233,0.2);color:#0ea5e9">DRG编码</span>
+    <span class="tag" style="background:rgba(14,165,233,0.2);color:#0ea5e9">病历质控</span>
+    <span class="tag" style="background:rgba(14,165,233,0.2);color:#0ea5e9">医保支付</span>
+  </div>
+  <p class="gray" style="margin-top:80px;font-size:16px">全国大学生创业大赛 · 码医团队</p>
+</div>
+
+<!-- Slide 2: Pain Points -->
+<div class="slide" style="background:#0c1929">
+  <h2>中国医院的 DRG 编码困局</h2>
+  <h3>全国10万编码员缺口，每年因编码错误导致的医保损失超百亿</h3>
+  <div class="row" style="margin-top:40px">
+    <div class="card">
+      <p class="num red">10万</p>
+      <p class="gray">全国编码员缺口</p>
+    </div>
+    <div class="card">
+      <p class="num orange">15%</p>
+      <p class="gray">人工编码错误率</p>
+    </div>
+    <div class="card">
+      <p class="num red">100亿+</p>
+      <p class="gray">年医保损失金额</p>
+    </div>
+  </div>
+  <p class="gray" style="margin-top:60px;font-size:16px">"编码错了，医院少收钱，医保多花钱，患者数据失真"</p>
+</div>
+
+<!-- Slide 3: Solution -->
+<div class="slide" style="background:#0f172a">
+  <h2>码医 — 一站式的智能编码与质控方案</h2>
+  <div class="flow" style="margin-top:60px">
+    <div class="flow-item">病历输入</div><div class="arrow">→</div>
+    <div class="flow-item">NLP智能编码</div><div class="arrow">→</div>
+    <div class="flow-item">DRG自动分组</div><div class="arrow">→</div>
+    <div class="flow-item">质控+费用测算</div>
+  </div>
+  <div class="row" style="margin-top:60px">
+    <div class="card"><p class="blue" style="font-size:24px">编码+DRG+质控<br>三合一</p></div>
+    <div class="card"><p class="green" style="font-size:24px">CHS-DRG 1.2<br>国家标准</p></div>
+    <div class="card"><p style="font-size:24px;color:#b8860b">准确率95%+<br>秒级响应</p></div>
+  </div>
+</div>
+
+<!-- Slide 4: Architecture -->
+<div class="slide" style="background:#0c1929">
+  <h2>双层 AI 引擎 — 规则 + 语义双模质控</h2>
+  <h3>规则保底线，LLM突破天花板</h3>
+  <div class="row" style="margin-top:40px;gap:80px">
+    <div>
+      <p class="blue" style="font-size:22px;margin-bottom:16px">🔵 规则引擎层</p>
+      <p class="gray" style="font-size:16px">100+条医学规则</p>
+      <p class="gray" style="font-size:16px">完整性检查 · 逻辑校验</p>
+      <p class="gray" style="font-size:16px">性别一致性 · 编码匹配</p>
+      <p class="gray" style="font-size:16px">时效性 · 规范表达</p>
+    </div>
+    <div>
+      <p style="color:#6366f1;font-size:22px;margin-bottom:16px">🟣 LLM 语义层</p>
+      <p class="gray" style="font-size:16px">NLP实体识别</p>
+      <p class="gray" style="font-size:16px">医学知识图谱</p>
+      <p class="gray" style="font-size:16px">Ollama本地推理</p>
+      <p class="gray" style="font-size:16px">置信度+可解释性</p>
+    </div>
+  </div>
+  <p class="gray" style="margin-top:60px;font-size:16px">离线可用 · 隐私合规 · AI增强但非必需</p>
+</div>
+
+<!-- Slide 5: Accuracy Data -->
+<div class="slide" style="background:#fff;color:#1e293b">
+  <h2 style="color:#1e293b">编码准确率达 95.2%，超越人工平均水平</h2>
+  <h3 style="color:#94a3b8">基于500份真实出院病历模板数据的对比测试</h3>
+  <div class="row" style="margin-top:80px">
+    <div class="card" style="background:#f0f9ff">
+      <p class="num" style="color:#0ea5e9">95.2%</p>
+      <p>AI 编码准确率</p>
+    </div>
+    <div class="card" style="background:#f8fafc">
+      <p class="num" style="color:#94a3b8">82.7%</p>
+      <p>人工编码准确率</p>
+    </div>
+    <div class="card" style="background:#f0fff0">
+      <p class="num" style="color:#10b981">+12.5pp</p>
+      <p>准确率提升</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 6: QC Engine -->
+<div class="slide" style="background:#fff;color:#1e293b">
+  <h2 style="color:#1e293b">内涵质控 — 覆盖 6 大维度、47 条质控规则</h2>
+  <div class="row" style="margin-top:40px">
+    <div class="card" style="background:#f8fafc"><span class="blue" style="font-size:20px">完整性</span><br>12条规则</div>
+    <div class="card" style="background:#f8fafc"><span style="color:#6366f1;font-size:20px">逻辑一致性</span><br>10条规则</div>
+    <div class="card" style="background:#f8fafc"><span class="green" style="font-size:20px">编码一致性</span><br>8条规则</div>
+    <div class="card" style="background:#f8fafc"><span style="color:#b8860b;font-size:20px">时效性</span><br>5条规则</div>
+    <div class="card" style="background:#f8fafc"><span class="orange" style="font-size:20px">规范表达</span><br>7条规则</div>
+    <div class="card" style="background:#f8fafc"><span class="red" style="font-size:20px">语义质量</span><br>5条规则</div>
+  </div>
+  <p style="font-size:24px;margin-top:60px;color:#1e293b">质控缺陷检出率 <span class="green">98.3%</span> vs 人工抽查覆盖率仅 <span class="red">5-10%</span></p>
+</div>
+
+<!-- Slide 7: DRG Value -->
+<div class="slide" style="background:#fff;color:#1e293b">
+  <h2 style="color:#1e293b">让每一分医保基金都花在刀刃上</h2>
+  <div class="bar accent" style="margin-top:60px">
+    <p style="font-size:24px">漏编 <span class="red" style="font-weight:700">1个次要诊断</span> → 权重降低 <span class="orange" style="font-weight:700">0.35</span> → 医院少收 <span class="red" style="font-weight:700">¥8,320</span></p>
+    <p style="font-size:20px;color:#94a3b8;margin-top:16px">全国推广后，预计每年为医保基金节省 200 亿+</p>
+  </div>
+</div>
+
+<!-- Slide 8: Rejection Risk (New!) -->
+<div class="slide" style="background:#0c1929">
+  <h2>🆕 医保拒付风险预测 — 行业独家</h2>
+  <h3>11条拒付规则，在编码完成前预见审核风险</h3>
+  <div class="row" style="margin-top:40px">
+    <div class="card" style="border-color:rgba(255,77,79,0.3)">
+      <p class="num red">11</p><p class="gray">拒付规则</p>
+    </div>
+    <div class="card" style="border-color:rgba(250,173,20,0.3)">
+      <p class="num orange">3级</p><p class="gray">风险评级</p>
+    </div>
+    <div class="card" style="border-color:rgba(14,165,233,0.3)">
+      <p class="num blue">¥实时</p><p class="gray">可规避金额</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 9: Competition -->
+<div class="slide" style="background:#0f172a">
+  <h2>为什么是码医 — 市场上唯一的三合一方案</h2>
+  <table style="margin-top:40px">
+    <tr><th>功能</th><th style="color:#0ea5e9">码医</th><th>竞品A</th><th>竞品B</th></tr>
+    <tr><td>NLP智能编码</td><td class="green">✓ 95%</td><td class="gray">✓</td><td class="red">✗</td></tr>
+    <tr><td>DRG分组(CHS)</td><td class="green">✓ 1.2</td><td class="gray">✓</td><td class="gray">✓</td></tr>
+    <tr><td>AI内涵质控</td><td class="green">✓ 双模</td><td class="red">✗</td><td class="red">✗</td></tr>
+    <tr><td>医保拒付预测</td><td class="green">✓ 独家</td><td class="red">✗</td><td class="red">✗</td></tr>
+    <tr><td>一体化平台</td><td class="green">✓ 三合一</td><td class="red">✗</td><td class="red">✗</td></tr>
+    <tr><td>离线部署</td><td class="green">✓</td><td class="red">✗</td><td class="gray">✓</td></tr>
+  </table>
+</div>
+
+<!-- Slide 10: Business -->
+<div class="slide" style="background:#fff;color:#1e293b">
+  <h2 style="color:#1e293b">清晰的商业化路径</h2>
+  <div class="row" style="margin-top:40px">
+    <div class="card" style="background:#f0f9ff"><p class="blue" style="font-size:22px">基础层</p><p>SaaS年费 8-15万</p></div>
+    <div class="card" style="background:#f5f0ff"><p style="color:#6366f1;font-size:22px">增长层</p><p>编码超量计费</p></div>
+    <div class="card" style="background:#f0fff0"><p class="green" style="font-size:22px">增值层</p><p>定制知识库+培训</p></div>
+  </div>
+  <p style="margin-top:60px;font-size:18px;color:#94a3b8">目标：第1年合作10家医院，营收100万+</p>
+</div>
+
+<!-- Slide 11: Team -->
+<div class="slide" style="background:#0c1929">
+  <h2>一支能打硬仗的团队</h2>
+  <h3>技术 + 医疗 + 商业 — 三驾马车</h3>
+  <div class="row" style="margin-top:40px">
+    <div class="card"><p class="blue" style="font-size:20px">技术负责人</p><p class="gray">全栈开发<br>Python/React/AI</p></div>
+    <div class="card"><p class="green" style="font-size:20px">医疗顾问</p><p class="gray">临床医学背景<br>ICD编码审核</p></div>
+    <div class="card"><p style="color:#b8860b;font-size:20px">商业运营</p><p class="gray">市场调研<br>试点医院对接</p></div>
+  </div>
+</div>
+
+<!-- Slide 12: Closing -->
+<div class="slide" style="background:linear-gradient(135deg,#0c1929,#0f2744,#162d50)">
+  <h1 style="font-size:40px;font-weight:300;line-height:1.8;text-align:center">
+    让每一份病历都准确<br>
+    让每一分医保基金都花在刀刃上
+  </h1>
+  <p class="blue" style="font-size:28px;margin-top:40px">码医 MediCode</p>
+  <p class="gray" style="margin-top:60px;font-size:18px">AI驱动 · DRG编码 · 病历质控 · 医保支付</p>
+  <h2 style="margin-top:40px;font-size:28px">谢谢各位评委老师</h2>
+</div>
+
+</body>
+</html>
