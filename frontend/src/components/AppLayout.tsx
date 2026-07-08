@@ -11,6 +11,8 @@ import {
   SettingOutlined,
 } from '@ant-design/icons'
 import { useAuthStore } from '../services/authStore'
+import { useEffect, useState } from 'react'
+import { CommandPaletteModal } from './CommandPaletteModal'
 
 const { Header, Sider, Content } = Layout
 const { Text } = Typography
@@ -19,6 +21,22 @@ export default function AppLayout() {
   const navigate = useNavigate()
   const location = useLocation()
   const { user, logout } = useAuthStore()
+  const [cmdOpen, setCmdOpen] = useState(false)
+
+  // === Issue #3: ⌘⇧P / Ctrl+Shift+P 全局命令面板快捷键 ===
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const isMod = e.metaKey || e.ctrlKey
+      if (isMod && e.shiftKey && (e.key === 'P' || e.key === 'p')) {
+        e.preventDefault()
+        setCmdOpen((v) => !v)
+      }
+    }
+    if (typeof window !== 'undefined') {
+      window.addEventListener('keydown', handler)
+      return () => window.removeEventListener('keydown', handler)
+    }
+  }, [])
 
   const isAdmin = user?.role === 'admin'
 
@@ -145,6 +163,13 @@ export default function AppLayout() {
           <Outlet />
         </Content>
       </Layout>
+
+      {/* Issue #3: 命令面板 — ⌘⇧P 触发 */}
+      <CommandPaletteModal
+        open={cmdOpen}
+        onClose={() => setCmdOpen(false)}
+        navigate={navigate}
+      />
     </Layout>
   )
 }
