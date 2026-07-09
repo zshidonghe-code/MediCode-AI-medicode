@@ -12,7 +12,6 @@ import {
 } from '@ant-design/icons'
 import { codingAPI, qcAPI, drgAPI, pipelineAPI, api } from '../services/api'
 import IcdCodingResult from '../components/IcdCodingResult'
-import AnimatedCounter from '../components/AnimatedCounter'
 import type { CodeItem, CodingResultData } from '../components/IcdCodingResult'
 
 const { TextArea } = Input
@@ -657,7 +656,7 @@ export default function PipelinePage() {
               >
                 <div style={{ textAlign: 'center', padding: '16px 0' }}>
                   <div style={{ fontSize: 36, fontWeight: 'bold', color: '#3f8600', fontFamily: 'monospace' }}>
-                    <AnimatedCounter value={drgResult.estimated_payment} />
+                    ¥{drgResult.estimated_payment.toLocaleString()}
                   </div>
                   <div style={{ marginTop: 8, color: '#888' }}>预估医保支付金额</div>
 
