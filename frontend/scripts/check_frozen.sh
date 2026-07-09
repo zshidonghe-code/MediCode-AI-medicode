@@ -23,6 +23,8 @@ ACTIVE_COMPONENTS=(
   "../components/x_features/RejectionPredictor"
   "../components/x_features/DRGCompare"
   "../components/x_features/DocUploadCoder"
+  # B v2 流水线末尾自动跳转 (董事会 2026-07-09 决议)
+  "../components/x_features/PipelineRejectionRedirect"
 )
 
 echo "✅ 允许的组件引用:"

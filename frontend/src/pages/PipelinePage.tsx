@@ -14,6 +14,7 @@ import { codingAPI, qcAPI, drgAPI, pipelineAPI, api } from '../services/api'
 import IcdCodingResult from '../components/IcdCodingResult'
 import type { CodeItem, CodingResultData } from '../components/IcdCodingResult'
 import RejectionPredictor from '../components/x_features/RejectionPredictor'
+import PipelineRejectionRedirect from '../components/x_features/PipelineRejectionRedirect'
 
 const { TextArea } = Input
 const { Title, Text } = Typography
@@ -789,6 +790,19 @@ export default function PipelinePage() {
 
         {/* X 功能迷你版 B: 拒付风险实时预测 */}
         <RejectionPredictor defaultContent="" />
+
+        {/* B v2: 流水线分析完成后, 引导跳转至独立 /rejection 页面 */}
+        <PipelineRejectionRedirect
+          trigger={!!rejectionResult}
+          prefill={{
+            content,
+            primary_diagnosis: codingResult?.primary_diagnosis
+              ? { code: codingResult.primary_diagnosis.code, name: codingResult.primary_diagnosis.name }
+              : null,
+            patient_info: { age: patientAge || 0, gender: patientGender || '', days_of_stay: daysOfStay || 0 },
+            hospital_cost: 0,
+          }}
+        />
       </Spin>
     </div>
   )
