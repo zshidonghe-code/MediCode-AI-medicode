@@ -96,6 +96,19 @@ export const pipelineAPI = {
     api.post('/pipeline/save', data),
 }
 
+// === Rejection API (X 功能迷你版 B) ===
+export const rejectionAPI = {
+  assess: (data: {
+    primary_diagnosis?: any
+    secondary_diagnoses?: any[]
+    procedures?: any[]
+    drg_result?: any
+    patient_info?: any
+    content?: string
+    hospital_cost?: number
+  }) => api.post('/rejection/assess', data),
+}
+
 // === Admin API ===
 export const adminAPI = {
   reset: (confirm: boolean = false) =>

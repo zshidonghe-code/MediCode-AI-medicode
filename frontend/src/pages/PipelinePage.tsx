@@ -13,6 +13,7 @@ import {
 import { codingAPI, qcAPI, drgAPI, pipelineAPI, api } from '../services/api'
 import IcdCodingResult from '../components/IcdCodingResult'
 import type { CodeItem, CodingResultData } from '../components/IcdCodingResult'
+import RejectionPredictor from '../components/x_features/RejectionPredictor'
 
 const { TextArea } = Input
 const { Title, Text } = Typography
@@ -785,6 +786,9 @@ export default function PipelinePage() {
             </div>
           </Card>
         )}
+
+        {/* X 功能迷你版 B: 拒付风险实时预测 */}
+        <RejectionPredictor defaultContent="" />
       </Spin>
     </div>
   )

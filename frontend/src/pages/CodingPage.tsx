@@ -12,6 +12,7 @@ import {
 import { codingAPI, pipelineAPI } from '../services/api'
 import IcdCodingResult from '../components/IcdCodingResult'
 import type { CodeItem, CodingResultData } from '../components/IcdCodingResult'
+import DocUploadCoder from '../components/x_features/DocUploadCoder'
 
 const { TextArea } = Input
 const { Title, Text } = Typography
@@ -441,6 +442,9 @@ export default function CodingPage() {
           ]}
         />
       </Modal>
+
+      {/* X 功能迷你版 A: 病历文档上传自动编码 */}
+      <DocUploadCoder />
     </div>
   )
 }

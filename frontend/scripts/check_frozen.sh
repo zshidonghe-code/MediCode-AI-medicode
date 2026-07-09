@@ -19,6 +19,10 @@ ACTIVE_COMPONENTS=(
   "../components/AppLayout"
   "../components/ErrorBoundary"
   "../components/IcdCodingResult"
+  # X 功能迷你版 (董事会 2026-07-09 P0 审批通过)
+  "../components/x_features/RejectionPredictor"
+  "../components/x_features/DRGCompare"
+  "../components/x_features/DocUploadCoder"
 )
 
 echo "✅ 允许的组件引用:"

@@ -6,6 +6,7 @@ import {
   CheckCircleOutlined, LoadingOutlined, FileTextOutlined,
 } from '@ant-design/icons'
 import { drgAPI, pipelineAPI } from '../services/api'
+import DRGCompare from '../components/x_features/DRGCompare'
 
 const { Title, Text } = Typography
 
@@ -384,6 +385,9 @@ export default function DRGPage() {
           </div>
         </Card>
       )}
+
+      {/* X 功能迷你版 C: AI vs 人工 DRG 对比 */}
+      <DRGCompare defaultRecordId={1} />
     </div>
   )
 }
