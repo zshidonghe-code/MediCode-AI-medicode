@@ -69,8 +69,23 @@
 | `components/AppLayout.tsx` | 顶栏 + 侧栏 | ✅ 活跃 |
 | `components/ErrorBoundary.tsx` | 错误兜底 | ✅ 活跃 |
 | `components/IcdCodingResult.tsx` | 编码结果展示 | ✅ 活跃 |
+| `pages/RejectionPage.tsx` | 拒付预测独立页 (B v1) | ✅ 活跃 (董事会 2026-07-09 放大) |
 
 新增独立组件时，按规则 2 走董事会审批。
+
+---
+
+## X 功能复审状态（2026-07-09 第三轮董事会）
+
+**复审决议 PDF**：`C:/Users/Donghe/Desktop/council-reports/2026-07-09-1719-medicode-x-amplify/council-report.pdf`
+
+| X 功能 | 状态 | 冻结期 | 复活成本 |
+|--------|------|--------|----------|
+| **B 拒付预测** | ✅ 放大为独立顶级菜单 (`/rejection`) | — | — |
+| **A 文档上传** (`DocUploadCoder.tsx`) | 🟡 冻结不删 (B 失败保底) | 4 周 (2026-07-09 ~ 2026-08-06) | 1h |
+| **C DRG 对比** (`DRGCompare.tsx`) | 🟡 冻结不删 (B 失败保底) | 4 周 (2026-07-09 ~ 2026-08-06) | 1h |
+
+**复活操作**：删除 `// FROZEN_X_CANDIDATE` 注释 + 重新在 `CodingPage` / `DRGPage` import 即可。
 
 ---
 
