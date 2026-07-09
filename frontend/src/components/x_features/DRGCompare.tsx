@@ -1,3 +1,10 @@
+// FROZEN_X_CANDIDATE (2026-07-09 董事会复审决议)
+// 状态: 冻结 4 周 (2026-07-09 ~ 2026-08-06)
+// 原因: B 拒付预测放大为独立顶级菜单入口，本组件作为 B 失败的保底方案
+// 复活条件: B 放大效果不达预期 → 删本注释 + 重新 import 到 DRGPage
+// 复活成本: 1 小时
+// 决议来源: council-reports/2026-07-09-1719-medicode-x-amplify/
+
 import { useState } from 'react'
 import { Card, Button, Input, Tag, Space, Typography, Spin, Alert, Statistic, Row, Col } from 'antd'
 import { SwapOutlined } from '@ant-design/icons'

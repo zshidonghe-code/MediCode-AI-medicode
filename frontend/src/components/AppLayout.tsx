@@ -9,6 +9,7 @@ import {
   UserOutlined,
   NodeIndexOutlined,
   SettingOutlined,
+  AlertOutlined,
 } from '@ant-design/icons'
 import { useAuthStore } from '../services/authStore'
 
@@ -25,6 +26,7 @@ export default function AppLayout() {
   const menuItems = isAdmin
     ? [
         { key: '/dashboard', icon: <DashboardOutlined />, label: '数据驾驶舱' },
+        { key: '/rejection', icon: <AlertOutlined />, label: '拒付风险评估' },
         { key: '/admin', icon: <SettingOutlined />, label: '系统管理' },
       ]
     : [
@@ -32,6 +34,7 @@ export default function AppLayout() {
         { key: '/coding', icon: <FileTextOutlined />, label: '编码工作台' },
         { key: '/drg', icon: <MedicineBoxOutlined />, label: 'DRG分组' },
         { key: '/qc', icon: <SafetyCertificateOutlined />, label: '质控中心' },
+        { key: '/rejection', icon: <AlertOutlined />, label: '拒付风险评估' },
       ]
 
   const roleMap: Record<string, string> = {

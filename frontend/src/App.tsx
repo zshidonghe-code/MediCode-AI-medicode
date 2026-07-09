@@ -12,6 +12,7 @@ const QCPage = lazy(() => import('./pages/QCPage'))
 const PipelinePage = lazy(() => import('./pages/PipelinePage'))
 const DashboardPage = lazy(() => import('./pages/DashboardPage'))
 const AdminPage = lazy(() => import('./pages/AdminPage'))
+const RejectionPage = lazy(() => import('./pages/RejectionPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
 
 function LazyLoad({ children }: { children: React.ReactNode }) {
@@ -52,6 +53,7 @@ export default function App() {
         <Route path="coding" element={<LazyLoad><CodingPage /></LazyLoad>} />
         <Route path="drg" element={<LazyLoad><DRGPage /></LazyLoad>} />
         <Route path="qc" element={<LazyLoad><QCPage /></LazyLoad>} />
+        <Route path="rejection" element={<LazyLoad><RejectionPage /></LazyLoad>} />
         <Route path="dashboard" element={<LazyLoad><DashboardPage /></LazyLoad>} />
         <Route path="admin" element={<LazyLoad><AdminRoute><AdminPage /></AdminRoute></LazyLoad>} />
         <Route path="*" element={<LazyLoad><NotFoundPage /></LazyLoad>} />
