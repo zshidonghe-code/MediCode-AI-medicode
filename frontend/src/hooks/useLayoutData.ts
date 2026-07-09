@@ -1,16 +1,29 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { dashboardAPI } from '../services/api'
 
+/**
+ * Layout 级统计数据 — 字段对齐真后端 /dashboard/overview 返回 shape。
+ * 后端源：backend/src/api/v1/endpoints/dashboard.py:89
+ */
 export interface TodayStats {
-  total: number
-  avgMs: number
-  savedYuan: number
+  totalCases: number
+  cmi: number
+  avgStayDays: number
+  aiCodingRate: number
+  qcPassRate: number
   loading: boolean
 }
 
+/**
+ * 质控趋势点 — 字段对齐真后端 /dashboard/qc-trend 返回 shape。
+ * 后端源：backend/src/api/v1/endpoints/dashboard.py:196
+ */
 export interface TrendPoint {
-  day: string
-  total: number
+  date: string
+  score: number
+  checks: number
+  defectRate: number
+  cmi: number | null
 }
 
 export interface UseLayoutDataResult {
@@ -21,15 +34,20 @@ export interface UseLayoutDataResult {
   refresh: () => Promise<void>
 }
 
-const EMPTY_TREND: TrendPoint[] = Array.from({ length: 7 }, (_, i) => ({
-  day: `${i + 1}`,
-  total: 0,
+const EMPTY_TREND: TrendPoint[] = Array.from({ length: 7 }, () => ({
+  date: '',
+  score: 0,
+  checks: 0,
+  defectRate: 0,
+  cmi: null,
 }))
 
 const INITIAL_STATS: TodayStats = {
-  total: 0,
-  avgMs: 0,
-  savedYuan: 0,
+  totalCases: 0,
+  cmi: 0,
+  avgStayDays: 0,
+  aiCodingRate: 0,
+  qcPassRate: 0,
   loading: true,
 }
 
@@ -50,31 +68,54 @@ export function useLayoutData(refreshIntervalMs = 60000): UseLayoutDataResult {
 
   const fetchAll = useCallback(async () => {
     try {
+      // 调真 API：getOverview + getQCTrend（之前错调 getTrendDaily，已修复）
       const [overviewRes, trendRes] = await Promise.all([
-        dashboardAPI.getOverview({ days: 1 }),
-        dashboardAPI.getTrendDaily(7),
+        dashboardAPI.getOverview({}),
+        dashboardAPI.getQCTrend(7),
       ])
       if (!isMounted.current) return
 
-      const data = overviewRes?.data ?? {}
-      const total = data.today_count ?? data.total_cases ?? 0
-      const avgMs = data.today_avg_ms ?? data.avg_processing_ms ?? 0
-      const savedYuan = data.today_saved_yuan ?? data.estimated_savings ?? total * 240
+      const overview = overviewRes?.data ?? {}
+      setTodayStats({
+        totalCases: Number(overview.total_cases ?? 0),
+        cmi: Number(overview.cmi ?? 0),
+        avgStayDays: Number(overview.avg_stay_days ?? 0),
+        aiCodingRate: Number(overview.ai_coding_rate ?? 0),
+        qcPassRate: Number(overview.qc_pass_rate ?? 0),
+        loading: false,
+      })
 
-      setTodayStats({ total, avgMs, savedYuan, loading: false })
-
-      const list: any[] = trendRes?.data?.trend ?? []
-      const arr: TrendPoint[] = list.map((row, i) => ({
-        day: row.day || row.date?.slice(5) || `${i + 1}`,
-        total: Number(row.total ?? 0),
+      const rawList = (trendRes?.data?.trend ?? []) as Array<{
+        date?: string
+        avg_score?: number
+        total_checks?: number
+        defect_rate?: number
+        cmi?: number | null
+      }>
+      const mapped: TrendPoint[] = rawList.map((row) => ({
+        date: row.date ?? '',
+        score: Number(row.avg_score ?? 0),
+        checks: Number(row.total_checks ?? 0),
+        defectRate: Number(row.defect_rate ?? 0),
+        cmi: row.cmi != null ? Number(row.cmi) : null,
       }))
-      while (arr.length < 7) arr.push({ day: `${arr.length + 1}`, total: 0 })
-      setTrend7d(arr)
+      // 补齐到 7 个点（不足则用占位）
+      while (mapped.length < 7) {
+        mapped.push({ date: '', score: 0, checks: 0, defectRate: 0, cmi: null })
+      }
+      setTrend7d(mapped.slice(0, 7))
       setError(null)
     } catch (e) {
       if (!isMounted.current) return
       setError(e instanceof Error ? e : new Error(String(e)))
-      setTodayStats((s) => ({ ...s, loading: false }))
+      setTodayStats({
+        totalCases: 0,
+        cmi: 0,
+        avgStayDays: 0,
+        aiCodingRate: 0,
+        qcPassRate: 0,
+        loading: false,
+      })
       setTrend7d(EMPTY_TREND)
     } finally {
       if (isMounted.current) setLoading(false)
