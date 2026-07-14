@@ -6,7 +6,7 @@
 规则来源：国家医保局飞行检查通报、DRG付费审核细则
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
 import re
 from typing import Optional
@@ -16,6 +16,13 @@ class RiskLevel(str, Enum):
     HIGH = "high"         # 极高风险 — 大概率拒付
     MEDIUM = "medium"     # 中等风险 — 需要复核
     LOW = "low"           # 低风险 — 建议关注
+
+
+RISK_SCORE_WEIGHTS = {
+    RiskLevel.LOW: 10,
+    RiskLevel.MEDIUM: 30,
+    RiskLevel.HIGH: 60,
+}
 
 
 @dataclass
@@ -32,14 +39,9 @@ class RejectionRisk:
 @dataclass
 class RejectionReport:
     overall_risk: RiskLevel
-    risk_score: int  # 0-100, lower = safer
+    risk_score: int  # 0-100, higher = greater rejection risk
     risks: list[RejectionRisk]
     preventable_amount: float = 0.0  # 可规避的拒付金额
-
-    def __post_init__(self):
-        if self.overall_risk == RiskLevel.HIGH:
-            self.risk_score = max(0, 100 - len([r for r in self.risks if r.risk_level == RiskLevel.HIGH]) * 30
-                                    - len([r for r in self.risks if r.risk_level == RiskLevel.MEDIUM]) * 10)
 
 
 # ── 拒付风险规则库 ──────────────────────────────────────────────
@@ -240,18 +242,12 @@ class RejectionRiskEngine:
             if risk: risks.append(risk)
 
         # Calculate overall risk
-        high_count = sum(1 for r in risks if r.risk_level == RiskLevel.HIGH)
-        medium_count = sum(1 for r in risks if r.risk_level == RiskLevel.MEDIUM)
-        low_count = sum(1 for r in risks if r.risk_level == RiskLevel.LOW)
+        score = min(100, sum(RISK_SCORE_WEIGHTS[r.risk_level] for r in risks))
 
-        score = max(0, 100 - high_count * 30 - medium_count * 10 - low_count * 3)
-
-        if high_count >= 2:
+        if score >= 60:
             overall = RiskLevel.HIGH
-        elif high_count >= 1 or medium_count >= 3:
+        elif score >= 30:
             overall = RiskLevel.MEDIUM
-        elif medium_count >= 1 or low_count >= 2:
-            overall = RiskLevel.LOW
         else:
             overall = RiskLevel.LOW
 
@@ -383,14 +379,14 @@ class RejectionRiskEngine:
         diag_text = " ".join(diag_names)
 
         for set_a, set_b, reason in CONTRADICTORY_PAIRS:
-            has_a = any(a in diag_text for a in set_a)
-            has_b = any(b in diag_text for b in set_b)
-            if has_a and has_b:
+            matched_a = next((term for term in sorted(set_a) if term in diag_text), "")
+            matched_b = next((term for term in sorted(set_b) if term in diag_text), "")
+            if matched_a and matched_b:
                 risks.append(RejectionRisk(
                     rule_id="RR-003",
                     rule_name="诊断矛盾",
                     risk_level=RiskLevel.MEDIUM,
-                    description=f"诊断中存在{reason}：{set_a.pop() if has_a else ''} vs {set_b.pop() if has_b else ''}",
+                    description=f"诊断中存在{reason}：{matched_a} vs {matched_b}",
                     suggestion="核实两份诊断的临床依据，排除编码错误或确认是否为药物性/一过性",
                 ))
         return risks[:2]  # Max 2 contradiction flags

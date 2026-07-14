@@ -187,21 +187,7 @@ class ICDCoder:
             except Exception as e:
                 logger.warning(f"Vector search failed for '{text}': {e}")
 
-        # 4. LLM-only recommendation
-        if use_llm:
-            try:
-                from src.services.llm_engine import llm_engine
-                suggestion = await llm_engine.code_recommend(
-                    text, [],
-                    context=json.dumps(context, ensure_ascii=False) if context else "",
-                )
-                if suggestion and suggestion.code:
-                    return [ICDCandidate(
-                        code=suggestion.code, name=suggestion.name,
-                        category="诊断", score=suggestion.confidence,
-                    )]
-            except Exception as e:
-                logger.warning(f"LLM-only recommendation failed for '{text}': {e}")
+        # LLM may rerank validated candidates, but must not invent an ICD code.
 
         return []
 

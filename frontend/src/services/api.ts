@@ -1,4 +1,5 @@
 import axios from 'axios'
+import type { RejectionAssessRequest, RejectionResultData } from '../types/api'
 
 const api = axios.create({
   baseURL: '/api/v1',
@@ -98,15 +99,8 @@ export const pipelineAPI = {
 
 // === Rejection API (X 功能迷你版 B) ===
 export const rejectionAPI = {
-  assess: (data: {
-    primary_diagnosis?: any
-    secondary_diagnoses?: any[]
-    procedures?: any[]
-    drg_result?: any
-    patient_info?: any
-    content?: string
-    hospital_cost?: number
-  }) => api.post('/rejection/assess', data),
+  assess: (data: RejectionAssessRequest) =>
+    api.post<RejectionResultData>('/rejection/assess', data),
 }
 
 // === Admin API ===

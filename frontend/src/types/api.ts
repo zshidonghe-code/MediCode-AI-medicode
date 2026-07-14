@@ -99,3 +99,51 @@ export interface PipelineSaveRequest {
   secondary_diagnosis_codes?: string[]
   procedure_codes?: string[]
 }
+
+export type RejectionRiskLevel = 'high' | 'medium' | 'low'
+
+export interface RejectionRiskItemData {
+  rule_id: string
+  rule_name: string
+  risk_level: RejectionRiskLevel
+  description: string
+  affected_code: string
+  suggestion: string
+  estimated_loss: number
+}
+
+export interface RejectionResultData {
+  overall_risk: RejectionRiskLevel
+  risk_score: number
+  preventable_amount: number
+  risks: RejectionRiskItemData[]
+}
+
+export type RejectionCodeItem = Pick<CodeItem, 'code' | 'name'>
+
+export interface RejectionDRGInfo {
+  drg_code: string
+  drg_name: string
+  weight: number
+  avg_los: number
+}
+
+export interface RejectionPatientInfo {
+  age: number
+  gender: string
+  days_of_stay: number
+}
+
+export interface RejectionAssessRequest {
+  primary_diagnosis?: RejectionCodeItem | null
+  secondary_diagnoses?: RejectionCodeItem[]
+  procedures?: RejectionCodeItem[]
+  drg_result?: RejectionDRGInfo
+  patient_info?: RejectionPatientInfo
+  content?: string
+  hospital_cost?: number
+}
+
+export interface RejectionPageState extends RejectionAssessRequest {
+  assessment_result?: RejectionResultData
+}

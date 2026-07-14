@@ -9,38 +9,19 @@ import {
   WarningOutlined, CheckCircleOutlined, ArrowLeftOutlined,
   SafetyCertificateOutlined, FireOutlined,
 } from '@ant-design/icons'
+import { REJECTION_RISK_META } from '../components/x_features/rejectionRiskMeta'
 import { rejectionAPI } from '../services/api'
+import type { RejectionAssessRequest, RejectionPageState, RejectionPatientInfo, RejectionResultData, RejectionRiskItemData, RejectionRiskLevel } from '../types/api'
 
 const { TextArea } = Input
 const { Title, Text, Paragraph } = Typography
 
-interface RiskItem {
-  rule_id: string
-  rule_name: string
-  risk_level: 'HIGH' | 'MEDIUM' | 'LOW' | string
-  description: string
-  affected_code?: string
-  suggestion?: string
-  estimated_loss?: number
+interface AssessmentContext {
+  secondary_diagnoses: NonNullable<RejectionAssessRequest['secondary_diagnoses']>
+  procedures: NonNullable<RejectionAssessRequest['procedures']>
+  drg_result: RejectionAssessRequest['drg_result']
+  patient_info: Pick<RejectionPatientInfo, 'age' | 'gender'>
 }
-
-interface RejectionResult {
-  overall_risk: 'high' | 'medium' | 'low' | string
-  risk_score: number
-  preventable_amount: number
-  risks: RiskItem[]
-}
-
-const RISK_META: Record<string, { label: string; color: string; bg: string; textColor: string }> = {
-  HIGH: { label: '高风险', color: 'red', bg: 'linear-gradient(135deg, #fff1f0 0%, #ffccc7 100%)', textColor: '#cf1322' },
-  high: { label: '高风险', color: 'red', bg: 'linear-gradient(135deg, #fff1f0 0%, #ffccc7 100%)', textColor: '#cf1322' },
-  MEDIUM: { label: '中风险', color: 'orange', bg: 'linear-gradient(135deg, #fffbe6 0%, #ffe58f 100%)', textColor: '#d48806' },
-  medium: { label: '中风险', color: 'orange', bg: 'linear-gradient(135deg, #fffbe6 0%, #ffe58f 100%)', textColor: '#d48806' },
-  LOW: { label: '低风险', color: 'green', bg: 'linear-gradient(135deg, #f6ffed 0%, #d9f7be 100%)', textColor: '#3f8600' },
-  low: { label: '低风险', color: 'green', bg: 'linear-gradient(135deg, #f6ffed 0%, #d9f7be 100%)', textColor: '#3f8600' },
-}
-
-const riskMeta = (key: string) => RISK_META[key] || RISK_META.MEDIUM
 
 const SAMPLE_CONTENT = `男性 65 岁,主诊:急性前壁心肌梗死(I21.0),次诊:高血压 3 级(I10.x00)、2 型糖尿病(E11.900)、慢性肾脏病 3 期(N18.3),手术:经皮冠状动脉支架植入(36.0600) + 冠状动脉造影(88.5700),住院 8 天,总费用 58000 元。既往 PCI 术后 1 年,长期服用阿司匹林+氯吡格雷。`
 
@@ -49,18 +30,27 @@ export default function RejectionPage() {
   const location = useLocation()
 
   // 来自 pipeline 的预填数据
-  const prefill = (location.state as any) || null
+  const prefill = (location.state as RejectionPageState | null) ?? null
 
   // 表单
-  const [content, setContent] = useState<string>(prefill?.content || '')
-  const [primaryCode, setPrimaryCode] = useState<string>(prefill?.primary_diagnosis?.code || '')
-  const [primaryName, setPrimaryName] = useState<string>(prefill?.primary_diagnosis?.name || '')
-  const [hospitalCost, setHospitalCost] = useState<number | null>(prefill?.hospital_cost || 0)
-  const [daysOfStay, setDaysOfStay] = useState<number | null>(prefill?.patient_info?.days_of_stay || 8)
+  const [content, setContent] = useState<string>(prefill?.content ?? '')
+  const [primaryCode, setPrimaryCode] = useState<string>(prefill?.primary_diagnosis?.code ?? '')
+  const [primaryName, setPrimaryName] = useState<string>(prefill?.primary_diagnosis?.name ?? '')
+  const [hospitalCost, setHospitalCost] = useState<number | null>(prefill?.hospital_cost ?? 0)
+  const [daysOfStay, setDaysOfStay] = useState<number | null>(prefill?.patient_info?.days_of_stay ?? 8)
+  const [assessmentContext, setAssessmentContext] = useState<AssessmentContext>({
+    secondary_diagnoses: prefill?.secondary_diagnoses ?? [],
+    procedures: prefill?.procedures ?? [],
+    drg_result: prefill?.drg_result,
+    patient_info: {
+      age: prefill?.patient_info?.age ?? 0,
+      gender: prefill?.patient_info?.gender ?? '',
+    },
+  })
 
   // 状态
   const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState<RejectionResult | null>(null)
+  const [result, setResult] = useState<RejectionResultData | null>(prefill?.assessment_result ?? null)
   const [error, setError] = useState<string | null>(null)
 
   const onAssess = useCallback(async () => {
@@ -72,10 +62,14 @@ export default function RejectionPage() {
     setError(null)
     try {
       const { data } = await rejectionAPI.assess({
+        ...assessmentContext,
         content: content.trim(),
         primary_diagnosis: primaryCode.trim() ? { code: primaryCode.trim(), name: primaryName.trim() || primaryCode.trim() } : null,
-        hospital_cost: hospitalCost || 0,
-        patient_info: { age: 0, gender: '', days_of_stay: daysOfStay || 0 },
+        hospital_cost: hospitalCost ?? 0,
+        patient_info: {
+          ...assessmentContext.patient_info,
+          days_of_stay: daysOfStay ?? 0,
+        },
       })
       setResult(data)
     } catch (e: any) {
@@ -83,7 +77,7 @@ export default function RejectionPage() {
     } finally {
       setLoading(false)
     }
-  }, [content, primaryCode, primaryName, hospitalCost, daysOfStay])
+  }, [assessmentContext, content, primaryCode, primaryName, hospitalCost, daysOfStay])
 
   const onLoadSample = () => {
     setContent(SAMPLE_CONTENT)
@@ -91,6 +85,12 @@ export default function RejectionPage() {
     setPrimaryName('急性前壁心肌梗死')
     setHospitalCost(58000)
     setDaysOfStay(8)
+    setAssessmentContext({
+      secondary_diagnoses: [],
+      procedures: [],
+      drg_result: undefined,
+      patient_info: { age: 65, gender: 'male' },
+    })
     setResult(null)
     setError(null)
   }
@@ -101,14 +101,20 @@ export default function RejectionPage() {
     setPrimaryName('')
     setHospitalCost(0)
     setDaysOfStay(8)
+    setAssessmentContext({
+      secondary_diagnoses: [],
+      procedures: [],
+      drg_result: undefined,
+      patient_info: { age: 0, gender: '' },
+    })
     setResult(null)
     setError(null)
   }
 
-  const meta = result ? riskMeta(result.overall_risk) : null
-  const highCount = result?.risks?.filter(r => r.risk_level?.toUpperCase() === 'HIGH').length || 0
-  const mediumCount = result?.risks?.filter(r => r.risk_level?.toUpperCase() === 'MEDIUM').length || 0
-  const lowCount = result?.risks?.filter(r => r.risk_level?.toUpperCase() === 'LOW').length || 0
+  const meta = result ? REJECTION_RISK_META[result.overall_risk] : null
+  const highCount = result?.risks?.filter(r => r.risk_level === 'high').length || 0
+  const mediumCount = result?.risks?.filter(r => r.risk_level === 'medium').length || 0
+  const lowCount = result?.risks?.filter(r => r.risk_level === 'low').length || 0
 
   return (
     <div>
@@ -337,14 +343,14 @@ export default function RejectionPage() {
               columns={[
                 {
                   title: '级别', dataIndex: 'risk_level', width: 90,
-                  render: (v: string) => {
-                    const m = riskMeta(v)
+                  render: (v: RejectionRiskLevel) => {
+                    const m = REJECTION_RISK_META[v]
                     return <Tag color={m.color}>{m.label}</Tag>
                   },
                 },
                 {
                   title: '检查项', dataIndex: 'rule_name', width: 180,
-                  render: (v: string, r: RiskItem) => (
+                  render: (v: string, r: RejectionRiskItemData) => (
                     <Space direction="vertical" size={0}>
                       <Text strong>{v}</Text>
                       <Text type="secondary" style={{ fontSize: 11 }} code>{r.rule_id}</Text>
@@ -353,7 +359,7 @@ export default function RejectionPage() {
                 },
                 {
                   title: '问题描述', dataIndex: 'description',
-                  render: (v: string, r: RiskItem) => (
+                  render: (v: string, r: RejectionRiskItemData) => (
                     <Space direction="vertical" size={0}>
                       <Text>{v}</Text>
                       {r.affected_code && <Tag color="default" style={{ fontSize: 11 }}>编码: {r.affected_code}</Tag>}

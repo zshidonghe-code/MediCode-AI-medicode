@@ -331,7 +331,7 @@ class LLMEngine:
                 logger.warning(f"LLM code_recommend failed, using rule fallback: {e}")
 
         # 回退到规则引擎
-        return backend.code_recommend(entity_text, candidates, context)
+        return self._rule_based.code_recommend(entity_text, candidates, context)
 
     async def qc_check(
         self, rule_id: str, **kwargs

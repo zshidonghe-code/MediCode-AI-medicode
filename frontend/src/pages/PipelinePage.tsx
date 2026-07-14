@@ -10,11 +10,11 @@ import {
   CheckCircleOutlined, LoadingOutlined, PlayCircleOutlined,
   PauseCircleOutlined, ReloadOutlined, TrophyOutlined,
 } from '@ant-design/icons'
-import { codingAPI, qcAPI, drgAPI, pipelineAPI, api } from '../services/api'
+import { codingAPI, qcAPI, drgAPI, pipelineAPI, rejectionAPI } from '../services/api'
 import IcdCodingResult from '../components/IcdCodingResult'
 import type { CodeItem, CodingResultData } from '../components/IcdCodingResult'
-import RejectionPredictor from '../components/x_features/RejectionPredictor'
 import PipelineRejectionRedirect from '../components/x_features/PipelineRejectionRedirect'
+import type { RejectionAssessRequest, RejectionResultData } from '../types/api'
 
 const { TextArea } = Input
 const { Title, Text } = Typography
@@ -83,6 +83,7 @@ interface DRGResult {
   drg_code: string; drg_name: string; is_surgical: boolean
   weight: number; rate: number; estimated_payment: number
   cc_flag: string; patient_complexity: string
+  avg_days?: number
 }
 
 const severityColor: Record<string, string> = {
@@ -105,10 +106,8 @@ export default function PipelinePage() {
   } | null>(null)
 
   const [drgResult, setDrgResult] = useState<DRGResult | null>(null)
-  const [rejectionResult, setRejectionResult] = useState<{
-    overall_risk: string; risk_score: number; preventable_amount: number
-    risks: { rule_id: string; rule_name: string; risk_level: string; description: string; suggestion: string; estimated_loss: number }[]
-  } | null>(null)
+  const [rejectionResult, setRejectionResult] = useState<RejectionResultData | null>(null)
+  const [rejectionContext, setRejectionContext] = useState<RejectionAssessRequest | null>(null)
 
   // Persisted QC result IDs for accept/reject
   const [qcResultIds, setQcResultIds] = useState<{ id: number; severity: string }[]>([])
@@ -139,6 +138,7 @@ export default function PipelinePage() {
     setQcResult(null)
     setDrgResult(null)
     setRejectionResult(null)
+    setRejectionContext(null)
     startTimeRef.current = Date.now()
     setElapsedTime(0)
 
@@ -179,15 +179,26 @@ export default function PipelinePage() {
       setCurrentStep(3)
       try {
         const priDiag = coding.primary_diagnosis
-        const { data: rejection } = await api.post('/rejection/assess', {
+        const rejectionRequest: RejectionAssessRequest = {
           primary_diagnosis: priDiag ? { code: priDiag.code, name: priDiag.name } : null,
           secondary_diagnoses: (coding.secondary_diagnoses || []).map((d: CodeItem) => ({ code: d.code, name: d.name })),
           procedures: (coding.procedures || []).map((p: CodeItem) => ({ code: p.code, name: p.name })),
-          drg_result: { drg_code: drg.drg_code || '', drg_name: drg.drg_name || '', weight: drg.weight || 1, avg_los: drg.avg_days || 7 },
-          patient_info: { age: patientAge || 0, gender: patientGender || '', days_of_stay: daysOfStay || 0 },
+          drg_result: {
+            drg_code: drg.drg_code ?? '',
+            drg_name: drg.drg_name ?? '',
+            weight: drg.weight ?? 1,
+            avg_los: drg.avg_days ?? 7,
+          },
+          patient_info: {
+            age: patientAge ?? 0,
+            gender: patientGender ?? '',
+            days_of_stay: daysOfStay ?? 0,
+          },
           content: text,
           hospital_cost: 0,
-        })
+        }
+        setRejectionContext(rejectionRequest)
+        const { data: rejection } = await rejectionAPI.assess(rejectionRequest)
         setRejectionResult(rejection)
       } catch { /* rejection is optional, don't block */ }
 
@@ -217,7 +228,7 @@ export default function PipelinePage() {
     } finally {
       setLoading(false)
     }
-  }, [content, demoRunning])
+  }, [content, demoRunning, patientAge, patientGender, daysOfStay])
 
   // ─── Demo mode: typewriter effect ──────────────────────────────────────
 
@@ -236,6 +247,7 @@ export default function PipelinePage() {
     setQcResult(null)
     setDrgResult(null)
     setRejectionResult(null)
+    setRejectionContext(null)
     setCurrentStep(-1)
     setElapsedTime(0)
 
@@ -788,19 +800,12 @@ export default function PipelinePage() {
           </Card>
         )}
 
-        {/* X 功能迷你版 B: 拒付风险实时预测 */}
-        <RejectionPredictor defaultContent="" />
-
         {/* B v2: 流水线分析完成后, 引导跳转至独立 /rejection 页面 */}
         <PipelineRejectionRedirect
-          trigger={!!rejectionResult}
+          trigger={!!rejectionResult && !!rejectionContext}
           prefill={{
-            content,
-            primary_diagnosis: codingResult?.primary_diagnosis
-              ? { code: codingResult.primary_diagnosis.code, name: codingResult.primary_diagnosis.name }
-              : null,
-            patient_info: { age: patientAge || 0, gender: patientGender || '', days_of_stay: daysOfStay || 0 },
-            hospital_cost: 0,
+            ...(rejectionContext ?? { content }),
+            assessment_result: rejectionResult ?? undefined,
           }}
         />
       </Spin>

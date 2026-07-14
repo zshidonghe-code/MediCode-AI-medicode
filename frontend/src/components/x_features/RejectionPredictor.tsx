@@ -1,31 +1,14 @@
 import { useState } from 'react'
 import { Card, Button, Input, Tag, Space, Typography, Spin, Alert, Statistic } from 'antd'
 import { rejectionAPI } from '../../services/api'
+import type { RejectionResultData } from '../../types/api'
+import { REJECTION_RISK_META } from './rejectionRiskMeta'
 
-const { Title, Text, Paragraph } = Typography
+const { Title, Text } = Typography
 const { TextArea } = Input
 
 interface RejectionPredictorProps {
   defaultContent?: string
-}
-
-interface RiskItem {
-  rule_id: string
-  rule_name: string
-  risk_level: string
-  description: string
-}
-
-const RISK_COLOR: Record<string, string> = {
-  HIGH: 'red',
-  MEDIUM: 'orange',
-  LOW: 'gold',
-}
-
-const RISK_LABEL: Record<string, string> = {
-  HIGH: '高风险',
-  MEDIUM: '中风险',
-  LOW: '低风险',
 }
 
 /**
@@ -36,12 +19,7 @@ const RISK_LABEL: Record<string, string> = {
 export function RejectionPredictor({ defaultContent = '' }: RejectionPredictorProps) {
   const [content, setContent] = useState(defaultContent)
   const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState<{
-    overall_risk: string
-    risk_score: number
-    preventable_amount: number
-    risks: RiskItem[]
-  } | null>(null)
+  const [result, setResult] = useState<RejectionResultData | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const onAssess = async () => {
@@ -102,8 +80,8 @@ export function RejectionPredictor({ defaultContent = '' }: RejectionPredictorPr
               <Space size="large" wrap>
                 <Statistic
                   title="综合风险等级"
-                  value={RISK_LABEL[result.overall_risk] || result.overall_risk}
-                  valueStyle={{ color: RISK_COLOR[result.overall_risk] === 'red' ? '#cf1322' : '#d48806' }}
+                  value={REJECTION_RISK_META[result.overall_risk].label}
+                  valueStyle={{ color: REJECTION_RISK_META[result.overall_risk].textColor }}
                 />
                 <Statistic title="风险评分" value={result.risk_score} suffix="/ 100" />
                 <Statistic
@@ -122,10 +100,10 @@ export function RejectionPredictor({ defaultContent = '' }: RejectionPredictorPr
                     {result.risks.map((r, i) => (
                       <Alert
                         key={i}
-                        type={r.risk_level === 'HIGH' ? 'error' : r.risk_level === 'MEDIUM' ? 'warning' : 'info'}
+                        type={REJECTION_RISK_META[r.risk_level].alertType}
                         message={
                           <Space>
-                            <Tag color={RISK_COLOR[r.risk_level]}>{RISK_LABEL[r.risk_level]}</Tag>
+                            <Tag color={REJECTION_RISK_META[r.risk_level].color}>{REJECTION_RISK_META[r.risk_level].label}</Tag>
                             <Text strong>{r.rule_name}</Text>
                             <Text type="secondary" code>{r.rule_id}</Text>
                           </Space>

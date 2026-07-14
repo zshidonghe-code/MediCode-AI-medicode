@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 from typing import Optional
 
-from src.services.rejection_risk import rejection_engine, RejectionReport, RejectionRisk
 from src.api.v1.endpoints.auth import get_current_user
+from src.services.rejection_risk import RiskLevel, rejection_engine
 
 router = APIRouter()
 
@@ -46,7 +46,7 @@ class RejectionRequest(BaseModel):
 class RejectionRiskItem(BaseModel):
     rule_id: str
     rule_name: str
-    risk_level: str
+    risk_level: RiskLevel
     description: str
     affected_code: str = ""
     suggestion: str = ""
@@ -54,8 +54,8 @@ class RejectionRiskItem(BaseModel):
 
 
 class RejectionResponse(BaseModel):
-    overall_risk: str
-    risk_score: int
+    overall_risk: RiskLevel
+    risk_score: int = Field(ge=0, le=100)
     preventable_amount: float
     risks: list[RejectionRiskItem]
 
@@ -76,14 +76,14 @@ async def assess_rejection_risk(
         hospital_cost=req.hospital_cost,
     )
     return RejectionResponse(
-        overall_risk=report.overall_risk.value,
+        overall_risk=report.overall_risk,
         risk_score=report.risk_score,
         preventable_amount=report.preventable_amount,
         risks=[
             RejectionRiskItem(
                 rule_id=r.rule_id,
                 rule_name=r.rule_name,
-                risk_level=r.risk_level.value,
+                risk_level=r.risk_level,
                 description=r.description,
                 affected_code=r.affected_code,
                 suggestion=r.suggestion,

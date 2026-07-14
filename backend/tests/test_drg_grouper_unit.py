@@ -1,6 +1,10 @@
 """DRG Grouper unit tests — no server required."""
 import pytest
-from src.services.drg_grouper.grouper import DRGGrouper
+from src.services.drg_grouper.grouper import (
+    ADRG_DEFS,
+    DRGGrouper,
+    MDC_NAMES,
+)
 
 
 @pytest.fixture
@@ -128,3 +132,35 @@ def test_drg_suffix_mapping(grouper):
         patient_info={},
     )
     assert no_cc.drg_code.endswith("5") or no_cc.drg_code == "MDCZ-NA"
+
+
+def test_neonatal_procedure_does_not_match_circulatory_adrg(grouper):
+    result = grouper.group(
+        primary_diag_code="P22.0",
+        secondary_diag_codes=[],
+        procedure_codes=["38.0"],
+        patient_info={"age": 0, "days_of_stay": 5},
+    )
+
+    assert result.mdc == "MDCO"
+    assert result.adrg == "PA1"
+
+
+def test_all_adrg_definitions_have_known_mdc():
+    unmapped = [
+        code
+        for mdc, code, _name, _is_surgical, _triggers, _weight in ADRG_DEFS
+        if mdc not in MDC_NAMES
+    ]
+
+    assert unmapped == []
+
+
+def test_representative_adrg_definitions_belong_to_expected_mdc():
+    definition_mdc = {code: mdc for mdc, code, *_rest in ADRG_DEFS}
+
+    assert definition_mdc["AA1"] == "MDCA"
+    assert definition_mdc["BR1"] == "MDCA"
+    assert definition_mdc["RA1"] == "MDCQ"
+    assert definition_mdc["RR2"] == "MDCR"
+    assert definition_mdc["SR1"] == "MDCS"
