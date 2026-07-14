@@ -5,6 +5,12 @@ import { MedicineBoxOutlined, ThunderboltOutlined, SafetyCertificateOutlined, Us
 import { useAuthStore } from '../services/authStore'
 
 const { Title, Text } = Typography
+const DEMO_ACCOUNTS = [
+  { role: '管理员', username: 'admin' },
+  { role: '编码员', username: 'coder' },
+  { role: '医生', username: 'doctor' },
+] as const
+
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false)
@@ -125,14 +131,33 @@ export default function LoginPage() {
           </Form>
 
           <div style={{
-            padding: '12px 16px',
+            padding: '12px 16px 14px',
             background: '#f8fafc',
             borderRadius: 8,
             border: '1px solid #e8edf2',
           }}>
-            <Text type="secondary" style={{ fontSize: 12 }}>
-              演示账号 <Text code style={{ fontSize: 12 }}>coder</Text> / <Text code style={{ fontSize: 12 }}>123456</Text>
-            </Text>
+            <Space direction="vertical" size={6} style={{ width: '100%' }}>
+              <Text strong style={{ fontSize: 12, color: '#475569' }}>
+                演示验证账号
+              </Text>
+              {DEMO_ACCOUNTS.map((account) => (
+                <div
+                  key={account.username}
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '52px minmax(0, 1fr) auto minmax(0, 1fr)',
+                    alignItems: 'center',
+                    gap: 8,
+                    textAlign: 'left',
+                  }}
+                >
+                  <Text type="secondary" style={{ fontSize: 12 }}>{account.role}</Text>
+                  <Text code style={{ fontSize: 12 }}>{account.username}</Text>
+                  <Text type="secondary" style={{ fontSize: 12 }}>/</Text>
+                  <Text code style={{ fontSize: 12 }}>123456</Text>
+                </div>
+              ))}
+            </Space>
           </div>
         </Space>
       </Card>
