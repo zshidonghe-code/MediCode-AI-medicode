@@ -1,48 +1,91 @@
 import http from '@ohos.net.http';
 import { RedactionReceipt, ReviewDocument, ReviewEvent, ReviewSnapshot } from '../model/ReviewModels';
 
+interface CreateReviewBody {
+  documents: ReviewDocument[];
+  redaction_receipt: RedactionReceipt;
+  patient_context: Record<string, Object>;
+  preferred_mode: string;
+}
+
+interface AdvanceBody {
+  expected_version: number;
+}
+
+interface ConfirmSourceBody {
+  expected_version: number;
+  action: string;
+  issue_id: string;
+  selected_document_id: string;
+  note: string;
+}
+
+interface PendingBody {
+  expected_version: number;
+  action: string;
+  issue_id: string;
+  note: string;
+}
+
+interface CompleteBody {
+  expected_version: number;
+  action: string;
+}
+
 export class ReviewGateway {
-  constructor(private baseUrl: string, private token: string) {}
+  private baseUrl: string;
+  private token: string;
+
+  constructor(baseUrl: string, token: string) {
+    this.baseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+    this.token = token;
+  }
 
   async create(documents: ReviewDocument[], receipt: RedactionReceipt): Promise<ReviewSnapshot> {
-    return this.request<ReviewSnapshot>('/api/v1/agent/reviews', http.RequestMethod.POST, {
+    const patientContext: Record<string, Object> = {};
+    const body: CreateReviewBody = {
       documents: documents,
       redaction_receipt: receipt,
-      patient_context: {},
+      patient_context: patientContext,
       preferred_mode: 'auto'
-    });
+    };
+    return this.request<ReviewSnapshot>('/api/v1/agent/reviews', http.RequestMethod.POST, body);
   }
 
   async advance(review: ReviewSnapshot): Promise<ReviewSnapshot> {
-    return this.request<ReviewSnapshot>(`/api/v1/agent/reviews/${review.id}/advance`, http.RequestMethod.POST, {
+    const body: AdvanceBody = {
       expected_version: review.version
-    });
+    };
+    return this.request<ReviewSnapshot>(`/api/v1/agent/reviews/${review.id}/advance`, http.RequestMethod.POST, body);
   }
 
   async confirmSource(review: ReviewSnapshot, issueId: string, documentId: string, note: string): Promise<ReviewSnapshot> {
-    return this.request<ReviewSnapshot>(`/api/v1/agent/reviews/${review.id}/decisions`, http.RequestMethod.POST, {
+    const body: ConfirmSourceBody = {
       expected_version: review.version,
       action: 'confirm_source',
       issue_id: issueId,
       selected_document_id: documentId,
       note: note
-    });
+    };
+    return this.request<ReviewSnapshot>(`/api/v1/agent/reviews/${review.id}/decisions`, http.RequestMethod.POST, body);
   }
 
   async markPending(review: ReviewSnapshot, issueId: string, note: string): Promise<ReviewSnapshot> {
-    return this.request<ReviewSnapshot>(`/api/v1/agent/reviews/${review.id}/decisions`, http.RequestMethod.POST, {
+    const body: PendingBody = {
       expected_version: review.version,
       action: 'mark_pending',
       issue_id: issueId,
       note: note
-    });
+    };
+    return this.request<ReviewSnapshot>(`/api/v1/agent/reviews/${review.id}/decisions`, http.RequestMethod.POST, body);
   }
 
   async complete(review: ReviewSnapshot): Promise<ReviewSnapshot> {
-    return this.request<ReviewSnapshot>(`/api/v1/agent/reviews/${review.id}/decisions`, http.RequestMethod.POST, {
+    const body: CompleteBody = {
       expected_version: review.version,
       action: 'confirm_review'
-    });
+    };
+    return this.request<ReviewSnapshot>(`/api/v1/agent/reviews/${review.id}/decisions`, http.RequestMethod.POST, body);
   }
 
   async events(review: ReviewSnapshot): Promise<ReviewEvent[]> {

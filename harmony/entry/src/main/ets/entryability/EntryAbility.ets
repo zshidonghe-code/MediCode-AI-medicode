@@ -1,4 +1,5 @@
-import { UIAbility, window } from '@kit.AbilityKit';
+import { UIAbility } from '@kit.AbilityKit';
+import window from '@ohos.window';
 
 export default class EntryAbility extends UIAbility {
   onWindowStageCreate(windowStage: window.WindowStage): void {

@@ -174,6 +174,40 @@ async def test_conflict_requires_human_confirmation_then_recalculates():
 
 
 @pytest.mark.asyncio
+async def test_pending_evidence_can_complete_with_a_visible_unresolved_action():
+    agent = ReviewAgent(MemoryReviewStore(), DeterministicTools())
+    review = await agent.create(request(), OPERATOR)
+
+    for expected_status in ("extracted", "coded", "checked", "waiting_for_human"):
+        review = await agent.advance(review.id, review.version, OPERATOR)
+        assert review.status == expected_status
+
+    issue = review.pending_actions[0]
+    review = await agent.decide(
+        review.id,
+        ReviewDecisionRequest(
+            expected_version=review.version,
+            action="mark_pending",
+            issue_id=issue["id"],
+            note="source document is required before final coding confirmation",
+        ),
+        OPERATOR,
+    )
+    assert review.status == "ready_for_confirmation"
+    assert review.pending_actions[0]["status"] == "pending_evidence"
+
+    review = await agent.decide(
+        review.id,
+        ReviewDecisionRequest(expected_version=review.version, action="confirm_review"),
+        OPERATOR,
+    )
+    assert review.status == "completed_with_pending"
+
+    report = await agent.report(review.id, OPERATOR)
+    assert report["unresolved_actions"][0]["status"] == "pending_evidence"
+
+
+@pytest.mark.asyncio
 async def test_stale_version_cannot_advance_a_review():
     agent = ReviewAgent(MemoryReviewStore(), DeterministicTools())
     review = await agent.create(request(), OPERATOR)

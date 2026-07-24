@@ -1,3 +1,4 @@
+import { AuthGateway } from '../service/AuthGateway';
 import { ReviewDocument, ReviewSnapshot } from '../model/ReviewModels';
 import { ContinuationState } from '../service/ContinuationState';
 import { LocalPrivacyGate } from '../service/LocalPrivacyGate';
@@ -10,7 +11,10 @@ const RIGHT_SURGERY = '\u53f3\u4fa7\u5168\u9acb\u5173\u8282\u7f6e\u6362\u672f\u5
 @Component
 struct Index {
   @State endpoint: string = 'http://127.0.0.1:8000';
+  @State username: string = 'coder';
+  @State password: string = '';
   @State token: string = '';
+  @State authenticated: boolean = false;
   @State admissionText: string = LEFT_FRACTURE;
   @State surgeryText: string = RIGHT_SURGERY;
   @State task: ReviewSnapshot | undefined = undefined;
@@ -57,12 +61,22 @@ struct Index {
     Column({ space: 8 }) {
       Text('\u79c1\u6709\u5316\u8fde\u63a5').fontSize(16).fontWeight(FontWeight.Medium)
       TextInput({ text: this.endpoint, placeholder: 'http://intranet-host:8000' })
-        .onChange((value: string) => this.endpoint = value)
+        .onChange((value: string) => this.changeEndpoint(value))
         .width('100%')
-      TextInput({ text: this.token, placeholder: '\u8fd0\u8425\u5458\u767b\u5f55 Token' })
+      TextInput({ text: this.username, placeholder: '\u8fd0\u8425\u8d26\u53f7' })
+        .onChange((value: string) => this.username = value)
+        .width('100%')
+      TextInput({ text: this.password, placeholder: '\u8fd0\u8425\u5458\u5bc6\u7801' })
         .type(InputType.Password)
-        .onChange((value: string) => this.token = value)
+        .onChange((value: string) => this.password = value)
         .width('100%')
+      Button(this.authenticated ? '\u5df2\u8fde\u63a5' : '\u767b\u5f55\u5185\u7f51')
+        .enabled(!this.busy && !this.authenticated)
+        .onClick(() => this.login())
+        .width('100%').backgroundColor('#176B87')
+      if (this.authenticated) {
+        Text(`\u5df2\u767b\u5f55\uff1a${this.username}`).fontSize(13).fontColor('#19715C')
+      }
     }
     .alignItems(HorizontalAlign.Start)
     .width('100%')
@@ -86,7 +100,7 @@ struct Index {
         .onChange((value: string) => this.surgeryText = value)
         .height(90).width('100%')
       Button(this.busy ? '\u5904\u7406\u4e2d...' : '\u672c\u5730\u8131\u654f\u5e76\u521b\u5efa\u5ba1\u6838')
-        .enabled(!this.busy)
+        .enabled(this.authenticated && !this.busy)
         .onClick(() => this.createReview())
         .width('100%').backgroundColor('#176B87')
       if (this.privacySummary.length > 0) {
@@ -125,15 +139,14 @@ struct Index {
   @Builder
   pendingAction() {
     if (this.task !== undefined && this.task.pending_actions.length > 0) {
-      const action = this.task.pending_actions[0];
       Text('\u53d1\u73b0\u8de8\u6587\u4e66\u4fa7\u522b\u51b2\u7a81\uff0c\u8bf7\u786e\u8ba4\u4f9d\u636e\u6765\u6e90\u3002')
         .fontSize(14).fontColor('#A54200')
       Row({ space: 8 }) {
         Button('\u4ee5\u5165\u9662\u8bb0\u5f55\u4e3a\u51c6')
-          .onClick(() => this.confirmSource(String(action['id']), 'admission'))
+          .onClick(() => this.confirmSource(String(this.task?.pending_actions[0]['id']), 'admission'))
           .backgroundColor('#B54708')
         Button('\u6807\u8bb0\u5f85\u8865\u5145')
-          .onClick(() => this.markPending(String(action['id'])))
+          .onClick(() => this.markPending(String(this.task?.pending_actions[0]['id'])))
           .backgroundColor('#667085')
       }
     }
@@ -142,6 +155,10 @@ struct Index {
   @Builder
   actionButtons() {
     if (this.task !== undefined && ['created', 'extracted', 'coded', 'checked', 'recalculate'].includes(this.task.status)) {
+      Button(this.task.status === 'recalculate' ? '\u5b8c\u6210\u4eba\u5de5\u786e\u8ba4\u540e\u91cd\u65b0\u8ba1\u7b97' : '\u81ea\u52a8\u6267\u884c\u5206\u6790\u6d41\u7a0b')
+        .enabled(!this.busy)
+        .onClick(() => this.runAutomaticAnalysis())
+        .width('100%').backgroundColor('#176B87')
       Button('\u6267\u884c\u4e0b\u4e00\u6b65\u5ba1\u6838')
         .enabled(!this.busy)
         .onClick(() => this.advance())
@@ -188,9 +205,36 @@ struct Index {
     return new ReviewGateway(this.endpoint.trim(), this.token.trim());
   }
 
+  private changeEndpoint(value: string): void {
+    this.endpoint = value;
+    this.authenticated = false;
+    this.token = '';
+  }
+
+  private async login(): Promise<void> {
+    if (this.endpoint.trim().length === 0 || this.username.trim().length === 0 || this.password.length === 0) {
+      this.message = '\u8bf7\u586b\u5199\u5185\u7f51\u5730\u5740\u3001\u8d26\u53f7\u548c\u5bc6\u7801\u3002';
+      return;
+    }
+    try {
+      this.busy = true;
+      const session = await new AuthGateway(this.endpoint.trim()).login(this.username.trim(), this.password);
+      this.token = session.access_token;
+      this.authenticated = true;
+      this.password = '';
+      this.message = '\u8fde\u63a5\u6210\u529f\uff0c\u53ef\u5f00\u59cb\u672c\u5730\u8131\u654f\u5ba1\u6838\u3002';
+    } catch (error) {
+      this.authenticated = false;
+      this.token = '';
+      this.message = `\u767b\u5f55\u5931\u8d25: ${String(error)}`;
+    } finally {
+      this.busy = false;
+    }
+  }
+
   private async createReview(): Promise<void> {
-    if (this.endpoint.trim().length === 0 || this.token.trim().length === 0) {
-      this.message = '\u8bf7\u5148\u586b\u5199\u5185\u7f51\u5730\u5740\u548c\u8fd0\u8425\u5458 Token\u3002';
+    if (!this.authenticated || this.token.trim().length === 0) {
+      this.message = '\u8bf7\u5148\u767b\u5f55\u5185\u7f51\u3002';
       return;
     }
     try {
@@ -216,6 +260,27 @@ struct Index {
       await this.refreshEvents();
     } catch (error) {
       this.message = `\u5904\u7406\u5931\u8d25: ${String(error)}`;
+    } finally {
+      this.busy = false;
+    }
+  }
+
+  private async runAutomaticAnalysis(): Promise<void> {
+    if (this.task === undefined) return;
+    try {
+      this.busy = true;
+      while (['created', 'extracted', 'coded', 'checked', 'recalculate'].includes(this.task.status)) {
+        this.task = await this.gateway().advance(this.task);
+        await this.refreshEvents();
+        if (this.task.status === 'waiting_for_human' || this.task.status === 'ready_for_confirmation') {
+          break;
+        }
+      }
+      this.message = this.task.status === 'waiting_for_human'
+        ? '\u5206\u6790\u5df2\u6682\u505c\uff0c\u8bf7\u4eba\u5de5\u786e\u8ba4\u8bc1\u636e\u6765\u6e90\u3002'
+        : `\u5206\u6790\u5df2\u5b8c\u6210\uff0c\u5f53\u524d\u9636\u6bb5\uff1a${this.task.status}`;
+    } catch (error) {
+      this.message = `\u81ea\u52a8\u5206\u6790\u5931\u8d25: ${String(error)}`;
     } finally {
       this.busy = false;
     }

@@ -1,5 +1,13 @@
 export type RecordType = 'admission' | 'course' | 'surgery' | 'discharge' | 'consultation' | 'exam' | 'lab';
 
+export interface AuthSession {
+  access_token: string;
+  token_type: string;
+  username: string;
+  role: string;
+  name: string;
+}
+
 export interface ReviewDocument {
   id: string;
   title: string;
