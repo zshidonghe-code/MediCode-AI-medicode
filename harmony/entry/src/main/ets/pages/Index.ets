@@ -4,8 +4,8 @@ import { ContinuationState } from '../service/ContinuationState';
 import { LocalPrivacyGate } from '../service/LocalPrivacyGate';
 import { ReviewGateway } from '../service/ReviewGateway';
 
-const LEFT_FRACTURE = '\u5de6\u4fa7\u80a1\u9aa8\u9888\u9aa8\u6298\uff0c\u8be6\u89c1\u5165\u9662\u8bb0\u5f55\u3002';
-const RIGHT_SURGERY = '\u53f3\u4fa7\u5168\u9acb\u5173\u8282\u7f6e\u6362\u672f\u5df2\u5b8c\u6210\u3002';
+const LEFT_FRACTURE = '\u5de6\u4fa7\u5168\u9acb\u5173\u8282\u7f6e\u6362\u672f\u540e\u5165\u9662\u590d\u67e5\uff0c\u5207\u53e3\u60c5\u51b5\u7a33\u5b9a\u3002';
+const RIGHT_SURGERY = '\u53f3\u4fa7\u5168\u9acb\u5173\u8282\u7f6e\u6362\u672f\u5df2\u5b8c\u6210\uff0c\u672f\u540e\u751f\u547d\u4f53\u5f81\u5e73\u7a33\u3002';
 
 @Entry
 @Component
@@ -21,7 +21,19 @@ struct Index {
   @State message: string = '\u5c1a\u672a\u521b\u5efa\u5ba1\u6838\u4efb\u52a1';
   @State privacySummary: string = '';
   @State timeline: string = '';
-  @State report: string = '';
+  @State reportVisible: boolean = false;
+  @State reportStatus: string = '';
+  @State reportMode: string = '';
+  @State reportQualityScore: string = '--';
+  @State reportIssueCount: string = '0';
+  @State reportCriticalCount: string = '0';
+  @State reportMajorCount: string = '0';
+  @State reportPrimaryDiagnosis: string = '\u672a\u751f\u6210';
+  @State reportProcedure: string = '\u65e0';
+  @State reportEvidence: string = '\u672a\u53d1\u73b0\u8de8\u6587\u4e66\u8bc1\u636e\u51b2\u7a81\u3002';
+  @State reportDecision: string = '\u6682\u65e0\u4eba\u5de5\u51b3\u7b56\u3002';
+  @State reportRedaction: string = '\u672c\u5730\u8131\u654f\u5df2\u5904\u7406 0 \u9879\u3002';
+  @State reportIssues: string = '\u6682\u65e0\u8d28\u63a7\u95ee\u9898\u3002';
   @State busy: boolean = false;
 
   build() {
@@ -31,6 +43,7 @@ struct Index {
         this.connectionPanel()
         this.documentPanel()
         this.taskPanel()
+        this.reportPanel()
         this.timelinePanel()
       }
       .width('100%')
@@ -125,9 +138,6 @@ struct Index {
         this.pendingAction()
         this.actionButtons()
       }
-      if (this.report.length > 0) {
-        Text(this.report).fontSize(12).fontColor('#34445C').maxLines(8)
-      }
     }
     .alignItems(HorizontalAlign.Start)
     .width('100%')
@@ -137,16 +147,80 @@ struct Index {
   }
 
   @Builder
+  reportPanel() {
+    if (this.reportVisible) {
+      Column({ space: 12 }) {
+        Row() {
+          Column({ space: 4 }) {
+            Text('\u5ba1\u6838\u62a5\u544a').fontSize(18).fontWeight(FontWeight.Bold).fontColor('#172B4D')
+            Text('\u57fa\u4e8e\u8131\u654f\u4efb\u52a1\u7684\u8d28\u91cf\u4e0e\u8bc1\u636e\u590d\u6838\u7ed3\u679c')
+              .fontSize(13).fontColor('#5B6B7F')
+          }
+          .alignItems(HorizontalAlign.Start)
+          Blank()
+          Text(this.reportStatus === 'completed' ? '\u5df2\u5b8c\u6210' : this.reportStatus)
+            .fontSize(13).fontColor('#19715C')
+        }
+        .width('100%')
+
+        Row({ space: 8 }) {
+          Column({ space: 4 }) {
+            Text(this.reportQualityScore).fontSize(25).fontWeight(FontWeight.Bold).fontColor('#B54708')
+            Text('\u8d28\u63a7\u8bc4\u5206').fontSize(12).fontColor('#5B6B7F')
+          }
+          .width('32%').padding(8).backgroundColor('#FFF7ED').borderRadius(4)
+          Column({ space: 4 }) {
+            Text(this.reportIssueCount).fontSize(25).fontWeight(FontWeight.Bold).fontColor('#B42318')
+            Text('\u53d1\u73b0\u95ee\u9898').fontSize(12).fontColor('#5B6B7F')
+          }
+          .width('32%').padding(8).backgroundColor('#FEF3F2').borderRadius(4)
+          Column({ space: 4 }) {
+            Text(this.reportCriticalCount).fontSize(25).fontWeight(FontWeight.Bold).fontColor('#B42318')
+            Text('\u4e25\u91cd\u95ee\u9898').fontSize(12).fontColor('#5B6B7F')
+          }
+          .width('32%').padding(8).backgroundColor('#FEF3F2').borderRadius(4)
+        }
+        .width('100%')
+        .justifyContent(FlexAlign.SpaceBetween)
+        Text('\u4e25\u91cd\u95ee\u9898 ' + this.reportCriticalCount + '  |  \u4e3b\u8981\u95ee\u9898 ' + this.reportMajorCount)
+          .fontSize(12).fontColor('#5B6B7F').width('100%')
+
+        Text('\u7f16\u7801\u7ed3\u8bba').fontSize(15).fontWeight(FontWeight.Medium).fontColor('#172B4D')
+        Text('\u4e3b\u8981\u8bca\u65ad\uff1a' + this.reportPrimaryDiagnosis)
+          .fontSize(13).fontColor('#34445C').width('100%')
+        Text('\u624b\u672f\u7f16\u7801\uff1a' + this.reportProcedure)
+          .fontSize(13).fontColor('#34445C').width('100%')
+        Text('\u5206\u6790\u6a21\u5f0f\uff1a' + this.reportMode)
+          .fontSize(13).fontColor('#34445C').width('100%')
+
+        Text('\u8bc1\u636e\u590d\u6838').fontSize(15).fontWeight(FontWeight.Medium).fontColor('#172B4D')
+        Text(this.reportEvidence).fontSize(13).fontColor('#A54200').width('100%')
+        Text('\u4eba\u5de5\u51b3\u7b56\uff1a' + this.reportDecision)
+          .fontSize(13).fontColor('#34445C').width('100%')
+
+        Text('\u91cd\u70b9\u8d28\u63a7\u95ee\u9898').fontSize(15).fontWeight(FontWeight.Medium).fontColor('#172B4D')
+        Text(this.reportIssues).fontSize(13).fontColor('#34445C').width('100%').maxLines(14)
+        Text(this.reportRedaction).fontSize(12).fontColor('#5B6B7F').width('100%')
+      }
+      .alignItems(HorizontalAlign.Start)
+      .width('100%')
+      .padding(14)
+      .backgroundColor(Color.White)
+      .borderRadius(6)
+    }
+  }
+
+  @Builder
   pendingAction() {
-    if (this.task !== undefined && this.task.pending_actions.length > 0) {
+    if (this.hasOpenPendingAction()) {
       Text('\u53d1\u73b0\u8de8\u6587\u4e66\u4fa7\u522b\u51b2\u7a81\uff0c\u8bf7\u786e\u8ba4\u4f9d\u636e\u6765\u6e90\u3002')
         .fontSize(14).fontColor('#A54200')
       Row({ space: 8 }) {
         Button('\u4ee5\u5165\u9662\u8bb0\u5f55\u4e3a\u51c6')
-          .onClick(() => this.confirmSource(String(this.task?.pending_actions[0]['id']), 'admission'))
+          .onClick(() => this.confirmSource(this.openPendingActionId(), 'admission'))
           .backgroundColor('#B54708')
         Button('\u6807\u8bb0\u5f85\u8865\u5145')
-          .onClick(() => this.markPending(String(this.task?.pending_actions[0]['id'])))
+          .onClick(() => this.markPending(this.openPendingActionId()))
           .backgroundColor('#667085')
       }
     }
@@ -170,10 +244,11 @@ struct Index {
         .onClick(() => this.complete())
         .width('100%').backgroundColor('#176B87')
     }
-    if (this.task !== undefined && ['completed', 'completed_with_pending'].includes(this.task.status)) {
-      Button('\u67e5\u770b\u5ba1\u6838\u62a5\u544a')
-        .onClick(() => this.loadReport())
-        .width('100%').backgroundColor('#176B87')
+      if (this.task !== undefined && ['completed', 'completed_with_pending'].includes(this.task.status)) {
+        Button('\u67e5\u770b\u5ba1\u6838\u62a5\u544a')
+          .enabled(!this.busy)
+          .onClick(() => this.loadReport())
+          .width('100%').backgroundColor('#176B87')
       Button('\u751f\u6210\u8de8\u8bbe\u5907\u7eed\u529e\u72b6\u6001')
         .onClick(() => this.message = ContinuationState.serialize(this.task as ReviewSnapshot))
         .width('100%').backgroundColor('#667085')
@@ -201,8 +276,34 @@ struct Index {
     ];
   }
 
+  private openPendingActions(): Array<Record<string, Object>> {
+    if (this.task === undefined) {
+      return [];
+    }
+    return this.task.pending_actions.filter((action: Record<string, Object>) => String(action['status']) === 'open');
+  }
+
+  private hasOpenPendingAction(): boolean {
+    return this.openPendingActions().length > 0;
+  }
+
+  private openPendingActionId(): string {
+    const actions = this.openPendingActions();
+    return actions.length > 0 ? String(actions[0]['id']) : '';
+  }
+
   private gateway(): ReviewGateway {
     return new ReviewGateway(this.endpoint.trim(), this.token.trim());
+  }
+
+  private errorText(error: Object): string {
+    const value = error as Record<string, Object>;
+    const message = value['message'];
+    if (message !== undefined) {
+      return String(message);
+    }
+    const serialized = JSON.stringify(error);
+    return serialized === undefined ? String(error) : serialized;
   }
 
   private changeEndpoint(value: string): void {
@@ -226,7 +327,7 @@ struct Index {
     } catch (error) {
       this.authenticated = false;
       this.token = '';
-      this.message = `\u767b\u5f55\u5931\u8d25: ${String(error)}`;
+      this.message = `\u767b\u5f55\u5931\u8d25: ${this.errorText(error)}`;
     } finally {
       this.busy = false;
     }
@@ -245,7 +346,7 @@ struct Index {
       this.message = '\u5ba1\u6838\u4efb\u52a1\u5df2\u521b\u5efa\uff0c\u8bf7\u6267\u884c\u4e0b\u4e00\u6b65\u3002';
       await this.refreshEvents();
     } catch (error) {
-      this.message = `\u521b\u5efa\u5931\u8d25: ${String(error)}`;
+      this.message = `\u521b\u5efa\u5931\u8d25: ${this.errorText(error)}`;
     } finally {
       this.busy = false;
     }
@@ -253,16 +354,27 @@ struct Index {
 
   private async advance(): Promise<void> {
     if (this.task === undefined) return;
-    try {
-      this.busy = true;
-      this.task = await this.gateway().advance(this.task);
-      this.message = `\u5df2\u63a8\u8fdb\u5230 ${this.task.status}`;
-      await this.refreshEvents();
-    } catch (error) {
-      this.message = `\u5904\u7406\u5931\u8d25: ${String(error)}`;
-    } finally {
-      this.busy = false;
-    }
+      try {
+        this.busy = true;
+        this.task = await this.gateway().advance(this.task);
+        this.message = `\u5df2\u63a8\u8fdb\u5230 ${this.task.status}`;
+        await this.refreshEvents();
+      } catch (error) {
+        const detail = this.errorText(error);
+        if (detail.includes('(409)')) {
+          try {
+            this.task = await this.gateway().get(this.task.id);
+            await this.refreshEvents();
+            this.message = `\u4efb\u52a1\u72b6\u6001\u5df2\u5237\u65b0\u5230 ${this.task.status}\uff0c\u53ef\u7ee7\u7eed\u5206\u6790\u3002`;
+          } catch (refreshError) {
+            this.message = `\u5237\u65b0\u4efb\u52a1\u5931\u8d25: ${this.errorText(refreshError)}`;
+          }
+        } else {
+          this.message = `\u5904\u7406\u5931\u8d25: ${detail}`;
+        }
+      } finally {
+        this.busy = false;
+      }
   }
 
   private async runAutomaticAnalysis(): Promise<void> {
@@ -280,7 +392,7 @@ struct Index {
         ? '\u5206\u6790\u5df2\u6682\u505c\uff0c\u8bf7\u4eba\u5de5\u786e\u8ba4\u8bc1\u636e\u6765\u6e90\u3002'
         : `\u5206\u6790\u5df2\u5b8c\u6210\uff0c\u5f53\u524d\u9636\u6bb5\uff1a${this.task.status}`;
     } catch (error) {
-      this.message = `\u81ea\u52a8\u5206\u6790\u5931\u8d25: ${String(error)}`;
+      this.message = `\u81ea\u52a8\u5206\u6790\u5931\u8d25: ${this.errorText(error)}`;
     } finally {
       this.busy = false;
     }
@@ -294,7 +406,7 @@ struct Index {
       this.message = '\u4f9d\u636e\u5df2\u786e\u8ba4\uff0c\u8bf7\u91cd\u65b0\u8ba1\u7b97\u7f16\u7801\u5efa\u8bae\u3002';
       await this.refreshEvents();
     } catch (error) {
-      this.message = `\u786e\u8ba4\u5931\u8d25: ${String(error)}`;
+      this.message = `\u786e\u8ba4\u5931\u8d25: ${this.errorText(error)}`;
     } finally {
       this.busy = false;
     }
@@ -308,7 +420,7 @@ struct Index {
       this.message = '\u8be5\u8bc1\u636e\u5df2\u6807\u8bb0\u5f85\u8865\u5145\uff0c\u53ef\u4ee5\u7ee7\u7eed\u4eba\u5de5\u786e\u8ba4\u3002';
       await this.refreshEvents();
     } catch (error) {
-      this.message = `\u6807\u8bb0\u5931\u8d25: ${String(error)}`;
+      this.message = `\u6807\u8bb0\u5931\u8d25: ${this.errorText(error)}`;
     } finally {
       this.busy = false;
     }
@@ -322,7 +434,7 @@ struct Index {
       await this.loadReport();
       await this.refreshEvents();
     } catch (error) {
-      this.message = `\u5b8c\u6210\u5931\u8d25: ${String(error)}`;
+      this.message = `\u5b8c\u6210\u5931\u8d25: ${this.errorText(error)}`;
     } finally {
       this.busy = false;
     }
@@ -334,10 +446,128 @@ struct Index {
     this.timeline = events.map((event) => `${event.sequence}. ${event.phase}: ${event.event_type}`).join('\n');
   }
 
+  private valueText(value: Object | undefined, fallback: string): string {
+    if (value === undefined) {
+      return fallback;
+    }
+    const text = String(value);
+    return text === 'null' ? fallback : text;
+  }
+
+  private severityText(value: Object | undefined): string {
+    const severity = this.valueText(value, '\u63d0\u793a');
+    if (severity === 'critical') {
+      return '\u4e25\u91cd';
+    }
+    if (severity === 'major') {
+      return '\u4e3b\u8981';
+    }
+    if (severity === 'minor') {
+      return '\u4e00\u822c';
+    }
+    return severity;
+  }
+
+  private actionText(value: Object | undefined): string {
+    const action = this.valueText(value, '\u672a\u77e5\u64cd\u4f5c');
+    if (action === 'confirm_source') {
+      return '\u786e\u8ba4\u8bc1\u636e\u6765\u6e90';
+    }
+    if (action === 'confirm_review') {
+      return '\u786e\u8ba4\u5b8c\u6210\u5ba1\u6838';
+    }
+    return action;
+  }
+
+  private applyReport(report: Record<string, Object>): void {
+    this.reportVisible = true;
+    this.reportStatus = this.valueText(report['status'], '\u672a\u77e5');
+    this.reportMode = this.valueText(report['mode'], '\u672a\u77e5');
+    const emptyObject: Record<string, Object> = {};
+
+    const codingValue = report['coding'];
+    const coding = codingValue === undefined ? emptyObject : codingValue as Record<string, Object>;
+    const primaryValue = coding['primary_diagnosis'];
+    if (primaryValue === undefined || String(primaryValue) === 'null') {
+      this.reportPrimaryDiagnosis = '\u5f85\u8865\u5145\uff1a\u672a\u68c0\u51fa\u660e\u786e\u4e3b\u8bca\u65ad';
+    } else {
+      const primary = primaryValue as Record<string, Object>;
+      this.reportPrimaryDiagnosis = this.valueText(primary['code'], '') + ' ' +
+        this.valueText(primary['name'], '\u672a\u547d\u540d');
+    }
+
+    const proceduresValue = coding['procedures'];
+    const procedures = proceduresValue === undefined ? [] : proceduresValue as Array<Record<string, Object>>;
+    if (procedures.length > 0) {
+      const procedure = procedures[0];
+      this.reportProcedure = this.valueText(procedure['code'], '') + ' ' +
+        this.valueText(procedure['name'], '\u672a\u547d\u540d') + ' (' +
+        this.valueText(procedure['confidence'], '\u65e0\u7f6e\u4fe1\u5ea6') + ')';
+    } else {
+      this.reportProcedure = '\u672a\u68c0\u51fa\u624b\u672f\u7f16\u7801';
+    }
+
+    const qualityValue = report['quality'];
+    const quality = qualityValue === undefined ? emptyObject : qualityValue as Record<string, Object>;
+    this.reportQualityScore = this.valueText(quality['qc_score'], '--') + ' / 100';
+    this.reportIssueCount = this.valueText(quality['total_issues'], '0');
+    this.reportCriticalCount = this.valueText(quality['critical_count'], '0');
+    this.reportMajorCount = this.valueText(quality['major_count'], '0');
+
+    const issuesValue = quality['issues'];
+    const issues = issuesValue === undefined ? [] : issuesValue as Array<Record<string, Object>>;
+    if (issues.length === 0) {
+      this.reportIssues = '\u6682\u65e0\u8d28\u63a7\u95ee\u9898\u3002';
+    } else {
+      this.reportIssues = issues.map((issue: Record<string, Object>, index: number) => {
+        const severity = this.severityText(issue['severity']);
+        const name = this.valueText(issue['rule_name'], '\u672a\u547d\u540d\u89c4\u5219');
+        const description = this.valueText(issue['description'], '\u65e0\u63cf\u8ff0');
+        const suggestion = this.valueText(issue['suggestion'], '\u8bf7\u4eba\u5de5\u6838\u5b9e');
+        return (index + 1) + '. [' + severity + '] ' + name + '\n' + description + '\n\u5efa\u8bae\uff1a' + suggestion;
+      }).join('\n\n');
+    }
+
+    const evidenceValue = report['evidence'];
+    const evidence = evidenceValue === undefined ? emptyObject : evidenceValue as Record<string, Object>;
+    const conflictsValue = evidence['conflicts'];
+    const conflicts = conflictsValue === undefined ? [] : conflictsValue as Array<Record<string, Object>>;
+    if (conflicts.length > 0) {
+      const conflict = conflicts[0];
+      const title = this.valueText(conflict['title'], '\u8bc1\u636e\u4e0d\u4e00\u81f4');
+      const displayTitle = title.includes('laterality') ? '\u8de8\u6587\u4e66\u4fa7\u522b\u51b2\u7a81' : title;
+      this.reportEvidence = '\u53d1\u73b0 ' + conflicts.length + ' \u4e2a\u8de8\u6587\u4e66\u8bc1\u636e\u51b2\u7a81\uff1a' +
+        displayTitle + '\u3002\u5df2\u8fdb\u5165\u4eba\u5de5\u590d\u6838\u3002';
+    } else {
+      this.reportEvidence = '\u672a\u53d1\u73b0\u8de8\u6587\u4e66\u8bc1\u636e\u51b2\u7a81\u3002';
+    }
+
+    const decisionsValue = report['decisions'];
+    const decisions = decisionsValue === undefined ? [] : decisionsValue as Array<Record<string, Object>>;
+    if (decisions.length > 0) {
+      this.reportDecision = '\u5df2\u8bb0\u5f55 ' + decisions.length + ' \u9879\u4eba\u5de5\u51b3\u7b56\uff1a' +
+        decisions.map((decision: Record<string, Object>) => this.actionText(decision['action'])).join('\u3001');
+    } else {
+      this.reportDecision = '\u6682\u65e0\u4eba\u5de5\u51b3\u7b56\u3002';
+    }
+
+    const receiptValue = report['redaction_receipt'];
+    const receipt = receiptValue === undefined ? emptyObject : receiptValue as Record<string, Object>;
+    this.reportRedaction = '\u672c\u5730\u8131\u654f\u5df2\u5904\u7406 ' + this.valueText(receipt['redacted_count'], '0') + ' \u9879\u3002';
+  }
+
   private async loadReport(): Promise<void> {
     if (this.task === undefined) return;
-    const report = await this.gateway().report(this.task);
-    this.report = JSON.stringify(report, null, 2);
-    this.message = '\u5ba1\u6838\u62a5\u544a\u5df2\u751f\u6210\uff0c\u4ec5\u5305\u542b\u8131\u654f\u4efb\u52a1\u6570\u636e\u3002';
+    try {
+      this.busy = true;
+      this.message = '\u6b63\u5728\u52a0\u8f7d\u5ba1\u6838\u62a5\u544a...';
+      const report = await this.gateway().report(this.task);
+      this.applyReport(report);
+      this.message = '\u5ba1\u6838\u62a5\u544a\u5df2\u751f\u6210\uff0c\u4ec5\u5305\u542b\u8131\u654f\u4efb\u52a1\u6570\u636e\u3002';
+    } catch (error) {
+      this.message = '\u67e5\u770b\u62a5\u544a\u5931\u8d25: ' + this.errorText(error);
+    } finally {
+      this.busy = false;
+    }
   }
 }

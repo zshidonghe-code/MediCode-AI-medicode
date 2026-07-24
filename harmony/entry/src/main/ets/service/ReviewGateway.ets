@@ -59,6 +59,10 @@ export class ReviewGateway {
     return this.request<ReviewSnapshot>(`/api/v1/agent/reviews/${review.id}/advance`, http.RequestMethod.POST, body);
   }
 
+  async get(reviewId: string): Promise<ReviewSnapshot> {
+    return this.request<ReviewSnapshot>(`/api/v1/agent/reviews/${reviewId}`, http.RequestMethod.GET);
+  }
+
   async confirmSource(review: ReviewSnapshot, issueId: string, documentId: string, note: string): Promise<ReviewSnapshot> {
     const body: ConfirmSourceBody = {
       expected_version: review.version,
@@ -108,7 +112,7 @@ export class ReviewGateway {
         extraData: body === undefined ? undefined : JSON.stringify(body),
         expectDataType: http.HttpDataType.STRING,
         connectTimeout: 8000,
-        readTimeout: 20000
+        readTimeout: 130000
       });
       const text = response.result.toString();
       if (response.responseCode < 200 || response.responseCode >= 300) {
