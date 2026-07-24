@@ -1,7 +1,9 @@
 from fastapi import APIRouter
-from src.api.v1.endpoints import coding, drg, qc, dashboard, auth, admin, pipeline, rejection
+from src.api.v1.endpoints import coding, drg, qc, dashboard, auth, admin, pipeline, rejection, review_agent
 
 api_router = APIRouter()
+
+api_router.include_router(review_agent.router, prefix="/agent/reviews", tags=["Review Agent"])
 
 api_router.include_router(auth.router, prefix="/auth", tags=["认证"])
 api_router.include_router(coding.router, prefix="/coding", tags=["编码"])
