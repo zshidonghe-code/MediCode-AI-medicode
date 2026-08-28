@@ -10,6 +10,7 @@ import os
 import sys
 from datetime import date
 from pathlib import Path
+from typing import Any, cast
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
@@ -52,7 +53,7 @@ def _load_icd_json(filename: str) -> list[dict]:
         print(f"WARNING: ICD data file not found: {path}")
         return []
     with open(path, encoding="utf-8") as f:
-        return json.load(f)
+        return cast(list[dict[str, Any]], json.load(f))
 
 
 async def seed_icd_codes():
@@ -435,7 +436,7 @@ async def seed_demo_patients():
         records = []
         for r in demo_records:
             r_copy = dict(r)
-            r_copy["patient_id"] = pid_map[r["patient_id"]]
+            r_copy["patient_id"] = pid_map[str(r["patient_id"])]
             records.append(MedicalRecord(**r_copy))
         session.add_all(records)
         await session.commit()
