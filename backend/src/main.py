@@ -10,7 +10,6 @@ from src.config.settings import get_settings
 from src.models import init_db  # registers all models on Base.metadata
 from src.models.database import async_session, engine
 from src.models.patient import Patient
-from src.models.icd import ICDCode
 from src.api.router import api_router
 
 logger = logging.getLogger(__name__)
@@ -90,18 +89,13 @@ async def lifespan(app: FastAPI):
     # Startup
     await init_db()
 
-    # Auto-seed ICD codes + demo data if database is empty (competition demo safety)
+    # Auto-seed reference data + demo data if database is empty (competition demo safety)
     try:
         async with async_session() as db:
-            icd_count = (await db.execute(select(func.count()).select_from(ICDCode))).scalar() or 0
             patient_count = (await db.execute(select(func.count()).select_from(Patient))).scalar() or 0
 
-        if icd_count == 0:
-            logger.info("ICD codes empty, auto-seeding reference data...")
-            from src.scripts.seed_data import seed_icd_codes, seed_drg_groups, seed_qc_rules
-            await seed_icd_codes()
-            await seed_drg_groups()
-            await seed_qc_rules()
+        from src.scripts.seed_data import seed_reference_data_if_needed
+        if await seed_reference_data_if_needed():
             async with async_session() as db:
                 await db.execute(text("ANALYZE"))
                 await db.commit()

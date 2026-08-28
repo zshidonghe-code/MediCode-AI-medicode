@@ -24,3 +24,25 @@ requires `DEVECO_SDK_HOME` to point to the DevEco `sdk` directory and
 `JAVA_HOME` to point to DevEco's bundled JBR.
 
 The intended demonstration sequence is documented in `docs/DEMO_CHECKLIST.md`.
+
+## Scope boundary
+
+HarmonyOS is a native review client and evidence-confirmation surface. It is an
+independent client for the existing MediCode Agent API, not a second
+implementation of the React web application.
+
+| Capability | Native implementation |
+|---|---|
+| Local privacy gate | `entry/src/main/ets/service/LocalPrivacyGate.ets` checks common identity, phone, and ID-card patterns before upload. |
+| Authentication | `entry/src/main/ets/service/AuthGateway.ets` signs in against the backend. |
+| Review orchestration | `entry/src/main/ets/service/ReviewGateway.ets` calls create, advance, decision, event, and report routes. |
+| Evidence decision | `entry/src/main/ets/pages/Index.ets` presents conflicts and records the operator's selected source. |
+| Continuation state | `entry/src/main/ets/service/ContinuationState.ets` keeps recoverable task state for network or version errors. |
+| Review report | `entry/src/main/ets/pages/Index.ets` renders the redacted summary, coding, risks, evidence, and event timeline returned by the Agent API. |
+
+The backend remains responsible for NLP extraction, ICD coding, quality checks,
+DRG grouping, and rejection-risk assessment. The HarmonyOS client does not claim
+to replace coders, make unattended final coding decisions, or represent a
+hospital production deployment. Competition materials should describe the
+HarmonyOS contribution as the native privacy, evidence-confirmation, and
+auditable review experience mapped above.

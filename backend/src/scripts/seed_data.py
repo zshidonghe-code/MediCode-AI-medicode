@@ -16,12 +16,34 @@ from src.models.database import async_session, engine, Base
 from src.models.icd import ICDCode, ICDVersion, DRGGroup
 from src.models.patient import Patient, MedicalRecord, Gender, RecordType
 from src.models.qc import QCRule, QCSeverity, QCRuleType
-from sqlalchemy import select, delete
+from sqlalchemy import delete, func, select
 from datetime import date
 
 
 # 从统一的 JSON 数据文件加载 ICD 编码
 _DATA_DIR = Path(__file__).parent.parent / "data"
+
+
+async def seed_reference_data_if_needed() -> bool:
+    """Seed each reference dataset independently and report whether work was done."""
+    async with async_session() as session:
+        counts = {
+            "icd_codes": (await session.execute(select(func.count()).select_from(ICDCode))).scalar() or 0,
+            "drg_groups": (await session.execute(select(func.count()).select_from(DRGGroup))).scalar() or 0,
+            "qc_rules": (await session.execute(select(func.count()).select_from(QCRule))).scalar() or 0,
+        }
+
+    seeded = False
+    if counts["icd_codes"] == 0:
+        await seed_icd_codes()
+        seeded = True
+    if counts["drg_groups"] == 0:
+        await seed_drg_groups()
+        seeded = True
+    if counts["qc_rules"] == 0:
+        await seed_qc_rules()
+        seeded = True
+    return seeded
 
 
 def _load_icd_json(filename: str) -> list[dict]:
