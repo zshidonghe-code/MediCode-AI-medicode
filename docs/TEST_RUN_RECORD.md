@@ -4,7 +4,7 @@
 
 - **执行日期**：2026-08-29
 - **仓库**：`C:\Users\Donghe\Desktop\04_MediCode码医\MediCode`
-- **代码版本**：`664cd88` 及本次回归测试补充
+- **代码版本**：`71bc2d5`
 - **测试命令**：`backend/.venv/Scripts/python.exe -m pytest -q`
 - **服务依赖**：启动隔离 SQLite 数据库服务于 `127.0.0.1:8001`
 - **LLM**：未启用，测试覆盖规则模式和接口降级路径
