@@ -43,6 +43,9 @@ ollama_pull_result.json
 # Generated outputs
 *.pdf
 *.bak
+.coverage
+coverage.xml
+htmlcov/
 # output/ — kept: competition deliverables (.docx/.pptx)
 
 # Local dev logs

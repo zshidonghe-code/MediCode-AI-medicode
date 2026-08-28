@@ -33,8 +33,8 @@
 | 工具 | 命令 | 结果 |
 |---|---|---|
 | Ruff（本次改动相关文件） | `ruff check src/main.py src/scripts/seed_data.py tests/test_seed_data.py tests/test_startup.py` | 通过 |
-| Ruff（全部源码） | `ruff check src` | 未通过：200 项既有问题，91 项可自动修复 |
-| mypy（全部源码） | `mypy src` | 未通过：14 个文件共 31 项类型问题 |
+| Ruff（全部源码） | `ruff check src` | 未通过：195 项既有问题，86 项可自动修复 |
+| mypy（全部源码） | `mypy src` | 未通过：13 个文件共 29 项类型问题 |
 
 全库静态检查结果作为后续代码质量工作项保留；本次修正了启动与播种模块附近的导入和类型问题，没有对无关模块进行批量重构。
 
