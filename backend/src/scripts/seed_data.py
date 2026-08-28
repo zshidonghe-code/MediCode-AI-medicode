@@ -29,9 +29,14 @@ async def seed_reference_data_if_needed() -> bool:
     """Seed each reference dataset independently and report whether work was done."""
     async with async_session() as session:
         counts = {
-            "icd_codes": (await session.execute(select(func.count()).select_from(ICDCode))).scalar() or 0,
-            "drg_groups": (await session.execute(select(func.count()).select_from(DRGGroup))).scalar() or 0,
-            "qc_rules": (await session.execute(select(func.count()).select_from(QCRule))).scalar() or 0,
+            "icd_codes": (await session.execute(select(func.count()).select_from(ICDCode))).scalar()
+            or 0,
+            "drg_groups": (
+                await session.execute(select(func.count()).select_from(DRGGroup))
+            ).scalar()
+            or 0,
+            "qc_rules": (await session.execute(select(func.count()).select_from(QCRule))).scalar()
+            or 0,
         }
 
     seeded = False
@@ -67,28 +72,36 @@ async def seed_icd_codes():
 
         codes = []
         for item in _load_icd_json("icd_diagnoses.json"):
-            codes.append(ICDCode(
-                code=item["code"], name=item["name"],
-                category=item.get("category", ""),
-                version=ICDVersion.ICD10_CLINICAL,
-                py_code=item.get("py", ""),
-                search_terms={"alias": item.get("aliases", [])},
-            ))
+            codes.append(
+                ICDCode(
+                    code=item["code"],
+                    name=item["name"],
+                    category=item.get("category", ""),
+                    version=ICDVersion.ICD10_CLINICAL,
+                    py_code=item.get("py", ""),
+                    search_terms={"alias": item.get("aliases", [])},
+                )
+            )
 
         for item in _load_icd_json("icd_procedures.json"):
-            codes.append(ICDCode(
-                code=item["code"], name=item["name"],
-                category=item.get("category", "手术操作"),
-                version=ICDVersion.ICD9_CM3,
-                py_code=item.get("py", ""),
-                search_terms={"alias": item.get("aliases", [])},
-            ))
+            codes.append(
+                ICDCode(
+                    code=item["code"],
+                    name=item["name"],
+                    category=item.get("category", "手术操作"),
+                    version=ICDVersion.ICD9_CM3,
+                    py_code=item.get("py", ""),
+                    search_terms={"alias": item.get("aliases", [])},
+                )
+            )
 
         session.add_all(codes)
         await session.commit()
         diag_count = len(_load_icd_json("icd_diagnoses.json"))
         proc_count = len(_load_icd_json("icd_procedures.json"))
-        print(f"[OK] Seeded {len(codes)} ICD codes ({diag_count} diagnoses + {proc_count} procedures)")
+        print(
+            f"[OK] Seeded {len(codes)} ICD codes ({diag_count} diagnoses + {proc_count} procedures)"
+        )
 
 
 async def seed_drg_groups():
@@ -158,11 +171,18 @@ async def seed_drg_groups():
 
         groups = []
         for code, name, mdc, adrg, is_surg, weight, rate, avg_days in drg_defs:
-            groups.append(DRGGroup(
-                code=code, name=name, mdc=mdc, adrg=adrg,
-                is_surgical=is_surg, weight=weight, rate=rate,
-                avg_days=avg_days,
-            ))
+            groups.append(
+                DRGGroup(
+                    code=code,
+                    name=name,
+                    mdc=mdc,
+                    adrg=adrg,
+                    is_surgical=is_surg,
+                    weight=weight,
+                    rate=rate,
+                    avg_days=avg_days,
+                )
+            )
 
         session.add_all(groups)
         await session.commit()
@@ -179,72 +199,240 @@ async def seed_qc_rules():
 
         rules = [
             # 完整性
-            ("出院小结完整性-出院诊断", QCRuleType.COMPLETENESS, QCSeverity.CRITICAL,
-             "出院小结必须包含出院诊断", "_check_section_exists", {"section": "出院诊断"}),
-            ("出院小结完整性-入院情况", QCRuleType.COMPLETENESS, QCSeverity.MAJOR,
-             "出院小结必须包含入院情况描述", "_check_section_exists", {"section": "入院情况"}),
-            ("出院小结完整性-诊疗经过", QCRuleType.COMPLETENESS, QCSeverity.MAJOR,
-             "出院小结必须包含诊疗经过", "_check_section_exists", {"section": "诊疗经过"}),
-            ("出院小结完整性-出院医嘱", QCRuleType.COMPLETENESS, QCSeverity.CRITICAL,
-             "出院小结必须包含出院医嘱", "_check_section_exists", {"section": "出院医嘱"}),
-            ("手术记录完整性-手术日期", QCRuleType.COMPLETENESS, QCSeverity.MAJOR,
-             "手术记录必须包含手术日期", "_check_surgery_date", {}),
-            ("手术记录完整性-手术名称", QCRuleType.COMPLETENESS, QCSeverity.CRITICAL,
-             "手术记录必须包含手术名称且与编码一致", "_check_surgery_name", {}),
-            ("入院记录完整性-主诉", QCRuleType.COMPLETENESS, QCSeverity.MAJOR,
-             "入院记录必须包含主诉", "_check_section_exists", {"section": "主诉"}),
-            ("入院记录完整性-现病史", QCRuleType.COMPLETENESS, QCSeverity.MAJOR,
-             "入院记录必须包含现病史", "_check_section_exists", {"section": "现病史"}),
-            ("入院记录完整性-既往史", QCRuleType.COMPLETENESS, QCSeverity.MINOR,
-             "入院记录必须包含既往史", "_check_section_exists", {"section": "既往史"}),
-            ("入院记录完整性-体格检查", QCRuleType.COMPLETENESS, QCSeverity.MAJOR,
-             "入院记录必须包含体格检查", "_check_section_exists", {"section": "查体"}),
+            (
+                "出院小结完整性-出院诊断",
+                QCRuleType.COMPLETENESS,
+                QCSeverity.CRITICAL,
+                "出院小结必须包含出院诊断",
+                "_check_section_exists",
+                {"section": "出院诊断"},
+            ),
+            (
+                "出院小结完整性-入院情况",
+                QCRuleType.COMPLETENESS,
+                QCSeverity.MAJOR,
+                "出院小结必须包含入院情况描述",
+                "_check_section_exists",
+                {"section": "入院情况"},
+            ),
+            (
+                "出院小结完整性-诊疗经过",
+                QCRuleType.COMPLETENESS,
+                QCSeverity.MAJOR,
+                "出院小结必须包含诊疗经过",
+                "_check_section_exists",
+                {"section": "诊疗经过"},
+            ),
+            (
+                "出院小结完整性-出院医嘱",
+                QCRuleType.COMPLETENESS,
+                QCSeverity.CRITICAL,
+                "出院小结必须包含出院医嘱",
+                "_check_section_exists",
+                {"section": "出院医嘱"},
+            ),
+            (
+                "手术记录完整性-手术日期",
+                QCRuleType.COMPLETENESS,
+                QCSeverity.MAJOR,
+                "手术记录必须包含手术日期",
+                "_check_surgery_date",
+                {},
+            ),
+            (
+                "手术记录完整性-手术名称",
+                QCRuleType.COMPLETENESS,
+                QCSeverity.CRITICAL,
+                "手术记录必须包含手术名称且与编码一致",
+                "_check_surgery_name",
+                {},
+            ),
+            (
+                "入院记录完整性-主诉",
+                QCRuleType.COMPLETENESS,
+                QCSeverity.MAJOR,
+                "入院记录必须包含主诉",
+                "_check_section_exists",
+                {"section": "主诉"},
+            ),
+            (
+                "入院记录完整性-现病史",
+                QCRuleType.COMPLETENESS,
+                QCSeverity.MAJOR,
+                "入院记录必须包含现病史",
+                "_check_section_exists",
+                {"section": "现病史"},
+            ),
+            (
+                "入院记录完整性-既往史",
+                QCRuleType.COMPLETENESS,
+                QCSeverity.MINOR,
+                "入院记录必须包含既往史",
+                "_check_section_exists",
+                {"section": "既往史"},
+            ),
+            (
+                "入院记录完整性-体格检查",
+                QCRuleType.COMPLETENESS,
+                QCSeverity.MAJOR,
+                "入院记录必须包含体格检查",
+                "_check_section_exists",
+                {"section": "查体"},
+            ),
             # 逻辑一致性
-            ("诊断与性别一致性", QCRuleType.LOGIC, QCSeverity.CRITICAL,
-             "诊断编码与患者性别不一致", "_check_diagnosis_gender_consistency", {}),
-            ("手术与诊断一致性", QCRuleType.LOGIC, QCSeverity.CRITICAL,
-             "手术部位与诊断部位不一致", "_check_surgery_diagnosis_consistency", {}),
-            ("主要诊断选择正确性", QCRuleType.LOGIC, QCSeverity.CRITICAL,
-             "主要诊断应选择对健康危害最大、消耗医疗资源最多的诊断", "_check_primary_diagnosis_validity", {}),
-            ("住院天数逻辑检查", QCRuleType.LOGIC, QCSeverity.MAJOR,
-             "住院天数与诊断/手术复杂度不匹配", "_check_length_of_stay", {}),
-            ("主要诊断与次要诊断重复", QCRuleType.LOGIC, QCSeverity.MINOR,
-             "主要诊断与次要诊断不应出现编码重复", "_check_duplicate_diag", {}),
-            ("手术日期在住院期间内", QCRuleType.LOGIC, QCSeverity.MAJOR,
-             "手术日期应在入院日期和出院日期之间", "_check_surgery_date_range", {}),
+            (
+                "诊断与性别一致性",
+                QCRuleType.LOGIC,
+                QCSeverity.CRITICAL,
+                "诊断编码与患者性别不一致",
+                "_check_diagnosis_gender_consistency",
+                {},
+            ),
+            (
+                "手术与诊断一致性",
+                QCRuleType.LOGIC,
+                QCSeverity.CRITICAL,
+                "手术部位与诊断部位不一致",
+                "_check_surgery_diagnosis_consistency",
+                {},
+            ),
+            (
+                "主要诊断选择正确性",
+                QCRuleType.LOGIC,
+                QCSeverity.CRITICAL,
+                "主要诊断应选择对健康危害最大、消耗医疗资源最多的诊断",
+                "_check_primary_diagnosis_validity",
+                {},
+            ),
+            (
+                "住院天数逻辑检查",
+                QCRuleType.LOGIC,
+                QCSeverity.MAJOR,
+                "住院天数与诊断/手术复杂度不匹配",
+                "_check_length_of_stay",
+                {},
+            ),
+            (
+                "主要诊断与次要诊断重复",
+                QCRuleType.LOGIC,
+                QCSeverity.MINOR,
+                "主要诊断与次要诊断不应出现编码重复",
+                "_check_duplicate_diag",
+                {},
+            ),
+            (
+                "手术日期在住院期间内",
+                QCRuleType.LOGIC,
+                QCSeverity.MAJOR,
+                "手术日期应在入院日期和出院日期之间",
+                "_check_surgery_date_range",
+                {},
+            ),
             # 编码一致性
-            ("诊断编码与诊断文本匹配", QCRuleType.CODING, QCSeverity.MAJOR,
-             "ICD编码与病历中诊断描述不一致", "_check_code_text_consistency", {}),
-            ("漏编次要诊断检查", QCRuleType.CODING, QCSeverity.MAJOR,
-             "病历中存在可能遗漏的次要诊断编码", "_check_missing_secondary_diagnosis", {}),
-            ("手术操作编码完整性", QCRuleType.CODING, QCSeverity.CRITICAL,
-             "有手术记录则必须有对应的手术操作编码", "_check_procedure_coding", {}),
-            ("MCC/CC编码完整性", QCRuleType.CODING, QCSeverity.MAJOR,
-             "存在重要合并症时应正确编码以反映疾病严重程度", "_check_cc_coding", {}),
+            (
+                "诊断编码与诊断文本匹配",
+                QCRuleType.CODING,
+                QCSeverity.MAJOR,
+                "ICD编码与病历中诊断描述不一致",
+                "_check_code_text_consistency",
+                {},
+            ),
+            (
+                "漏编次要诊断检查",
+                QCRuleType.CODING,
+                QCSeverity.MAJOR,
+                "病历中存在可能遗漏的次要诊断编码",
+                "_check_missing_secondary_diagnosis",
+                {},
+            ),
+            (
+                "手术操作编码完整性",
+                QCRuleType.CODING,
+                QCSeverity.CRITICAL,
+                "有手术记录则必须有对应的手术操作编码",
+                "_check_procedure_coding",
+                {},
+            ),
+            (
+                "MCC/CC编码完整性",
+                QCRuleType.CODING,
+                QCSeverity.MAJOR,
+                "存在重要合并症时应正确编码以反映疾病严重程度",
+                "_check_cc_coding",
+                {},
+            ),
             # 时效性
-            ("入院记录24h完成", QCRuleType.TIMELINESS, QCSeverity.MINOR,
-             "入院记录应在入院后24小时内完成", "_check_admission_record_timeliness", {"hours": 24}),
-            ("手术记录术后即时完成", QCRuleType.TIMELINESS, QCSeverity.MINOR,
-             "手术记录应在术后24小时内完成", "_check_surgery_record_timeliness", {"hours": 24}),
-            ("出院小结及时完成", QCRuleType.TIMELINESS, QCSeverity.MINOR,
-             "出院小结应在出院后24小时内完成", "_check_discharge_timeliness", {"hours": 24}),
+            (
+                "入院记录24h完成",
+                QCRuleType.TIMELINESS,
+                QCSeverity.MINOR,
+                "入院记录应在入院后24小时内完成",
+                "_check_admission_record_timeliness",
+                {"hours": 24},
+            ),
+            (
+                "手术记录术后即时完成",
+                QCRuleType.TIMELINESS,
+                QCSeverity.MINOR,
+                "手术记录应在术后24小时内完成",
+                "_check_surgery_record_timeliness",
+                {"hours": 24},
+            ),
+            (
+                "出院小结及时完成",
+                QCRuleType.TIMELINESS,
+                QCSeverity.MINOR,
+                "出院小结应在出院后24小时内完成",
+                "_check_discharge_timeliness",
+                {"hours": 24},
+            ),
             # 规范表达
-            ("主要诊断为病因诊断", QCRuleType.NORMALIZATION, QCSeverity.MAJOR,
-             "主要诊断应为病因诊断，不应选择症状或体征作为主要诊断", "_check_primary_is_etiology", {}),
-            ("诊断名称规范化", QCRuleType.NORMALIZATION, QCSeverity.MINOR,
-             "诊断名称应使用标准医学名词，避免口语化或简写", "_check_diagnosis_naming", {}),
-            ("手术名称规范化", QCRuleType.NORMALIZATION, QCSeverity.MINOR,
-             "手术名称应使用标准医学术语", "_check_surgery_naming", {}),
-            ("病历无复制粘贴痕迹", QCRuleType.NORMALIZATION, QCSeverity.MINOR,
-             "病历内容不应有大量重复的复制粘贴文本", "_check_copy_paste", {}),
+            (
+                "主要诊断为病因诊断",
+                QCRuleType.NORMALIZATION,
+                QCSeverity.MAJOR,
+                "主要诊断应为病因诊断，不应选择症状或体征作为主要诊断",
+                "_check_primary_is_etiology",
+                {},
+            ),
+            (
+                "诊断名称规范化",
+                QCRuleType.NORMALIZATION,
+                QCSeverity.MINOR,
+                "诊断名称应使用标准医学名词，避免口语化或简写",
+                "_check_diagnosis_naming",
+                {},
+            ),
+            (
+                "手术名称规范化",
+                QCRuleType.NORMALIZATION,
+                QCSeverity.MINOR,
+                "手术名称应使用标准医学术语",
+                "_check_surgery_naming",
+                {},
+            ),
+            (
+                "病历无复制粘贴痕迹",
+                QCRuleType.NORMALIZATION,
+                QCSeverity.MINOR,
+                "病历内容不应有大量重复的复制粘贴文本",
+                "_check_copy_paste",
+                {},
+            ),
         ]
 
         db_rules = []
         for name, rtype, severity, desc, check_fn, params in rules:
-            db_rules.append(QCRule(
-                rule_name=name, rule_type=rtype, severity=severity,
-                description=desc, check_function=check_fn, params=params,
-            ))
+            db_rules.append(
+                QCRule(
+                    rule_name=name,
+                    rule_type=rtype,
+                    severity=severity,
+                    description=desc,
+                    check_function=check_fn,
+                    params=params,
+                )
+            )
 
         session.add_all(db_rules)
         await session.commit()
@@ -264,61 +452,71 @@ async def seed_demo_patients():
                 "patient_id": "P20240001",
                 "name_hash": "a1b2c3d4e5",
                 "gender": Gender.MALE,
-                "age": 68, "birth_year": 1956,
+                "age": 68,
+                "birth_year": 1956,
             },
             {
                 "patient_id": "P20240002",
                 "name_hash": "f6g7h8i9j0",
                 "gender": Gender.MALE,
-                "age": 72, "birth_year": 1952,
+                "age": 72,
+                "birth_year": 1952,
             },
             {
                 "patient_id": "P20240003",
                 "name_hash": "k1l2m3n4o5",
                 "gender": Gender.FEMALE,
-                "age": 65, "birth_year": 1959,
+                "age": 65,
+                "birth_year": 1959,
             },
             {
                 "patient_id": "P20240004",
                 "name_hash": "p6q7r8s9t0",
                 "gender": Gender.MALE,
-                "age": 55, "birth_year": 1969,
+                "age": 55,
+                "birth_year": 1969,
             },
             {
                 "patient_id": "P20240005",
                 "name_hash": "u1v2w3x4y5",
                 "gender": Gender.FEMALE,
-                "age": 45, "birth_year": 1979,
+                "age": 45,
+                "birth_year": 1979,
             },
             {
                 "patient_id": "P20240006",
                 "name_hash": "z6a7b8c9d0",
                 "gender": Gender.MALE,
-                "age": 70, "birth_year": 1954,
+                "age": 70,
+                "birth_year": 1954,
             },
             {
                 "patient_id": "P20240007",
                 "name_hash": "e1f2g3h4i5",
                 "gender": Gender.FEMALE,
-                "age": 58, "birth_year": 1966,
+                "age": 58,
+                "birth_year": 1966,
             },
             {
                 "patient_id": "P20240008",
                 "name_hash": "j6k7l8m9n0",
                 "gender": Gender.MALE,
-                "age": 62, "birth_year": 1962,
+                "age": 62,
+                "birth_year": 1962,
             },
             {
                 "patient_id": "P20240009",
                 "name_hash": "o1p2q3r4s5",
                 "gender": Gender.FEMALE,
-                "age": 38, "birth_year": 1986,
+                "age": 38,
+                "birth_year": 1986,
             },
             {
                 "patient_id": "P20240010",
                 "name_hash": "t6u7v8w9x0",
                 "gender": Gender.MALE,
-                "age": 75, "birth_year": 1949,
+                "age": 75,
+                "birth_year": 1949,
             },
         ]
 

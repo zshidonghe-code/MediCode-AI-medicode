@@ -10,10 +10,9 @@
 """
 
 import logging
-import numpy as np
 from dataclasses import dataclass
-from typing import Optional
 
+import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -34,7 +33,7 @@ class VectorSearchEngine:
     def __init__(self):
         self._documents: list[dict] = []  # [{code, name, category}]
         self._tfidf_matrix = None  # scipy sparse matrix
-        self._vectorizer: Optional[TfidfVectorizer] = None
+        self._vectorizer: TfidfVectorizer | None = None
         self._ready: bool = False
 
     def build_index(self, documents: list[dict]) -> int:
@@ -70,7 +69,7 @@ class VectorSearchEngine:
         Returns:
             按相似度降序排列的搜索结果
         """
-        if not self._ready or self._tfidf_matrix is None:
+        if not self._ready or self._tfidf_matrix is None or self._vectorizer is None:
             return []
 
         try:
@@ -91,12 +90,14 @@ class VectorSearchEngine:
             if sim < 0.15:  # 过滤低相关度
                 continue
             doc = self._documents[idx]
-            results.append(SearchResult(
-                code=doc["code"],
-                name=doc["name"],
-                category=doc.get("category", "诊断"),
-                score=round(sim, 3),
-            ))
+            results.append(
+                SearchResult(
+                    code=doc["code"],
+                    name=doc["name"],
+                    category=doc.get("category", "诊断"),
+                    score=round(sim, 3),
+                )
+            )
 
         return results
 

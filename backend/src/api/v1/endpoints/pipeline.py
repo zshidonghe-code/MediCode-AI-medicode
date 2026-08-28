@@ -1,5 +1,5 @@
-import logging
 import hashlib
+import logging
 from datetime import date
 
 from fastapi import APIRouter, Depends
@@ -9,8 +9,8 @@ from sqlalchemy.exc import IntegrityError
 
 from src.api.v1.endpoints.auth import get_current_user
 from src.models.database import async_session
-from src.models.patient import Patient, MedicalRecord, Gender, RecordType
 from src.models.icd import CodingResult
+from src.models.patient import Gender, MedicalRecord, Patient, RecordType
 from src.models.qc import QCResult, QCSeverity
 
 logger = logging.getLogger(__name__)
@@ -95,9 +95,9 @@ async def _do_save(req: PipelineSaveRequest, user: dict):
         # matching on demographic fields (name, DOB, gender) instead.
         content_hash = hashlib.sha256(content.encode()).hexdigest()
         patient_id_str = f"{prefix}{content_hash[:8].upper()}"
-        existing = (await db.execute(
-            select(Patient).where(Patient.patient_id == patient_id_str)
-        )).scalar_one_or_none()
+        existing = (
+            await db.execute(select(Patient).where(Patient.patient_id == patient_id_str))
+        ).scalar_one_or_none()
         if existing is not None:
             patient = existing
         else:
@@ -113,9 +113,9 @@ async def _do_save(req: PipelineSaveRequest, user: dict):
                 await db.flush()
             except IntegrityError:
                 await db.rollback()
-                existing = (await db.execute(
-                    select(Patient).where(Patient.patient_id == patient_id_str)
-                )).scalar_one_or_none()
+                existing = (
+                    await db.execute(select(Patient).where(Patient.patient_id == patient_id_str))
+                ).scalar_one_or_none()
                 if existing is not None:
                     patient = existing
                 else:
@@ -202,13 +202,15 @@ async def _do_save(req: PipelineSaveRequest, user: dict):
                     record_id=record.id,
                     rule_id=1,
                     severity=severity,
-                    line_snippet=(issue.get("line_snippet") or issue.get("description") or "")[:200],
+                    line_snippet=(issue.get("line_snippet") or issue.get("description") or "")[
+                        :200
+                    ],
                     suggestion=issue.get("suggestion", ""),
                 )
                 qc_rows.append(qc)
             db.add_all(qc_rows)
             await db.flush()
-            for qc, issue in zip(qc_rows, req.qc_result.get("issues", [])):
+            for qc, issue in zip(qc_rows, req.qc_result.get("issues", []), strict=False):
                 qc_result_ids.append({"id": qc.id, "severity": issue.get("severity", "minor")})
 
         await db.commit()

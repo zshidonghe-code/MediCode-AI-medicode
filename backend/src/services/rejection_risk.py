@@ -8,14 +8,12 @@
 
 from dataclasses import dataclass
 from enum import Enum
-import re
-from typing import Optional
 
 
 class RiskLevel(str, Enum):
-    HIGH = "high"         # 极高风险 — 大概率拒付
-    MEDIUM = "medium"     # 中等风险 — 需要复核
-    LOW = "low"           # 低风险 — 建议关注
+    HIGH = "high"  # 极高风险 — 大概率拒付
+    MEDIUM = "medium"  # 中等风险 — 需要复核
+    LOW = "low"  # 低风险 — 建议关注
 
 
 RISK_SCORE_WEIGHTS = {
@@ -76,7 +74,6 @@ REJECTION_RULES = [
         "description": "诊断{d1}与{d2}在临床上可能矛盾，审核时会被质疑编码准确性",
         "suggestion": "核实两份诊断的临床依据，排除编码错误",
     },
-
     # === 升级诊断嫌疑 ===
     {
         "id": "RR-101",
@@ -96,7 +93,6 @@ REJECTION_RULES = [
         "description": "手术{proc_code}的记录等级可能与实际不符，常见于分级诊疗审核",
         "suggestion": "核对手术记录中的实际操作范围、入路、时间与编码等级是否一致",
     },
-
     # === 分解住院 / 低码高套 ===
     {
         "id": "RR-201",
@@ -116,7 +112,6 @@ REJECTION_RULES = [
         "description": "本次住院费用与DRG标准费用偏离{deviation}%，触发费用异常审核",
         "suggestion": "核查费用明细，排除过度医疗或费用转移",
     },
-
     # === 编码完整性 ===
     {
         "id": "RR-301",
@@ -136,7 +131,6 @@ REJECTION_RULES = [
         "description": "病历中涉及高值耗材{device}但缺少对应手术/操作编码",
         "suggestion": "补充操作编码以匹配耗材使用",
     },
-
     # === 合理性 ===
     {
         "id": "RR-401",
@@ -171,10 +165,18 @@ CONTRADICTORY_PAIRS: list[tuple[set[str], set[str], str]] = [
 
 # ── MCC关键词（诊断升级重点关注） ─────────────────────────────
 MCC_FLAGS: dict[str, float] = {
-    "心力衰竭": 0.8, "呼吸衰竭": 0.9, "肾功能衰竭": 0.8,
-    "肝功能衰竭": 0.9, "败血症": 0.7, "急性心肌梗死": 0.6,
-    "脑卒中": 0.5, "肺栓塞": 0.8, "多器官功能衰竭": 1.0,
-    "休克": 0.7, "弥散性血管内凝血": 0.9, "急性胰腺炎": 0.4,
+    "心力衰竭": 0.8,
+    "呼吸衰竭": 0.9,
+    "肾功能衰竭": 0.8,
+    "肝功能衰竭": 0.9,
+    "败血症": 0.7,
+    "急性心肌梗死": 0.6,
+    "脑卒中": 0.5,
+    "肺栓塞": 0.8,
+    "多器官功能衰竭": 1.0,
+    "休克": 0.7,
+    "弥散性血管内凝血": 0.9,
+    "急性胰腺炎": 0.4,
 }
 
 # ── 高值耗材关键词 ────────────────────────────────────────────
@@ -199,24 +201,27 @@ class RejectionRiskEngine:
 
     def assess(
         self,
-        primary_diag: dict,             # {code, name}
-        secondary_diags: list[dict],    # [{code, name}, ...]
-        procedures: list[dict],         # [{code, name}, ...]
-        drg_result: dict | None = None, # {drg_code, drg_name, weight, ...}
+        primary_diag: dict,  # {code, name}
+        secondary_diags: list[dict],  # [{code, name}, ...]
+        procedures: list[dict],  # [{code, name}, ...]
+        drg_result: dict | None = None,  # {drg_code, drg_name, weight, ...}
         patient_info: dict | None = None,  # {age, gender, days_of_stay, ...}
-        content: str = "",              # Raw medical record text
-        hospital_cost: float = 0.0,     # Total hospitalization cost
+        content: str = "",  # Raw medical record text
+        hospital_cost: float = 0.0,  # Total hospitalization cost
     ) -> RejectionReport:
         risks = []
 
         # ── RR-001: 主要诊断MDC vs DRG MDC ──
         if primary_diag and drg_result:
             risk = self._check_primary_drg_mismatch(primary_diag, drg_result)
-            if risk: risks.append(risk)
+            if risk:
+                risks.append(risk)
 
         # ── RR-002: 手术无对应诊断 ──
         if procedures and (primary_diag or secondary_diags):
-            risks.extend(self._check_procedure_indications(procedures, primary_diag, secondary_diags))
+            risks.extend(
+                self._check_procedure_indications(procedures, primary_diag, secondary_diags)
+            )
 
         # ── RR-003: 诊断矛盾 ──
         all_diags = [primary_diag] + secondary_diags if primary_diag else secondary_diags
@@ -231,7 +236,8 @@ class RejectionRiskEngine:
         # ── RR-401: 住院天数异常 ──
         if patient_info and drg_result:
             risk = self._check_los_mismatch(patient_info, drg_result)
-            if risk: risks.append(risk)
+            if risk:
+                risks.append(risk)
 
         # ── 高值耗材检查 ──
         risks.extend(self._check_high_value_devices(content, procedures))
@@ -239,7 +245,8 @@ class RejectionRiskEngine:
         # ── 费用偏离 ──
         if hospital_cost > 0 and drg_result:
             risk = self._check_cost_deviation(hospital_cost, drg_result)
-            if risk: risks.append(risk)
+            if risk:
+                risks.append(risk)
 
         # Calculate overall risk
         score = min(100, sum(RISK_SCORE_WEIGHTS[r.risk_level] for r in risks))
@@ -253,7 +260,9 @@ class RejectionRiskEngine:
 
         # Preventable amount estimate
         weight = drg_result.get("weight", 1.0) if drg_result else 1.0
-        preventable = sum(r.estimated_loss for r in risks if r.risk_level in (RiskLevel.HIGH, RiskLevel.MEDIUM))
+        preventable = sum(
+            r.estimated_loss for r in risks if r.risk_level in (RiskLevel.HIGH, RiskLevel.MEDIUM)
+        )
         if not preventable and overall != RiskLevel.LOW:
             preventable = self.drg_base_rate * weight * 0.15  # ~15% at risk
 
@@ -269,26 +278,26 @@ class RejectionRiskEngine:
     # ICD前缀→DRG合法MDC映射（CHS-DRG 1.2标准）
     # 关键：DRG字母前缀≠ICD字母前缀。例如I(循环系统)的PCI→DRG F开头是合法的
     _ICD_TO_DRG_MDC: dict[str, set[str]] = {
-        "I": {"F", "I"},      # 循环系统→MDCE(F开头)或MDCI
-        "J": {"E", "J"},      # 呼吸→MDCD(E)或MDCJ
-        "K": {"G", "H", "K"}, # 消化→MDCG(G/H)或MDCK
-        "N": {"L", "N"},      # 泌尿→MDCL(L)或MDCN
-        "M": {"I", "M"},      # 骨骼→MDCI(I)或MDCM
-        "G": {"B", "G"},      # 神经→MDCA(B)或MDCG
-        "O": {"O", "N"},      # 产科→MDCO(O)或MDCN
-        "C": {"R", "C"},      # 肿瘤→MDCR(R)或MDCC
-        "S": {"I", "S"},      # 外伤→MDCI(I)或MDCS
-        "E": {"K", "E"},      # 内分泌→MDCK(K)或MDCE
-        "A": {"A", "B"},      # 感染→MDCA
-        "B": {"A", "B"},      # 感染
-        "D": {"D", "F"},      # 血液→MDCD或MDCF
-        "H": {"C", "H"},      # 眼科→MDCC或MDCH
-        "L": {"J", "L"},      # 皮肤→MDCJ或MDCL
-        "R": {"R", "F"},      # 症状→多MDC可能
-        "Z": {"Z", "F", "O"}, # 健康因素→多MDC
+        "I": {"F", "I"},  # 循环系统→MDCE(F开头)或MDCI
+        "J": {"E", "J"},  # 呼吸→MDCD(E)或MDCJ
+        "K": {"G", "H", "K"},  # 消化→MDCG(G/H)或MDCK
+        "N": {"L", "N"},  # 泌尿→MDCL(L)或MDCN
+        "M": {"I", "M"},  # 骨骼→MDCI(I)或MDCM
+        "G": {"B", "G"},  # 神经→MDCA(B)或MDCG
+        "O": {"O", "N"},  # 产科→MDCO(O)或MDCN
+        "C": {"R", "C"},  # 肿瘤→MDCR(R)或MDCC
+        "S": {"I", "S"},  # 外伤→MDCI(I)或MDCS
+        "E": {"K", "E"},  # 内分泌→MDCK(K)或MDCE
+        "A": {"A", "B"},  # 感染→MDCA
+        "B": {"A", "B"},  # 感染
+        "D": {"D", "F"},  # 血液→MDCD或MDCF
+        "H": {"C", "H"},  # 眼科→MDCC或MDCH
+        "L": {"J", "L"},  # 皮肤→MDCJ或MDCL
+        "R": {"R", "F"},  # 症状→多MDC可能
+        "Z": {"Z", "F", "O"},  # 健康因素→多MDC
     }
 
-    def _check_primary_drg_mismatch(self, primary: dict, drg: dict) -> Optional[RejectionRisk]:
+    def _check_primary_drg_mismatch(self, primary: dict, drg: dict) -> RejectionRisk | None:
         diag_code = primary.get("code", "")
         drg_code = drg.get("drg_code", "")
 
@@ -313,8 +322,8 @@ class RejectionRiskEngine:
                 rule_name="主要诊断与DRG不匹配",
                 risk_level=RiskLevel.HIGH,
                 description=(
-                    f"主要诊断 {primary.get('code')} {primary.get('name','')} "
-                    f"({diag_prefix}类)与DRG {drg.get('drg_code','')} ({drg_prefix}类)不在CHS-DRG标准映射中"
+                    f"主要诊断 {primary.get('code')} {primary.get('name', '')} "
+                    f"({diag_prefix}类)与DRG {drg.get('drg_code', '')} ({drg_prefix}类)不在CHS-DRG标准映射中"
                 ),
                 suggestion="核实主要诊断是否正确，或确认DRG分组逻辑",
                 affected_code=primary.get("code", ""),
@@ -361,15 +370,17 @@ class RejectionRiskEngine:
                 matched = True  # No keyword match = skip check
 
             if not matched:
-                risks.append(RejectionRisk(
-                    rule_id="RR-002",
-                    rule_name="手术操作无对应诊断",
-                    risk_level=RiskLevel.HIGH,
-                    description=f"手术 {proc.get('code','')} {proc_name} 缺少对应的临床诊断",
-                    suggestion=f"请核实{proc_name}的临床指征，补充对应诊断编码",
-                    affected_code=proc.get("code", ""),
-                    estimated_loss=self.drg_base_rate * 0.5,
-                ))
+                risks.append(
+                    RejectionRisk(
+                        rule_id="RR-002",
+                        rule_name="手术操作无对应诊断",
+                        risk_level=RiskLevel.HIGH,
+                        description=f"手术 {proc.get('code', '')} {proc_name} 缺少对应的临床诊断",
+                        suggestion=f"请核实{proc_name}的临床指征，补充对应诊断编码",
+                        affected_code=proc.get("code", ""),
+                        estimated_loss=self.drg_base_rate * 0.5,
+                    )
+                )
 
         return risks
 
@@ -382,13 +393,15 @@ class RejectionRiskEngine:
             matched_a = next((term for term in sorted(set_a) if term in diag_text), "")
             matched_b = next((term for term in sorted(set_b) if term in diag_text), "")
             if matched_a and matched_b:
-                risks.append(RejectionRisk(
-                    rule_id="RR-003",
-                    rule_name="诊断矛盾",
-                    risk_level=RiskLevel.MEDIUM,
-                    description=f"诊断中存在{reason}：{matched_a} vs {matched_b}",
-                    suggestion="核实两份诊断的临床依据，排除编码错误或确认是否为药物性/一过性",
-                ))
+                risks.append(
+                    RejectionRisk(
+                        rule_id="RR-003",
+                        rule_name="诊断矛盾",
+                        risk_level=RiskLevel.MEDIUM,
+                        description=f"诊断中存在{reason}：{matched_a} vs {matched_b}",
+                        suggestion="核实两份诊断的临床依据，排除编码错误或确认是否为药物性/一过性",
+                    )
+                )
         return risks[:2]  # Max 2 contradiction flags
 
     def _check_mcc_upcoding(self, secondary_diags: list, content: str) -> list[RejectionRisk]:
@@ -396,40 +409,44 @@ class RejectionRiskEngine:
         for diag in secondary_diags:
             name = diag.get("name", "")
             for mcc_kw, weight_delta in MCC_FLAGS.items():
-                if mcc_kw in name:
-                    # Check if content has strong evidence for this MCC
-                    if mcc_kw not in content or len(content.split(mcc_kw)) < 3:
-                        risks.append(RejectionRisk(
+                # Check if content has strong evidence for this MCC.
+                if mcc_kw in name and (mcc_kw not in content or len(content.split(mcc_kw)) < 3):
+                    risks.append(
+                        RejectionRisk(
                             rule_id="RR-101",
                             rule_name="疑似诊断升级（MCC嫌疑）",
                             risk_level=RiskLevel.HIGH,
-                            description=f"MCC诊断 {diag.get('code','')} {name} 在病历中缺乏详细依据描述",
+                            description=f"MCC诊断 {diag.get('code', '')} {name} 在病历中缺乏详细依据描述",
                             suggestion=f"在病程记录中补充{name}的检查结果、会诊意见和治疗措施",
                             affected_code=diag.get("code", ""),
                             estimated_loss=self.drg_base_rate * weight_delta,
-                        ))
+                        )
+                    )
         return risks
 
     def _check_missing_cc(self, content: str, all_diags: list) -> list[RejectionRisk]:
         """Check for missed CC/MCC that could increase DRG weight"""
         from src.services.llm_engine.medical_rules import COMMON_MISSED
+
         risks = []
         coded_text = " ".join(d.get("name", "") for d in all_diags)
 
         for keyword, (code, name) in COMMON_MISSED.items():
             if keyword in content and keyword not in coded_text:
-                risks.append(RejectionRisk(
-                    rule_id="RR-301",
-                    rule_name="漏编并发症/合并症",
-                    risk_level=RiskLevel.MEDIUM,
-                    description=f"病历提及'{keyword}'但未编码，遗漏将导致DRG权重降低",
-                    suggestion=f"补充编码 {code} - {name}，可提升DRG权重",
-                    affected_code=code,
-                    estimated_loss=self.drg_base_rate * 0.15,
-                ))
+                risks.append(
+                    RejectionRisk(
+                        rule_id="RR-301",
+                        rule_name="漏编并发症/合并症",
+                        risk_level=RiskLevel.MEDIUM,
+                        description=f"病历提及'{keyword}'但未编码，遗漏将导致DRG权重降低",
+                        suggestion=f"补充编码 {code} - {name}，可提升DRG权重",
+                        affected_code=code,
+                        estimated_loss=self.drg_base_rate * 0.15,
+                    )
+                )
         return risks[:3]  # Max 3 missing CC flags
 
-    def _check_los_mismatch(self, patient: dict, drg: dict) -> Optional[RejectionRisk]:
+    def _check_los_mismatch(self, patient: dict, drg: dict) -> RejectionRisk | None:
         days = patient.get("days_of_stay", 0)
         avg_days = drg.get("avg_los", 7)
         if days > avg_days * 1.5:
@@ -448,17 +465,19 @@ class RejectionRiskEngine:
         proc_text = " ".join(p.get("name", "") for p in procedures)
         for device, expected_proc in HIGH_VALUE_DEVICES.items():
             if device in content and expected_proc not in proc_text:
-                risks.append(RejectionRisk(
-                    rule_id="RR-302",
-                    rule_name="高值耗材无对应编码",
-                    risk_level=RiskLevel.MEDIUM,
-                    description=f"病历涉及'{device}'但缺少对应操作编码({expected_proc})",
-                    suggestion=f"补充操作编码{expected_proc}以匹配耗材使用",
-                    estimated_loss=self.drg_base_rate * 0.3,
-                ))
+                risks.append(
+                    RejectionRisk(
+                        rule_id="RR-302",
+                        rule_name="高值耗材无对应编码",
+                        risk_level=RiskLevel.MEDIUM,
+                        description=f"病历涉及'{device}'但缺少对应操作编码({expected_proc})",
+                        suggestion=f"补充操作编码{expected_proc}以匹配耗材使用",
+                        estimated_loss=self.drg_base_rate * 0.3,
+                    )
+                )
         return risks
 
-    def _check_cost_deviation(self, cost: float, drg: dict) -> Optional[RejectionRisk]:
+    def _check_cost_deviation(self, cost: float, drg: dict) -> RejectionRisk | None:
         weight = drg.get("weight", 1.0)
         expected = self.drg_base_rate * weight
         deviation = (cost - expected) / expected * 100

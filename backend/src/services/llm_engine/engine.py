@@ -9,18 +9,26 @@
 import json
 import logging
 import time
-import httpx
-import asyncio
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from typing import Any
 
-from src.services.llm_engine.prompts import (
-    ICD_CODING_SYSTEM, QC_SYSTEM, CODE_RECOMMEND_PROMPT,
-    QC_SURGERY_DIAG_CONSISTENCY, QC_PRIMARY_DIAGNOSIS_VALIDITY,
-    QC_CODE_TEXT_MATCH, QC_CODE_TEXT_MATCH_BATCH, QC_MISSED_DIAGNOSIS,
-    DRG_ANALYSIS_PROMPT,
-)
+import httpx
+
 from src.services.llm_engine.medical_rules import (
-    SURGERY_DIAG_PAIRS, SYMPTOM_CODES, COMMON_MISSED, MCC_KEYWORDS,
+    COMMON_MISSED,
+    MCC_KEYWORDS,
+    SURGERY_DIAG_PAIRS,
+    SYMPTOM_CODES,
+)
+from src.services.llm_engine.prompts import (
+    CODE_RECOMMEND_PROMPT,
+    DRG_ANALYSIS_PROMPT,
+    ICD_CODING_SYSTEM,
+    QC_CODE_TEXT_MATCH_BATCH,
+    QC_MISSED_DIAGNOSIS,
+    QC_PRIMARY_DIAGNOSIS_VALIDITY,
+    QC_SURGERY_DIAG_CONSISTENCY,
+    QC_SYSTEM,
 )
 
 logger = logging.getLogger(__name__)
@@ -57,6 +65,7 @@ class OllamaBackend:
 
     def __init__(self, base_url: str = "", model: str = ""):
         from src.config.settings import get_settings
+
         settings = get_settings()
         self.base_url = base_url or settings.llm_base_url
         self.model = model or settings.llm_model_name
@@ -92,29 +101,39 @@ class OllamaBackend:
                 payload["format"] = "json"
             r = await client.post(f"{self.base_url}/api/generate", json=payload)
             r.raise_for_status()
-            data = r.json()
-            return data.get("response", "")
+            data: object = r.json()
+            if not isinstance(data, dict):
+                return ""
+            response = data.get("response", "")
+            return response if isinstance(response, str) else str(response)
 
-    async def generate_json(self, prompt: str, system: str = "") -> dict:
+    async def generate_json(self, prompt: str, system: str = "") -> dict[str, Any]:
         """调用Ollama并解析JSON响应（增强容错）"""
         text = await self.generate(prompt, system, json_mode=True)
         try:
-            return json.loads(text)
+            parsed: object = json.loads(text)
+            if isinstance(parsed, dict):
+                return parsed
         except json.JSONDecodeError:
             pass
         # Try to extract JSON from markdown code blocks
         import re
-        match = re.search(r'```(?:json)?\s*([\s\S]*?)```', text)
+
+        match = re.search(r"```(?:json)?\s*([\s\S]*?)```", text)
         if match:
             try:
-                return json.loads(match.group(1))
+                parsed = json.loads(match.group(1))
+                if isinstance(parsed, dict):
+                    return parsed
             except json.JSONDecodeError:
                 pass
         # Try to extract the first JSON object from raw text
-        match = re.search(r'\{[^{}]*\}', text)
+        match = re.search(r"\{[^{}]*\}", text)
         if match:
             try:
-                return json.loads(match.group(0))
+                parsed = json.loads(match.group(0))
+                if isinstance(parsed, dict):
+                    return parsed
             except json.JSONDecodeError:
                 pass
         return {"error": "json_parse_failed", "raw": text[:500]}
@@ -129,7 +148,9 @@ class RuleBasedBackend:
     async def generate_json(self, prompt: str, system: str = "") -> dict:
         return {}  # 由各方法自行处理
 
-    def code_recommend(self, entity_text: str, candidates: list, context: str = "") -> LLMCodeSuggestion | None:
+    def code_recommend(
+        self, entity_text: str, candidates: list, context: str = ""
+    ) -> LLMCodeSuggestion | None:
         """基于规则增强的编码推荐"""
         if not candidates:
             return None
@@ -140,7 +161,9 @@ class RuleBasedBackend:
         for c in candidates:
             if c.name == entity_text:
                 return LLMCodeSuggestion(
-                    code=c.code, name=c.name, confidence=0.98,
+                    code=c.code,
+                    name=c.name,
+                    confidence=0.98,
                     reasoning=f"精确匹配：'{entity_text}' -> {c.code}",
                 )
 
@@ -149,7 +172,9 @@ class RuleBasedBackend:
             for c in candidates:
                 if "74" in c.code or "剖宫" in c.name:
                     return LLMCodeSuggestion(
-                        code=c.code, name=c.name, confidence=0.90,
+                        code=c.code,
+                        name=c.name,
+                        confidence=0.90,
                         reasoning=f"产科手术匹配：'{entity_text}' -> {c.code}",
                     )
 
@@ -159,19 +184,25 @@ class RuleBasedBackend:
             common = len(set(entity_text) & set(c.name))
             if common >= 3 and entity_text in c.name:
                 return LLMCodeSuggestion(
-                    code=c.code, name=c.name, confidence=0.92,
+                    code=c.code,
+                    name=c.name,
+                    confidence=0.92,
                     reasoning=f"部位匹配：'{entity_text}' ⊆ '{c.name}'",
                 )
 
         # 默认：相信分数最高的
         return LLMCodeSuggestion(
-            code=best.code, name=best.name, confidence=best.score,
+            code=best.code,
+            name=best.name,
+            confidence=best.score,
             reasoning=f"排序最优：score={best.score:.2f}",
         )
 
-    def qc_surgery_diag_consistency(self, diagnoses: list[str], surgeries: list[str]) -> list[LLMQCResult]:
+    def qc_surgery_diag_consistency(
+        self, diagnoses: list[str], surgeries: list[str]
+    ) -> list[LLMQCResult]:
         """QC-102: 手术与诊断一致性检查（规则版）"""
-        results = []
+        results: list[LLMQCResult] = []
 
         for surgery in surgeries:
             matched = False
@@ -182,13 +213,16 @@ class RuleBasedBackend:
                             matched = True
                             break
                     if not matched:
-                        results.append(LLMQCResult(
-                            rule_id="QC-102", rule_name="手术与诊断一致性",
-                            severity="CRITICAL",
-                            description=f"手术'{surgery}'缺少对应的诊断支持",
-                            suggestion=f"请确认'{surgery}'是否有对应的临床诊断，或补充相关诊断编码",
-                            line_snippet=surgery,
-                        ))
+                        results.append(
+                            LLMQCResult(
+                                rule_id="QC-102",
+                                rule_name="手术与诊断一致性",
+                                severity="CRITICAL",
+                                description=f"手术'{surgery}'缺少对应的诊断支持",
+                                suggestion=f"请确认'{surgery}'是否有对应的临床诊断，或补充相关诊断编码",
+                                line_snippet=surgery,
+                            )
+                        )
                     break
             else:
                 # 没有匹配到已知规则，跳过
@@ -196,30 +230,37 @@ class RuleBasedBackend:
 
         return results
 
-    def qc_primary_diagnosis_validity(self, content: str, primary_diag: str, all_diags: list[str]) -> list[LLMQCResult]:
+    def qc_primary_diagnosis_validity(
+        self, content: str, primary_diag: str, all_diags: list[str]
+    ) -> list[LLMQCResult]:
         """QC-103: 主要诊断选择正确性（规则版）"""
-        results = []
+        results: list[LLMQCResult] = []
 
-        for symptom, code_prefix in SYMPTOM_CODES.items():
+        for symptom, _code_prefix in SYMPTOM_CODES.items():
             if symptom in primary_diag and symptom in content:
                 # 检查是否有更明确的病因诊断
                 for diag in all_diags:
                     if diag != primary_diag and not any(s in diag for s in SYMPTOM_CODES):
-                        results.append(LLMQCResult(
-                            rule_id="QC-103", rule_name="主要诊断选择正确性",
-                            severity="MAJOR",
-                            description=f"主要诊断'{primary_diag}'是症状描述，建议选择病因诊断",
-                            suggestion=f"考虑将'{diag}'作为主要诊断，当前主要诊断为症状编码",
-                            line_snippet=primary_diag,
-                        ))
+                        results.append(
+                            LLMQCResult(
+                                rule_id="QC-103",
+                                rule_name="主要诊断选择正确性",
+                                severity="MAJOR",
+                                description=f"主要诊断'{primary_diag}'是症状描述，建议选择病因诊断",
+                                suggestion=f"考虑将'{diag}'作为主要诊断，当前主要诊断为症状编码",
+                                line_snippet=primary_diag,
+                            )
+                        )
                         break
                 break
 
         return results
 
-    def qc_code_text_match(self, code: str, code_name: str, diagnosis_text: str) -> list[LLMQCResult]:
+    def qc_code_text_match(
+        self, code: str, code_name: str, diagnosis_text: str
+    ) -> list[LLMQCResult]:
         """QC-201: 编码与诊断文本匹配检查（规则版）"""
-        results = []
+        results: list[LLMQCResult] = []
 
         # 检查是否为未特指编码（以.9结尾或x00结尾）
         if (".9" in code or ".x00" in code) and len(diagnosis_text) > 4:
@@ -228,9 +269,15 @@ class RuleBasedBackend:
 
         # 检查部位关键词
         body_parts = {
-            "左": "左侧", "右": "右侧", "双": "双侧",
-            "上叶": "上叶", "中叶": "中叶", "下叶": "下叶",
-            "近端": "近端", "中段": "中段", "远端": "远端",
+            "左": "左侧",
+            "右": "右侧",
+            "双": "双侧",
+            "上叶": "上叶",
+            "中叶": "中叶",
+            "下叶": "下叶",
+            "近端": "近端",
+            "中段": "中段",
+            "远端": "远端",
         }
         for kw, desc in body_parts.items():
             if kw in diagnosis_text and desc not in code_name:
@@ -245,28 +292,35 @@ class RuleBasedBackend:
 
         for keyword, (code, name) in COMMON_MISSED.items():
             if keyword in content and not any(keyword in d for d in coded_diags):
-                results.append(LLMQCResult(
-                    rule_id="QC-202", rule_name="漏编次要诊断检查",
-                    severity="MAJOR",
-                    description=f"病历中提到'{keyword}'但未在诊断编码中发现",
-                    suggestion=f"建议补充编码 {code} - {name}",
-                    line_snippet=keyword,
-                ))
+                results.append(
+                    LLMQCResult(
+                        rule_id="QC-202",
+                        rule_name="漏编次要诊断检查",
+                        severity="MAJOR",
+                        description=f"病历中提到'{keyword}'但未在诊断编码中发现",
+                        suggestion=f"建议补充编码 {code} - {name}",
+                        line_snippet=keyword,
+                    )
+                )
 
         return results
 
-    def drg_analysis(self, diagnoses: list, procedures: list, current_drg: dict) -> list[LLMDRGSuggestion]:
+    def drg_analysis(
+        self, diagnoses: list, procedures: list, current_drg: dict
+    ) -> list[LLMDRGSuggestion]:
         """DRG优化建议（规则版）"""
         suggestions = []
 
-        for kw, (code, name, cc_type) in MCC_KEYWORDS.items():
+        for kw, (code, name, _cc_type) in MCC_KEYWORDS.items():
             if kw in str(diagnoses) and not any(code in str(d) for d in diagnoses):
-                suggestions.append(LLMDRGSuggestion(
-                    type="add_diagnosis",
-                    code=code,
-                    reason=f"病历中存在'{name}'但未编码，补充后可提升为MCC",
-                    estimated_weight_change="+0.5~1.0",
-                ))
+                suggestions.append(
+                    LLMDRGSuggestion(
+                        type="add_diagnosis",
+                        code=code,
+                        reason=f"病历中存在'{name}'但未编码，补充后可提升为MCC",
+                        estimated_weight_change="+0.5~1.0",
+                    )
+                )
 
         return suggestions
 
@@ -281,10 +335,10 @@ class LLMEngine:
 
     async def prewarm(self) -> str:
         """Pre-check backend availability (call on app startup)"""
-        backend = await self._get_backend()
+        await self._get_backend()
         return self._backend_type
 
-    async def _get_backend(self):
+    async def _get_backend(self) -> OllamaBackend | RuleBasedBackend:
         """自动检测并选择可用后端"""
         if self._ollama is None:
             self._ollama = OllamaBackend()
@@ -310,7 +364,7 @@ class LLMEngine:
         if isinstance(backend, OllamaBackend):
             # 使用LLM推理
             cand_text = "\n".join(
-                f"{i+1}. {c.code} - {c.name} (score={c.score:.2f})"
+                f"{i + 1}. {c.code} - {c.name} (score={c.score:.2f})"
                 for i, c in enumerate(candidates[:10])
             )
             prompt = CODE_RECOMMEND_PROMPT.format(
@@ -333,9 +387,7 @@ class LLMEngine:
         # 回退到规则引擎
         return self._rule_based.code_recommend(entity_text, candidates, context)
 
-    async def qc_check(
-        self, rule_id: str, **kwargs
-    ) -> list[LLMQCResult]:
+    async def qc_check(self, rule_id: str, **kwargs) -> list[LLMQCResult]:
         """执行LLM驱动的质控检查"""
         backend = await self._get_backend()
 
@@ -377,7 +429,9 @@ class LLMEngine:
             )
         return []
 
-    async def _run_llm_qc(self, backend: OllamaBackend, rule_id: str, **kwargs) -> list[LLMQCResult]:
+    async def _run_llm_qc(
+        self, backend: OllamaBackend, rule_id: str, **kwargs
+    ) -> list[LLMQCResult]:
         """LLM驱动的质控检查"""
         results = []
 
@@ -389,13 +443,16 @@ class LLMEngine:
             result = await backend.generate_json(prompt, QC_SYSTEM)
             if not result.get("consistent", True):
                 for issue in result.get("issues", []):
-                    results.append(LLMQCResult(
-                        rule_id="QC-102", rule_name="手术与诊断一致性",
-                        severity=issue.get("severity", "MAJOR"),
-                        description=issue.get("problem", ""),
-                        suggestion="请核实手术操作与诊断的关联性",
-                        line_snippet=issue.get("surgery", ""),
-                    ))
+                    results.append(
+                        LLMQCResult(
+                            rule_id="QC-102",
+                            rule_name="手术与诊断一致性",
+                            severity=issue.get("severity", "MAJOR"),
+                            description=issue.get("problem", ""),
+                            suggestion="请核实手术操作与诊断的关联性",
+                            line_snippet=issue.get("surgery", ""),
+                        )
+                    )
 
         elif rule_id == "QC-103":
             prompt = QC_PRIMARY_DIAGNOSIS_VALIDITY.format(
@@ -405,12 +462,15 @@ class LLMEngine:
             )
             result = await backend.generate_json(prompt, QC_SYSTEM)
             if not result.get("valid", True):
-                results.append(LLMQCResult(
-                    rule_id="QC-103", rule_name="主要诊断选择正确性",
-                    severity=result.get("severity", "MAJOR"),
-                    description=result.get("reasoning", ""),
-                    suggestion=f"建议主诊断调整为: {result.get('suggested_primary', '')}",
-                ))
+                results.append(
+                    LLMQCResult(
+                        rule_id="QC-103",
+                        rule_name="主要诊断选择正确性",
+                        severity=result.get("severity", "MAJOR"),
+                        description=result.get("reasoning", ""),
+                        suggestion=f"建议主诊断调整为: {result.get('suggested_primary', '')}",
+                    )
+                )
 
         elif rule_id == "QC-201":
             coded_pairs = kwargs.get("coded_pairs", [])
@@ -418,7 +478,7 @@ class LLMEngine:
                 return results
             # Batch all pairs into a single LLM call
             pairs_text = "\n".join(
-                f"{i}. 编码: {p.get('code','')} - {p.get('name','')}  文本: {p.get('text','')[:200]}"
+                f"{i}. 编码: {p.get('code', '')} - {p.get('name', '')}  文本: {p.get('text', '')[:200]}"
                 for i, p in enumerate(coded_pairs[:6])
             )
             prompt = QC_CODE_TEXT_MATCH_BATCH.format(
@@ -430,13 +490,16 @@ class LLMEngine:
                 if not item.get("match", True):
                     idx = item.get("index", 0)
                     pair = coded_pairs[idx] if idx < len(coded_pairs) else {}
-                    results.append(LLMQCResult(
-                        rule_id="QC-201", rule_name="诊断编码与诊断文本匹配",
-                        severity="MAJOR",
-                        description=f"编码 {item.get('code', pair.get('code',''))} 与文本不匹配: {item.get('reasoning','')}",
-                        suggestion=f"建议编码: {item.get('suggested_code', '')}",
-                        line_snippet=pair.get("text", ""),
-                    ))
+                    results.append(
+                        LLMQCResult(
+                            rule_id="QC-201",
+                            rule_name="诊断编码与诊断文本匹配",
+                            severity="MAJOR",
+                            description=f"编码 {item.get('code', pair.get('code', ''))} 与文本不匹配: {item.get('reasoning', '')}",
+                            suggestion=f"建议编码: {item.get('suggested_code', '')}",
+                            line_snippet=pair.get("text", ""),
+                        )
+                    )
 
         elif rule_id == "QC-202":
             prompt = QC_MISSED_DIAGNOSIS.format(
@@ -445,25 +508,32 @@ class LLMEngine:
             )
             result = await backend.generate_json(prompt, QC_SYSTEM)
             for missed in result.get("missed", []):
-                results.append(LLMQCResult(
-                    rule_id="QC-202", rule_name="漏编次要诊断检查",
-                    severity="MAJOR",
-                    description=f"可能遗漏诊断: {missed.get('diagnosis_text','')} ({missed.get('reasoning','')})",
-                    suggestion=f"建议补充 {missed.get('suggested_code','')} - {missed.get('suggested_name','')}",
-                    line_snippet=missed.get("diagnosis_text", ""),
-                ))
+                results.append(
+                    LLMQCResult(
+                        rule_id="QC-202",
+                        rule_name="漏编次要诊断检查",
+                        severity="MAJOR",
+                        description=f"可能遗漏诊断: {missed.get('diagnosis_text', '')} ({missed.get('reasoning', '')})",
+                        suggestion=f"建议补充 {missed.get('suggested_code', '')} - {missed.get('suggested_name', '')}",
+                        line_snippet=missed.get("diagnosis_text", ""),
+                    )
+                )
 
         return results
 
     async def drg_optimize(
-        self, diagnoses: list[str], procedures: list[str],
-        primary_diag: str, patient_info: dict, current_drg: dict,
+        self,
+        diagnoses: list[str],
+        procedures: list[str],
+        primary_diag: str,
+        patient_info: dict,
+        current_drg: dict,
     ) -> list[LLMDRGSuggestion]:
         """DRG编码优化建议"""
         backend = await self._get_backend()
 
         if isinstance(backend, RuleBasedBackend):
-            return backend.drg_analysis(diagnoses, procedures, current_drg)
+            return self._rule_based.drg_analysis(diagnoses, procedures, current_drg)
 
         try:
             prompt = DRG_ANALYSIS_PROMPT.format(
@@ -474,18 +544,20 @@ class LLMEngine:
                 current_drg=json.dumps(current_drg, ensure_ascii=False),
             )
             result = await backend.generate_json(prompt, ICD_CODING_SYSTEM)
-            suggestions = []
+            suggestions: list[LLMDRGSuggestion] = []
             for s in result.get("suggestions", []):
-                suggestions.append(LLMDRGSuggestion(
-                    type=s.get("type", ""),
-                    code=s.get("code", ""),
-                    reason=s.get("reason", ""),
-                    estimated_weight_change=s.get("estimated_weight_change", ""),
-                ))
+                suggestions.append(
+                    LLMDRGSuggestion(
+                        type=s.get("type", ""),
+                        code=s.get("code", ""),
+                        reason=s.get("reason", ""),
+                        estimated_weight_change=s.get("estimated_weight_change", ""),
+                    )
+                )
             return suggestions
         except Exception as e:
             logger.warning(f"LLM DRG optimize failed, using rule fallback: {e}")
-            return backend.drg_analysis(diagnoses, procedures, current_drg)
+            return self._rule_based.drg_analysis(diagnoses, procedures, current_drg)
 
 
 # Singleton

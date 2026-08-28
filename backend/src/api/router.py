@@ -1,5 +1,16 @@
 from fastapi import APIRouter
-from src.api.v1.endpoints import coding, drg, qc, dashboard, auth, admin, pipeline, rejection, review_agent
+
+from src.api.v1.endpoints import (
+    admin,
+    auth,
+    coding,
+    dashboard,
+    drg,
+    pipeline,
+    qc,
+    rejection,
+    review_agent,
+)
 
 api_router = APIRouter()
 

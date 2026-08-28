@@ -19,7 +19,14 @@ select = [
     "C4",    # flake8-comprehensions
     "SIM",   # flake8-simplify
 ]
-ignore = ["E501"]  # line-too-long handled by formatter
+ignore = [
+    "E501",  # line-too-long handled by formatter
+    "UP042", # Preserve str + Enum serialization used by persisted models.
+]
+
+[tool.ruff.lint.per-file-ignores]
+"src/**/__init__.py" = ["F401"]  # Package modules intentionally re-export public APIs.
+"src/api/v1/endpoints/*.py" = ["B008"]  # FastAPI dependency declarations use argument defaults.
 
 [tool.ruff.lint.isort]
 known-first-party = ["src"]

@@ -56,8 +56,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         _rate_cleanup_counter += 1
         if _rate_cleanup_counter % 500 == 0:
             cutoff = now - _RATE_WINDOW_SEC * 2
-            stale = [ip for ip, times in list(_rate_buckets.items())
-                      if not times or times[-1] < cutoff]
+            stale = [
+                ip for ip, times in list(_rate_buckets.items()) if not times or times[-1] < cutoff
+            ]
             for ip in stale:
                 del _rate_buckets[ip]
 
@@ -94,9 +95,12 @@ async def lifespan(app: FastAPI):
     # Auto-seed reference data + demo data if database is empty (competition demo safety)
     try:
         async with async_session() as db:
-            patient_count = (await db.execute(select(func.count()).select_from(Patient))).scalar() or 0
+            patient_count = (
+                await db.execute(select(func.count()).select_from(Patient))
+            ).scalar() or 0
 
         from src.scripts.seed_data import seed_reference_data_if_needed
+
         if await seed_reference_data_if_needed():
             async with async_session() as db:
                 await db.execute(text("ANALYZE"))
@@ -106,6 +110,7 @@ async def lifespan(app: FastAPI):
         if patient_count == 0:
             logger.info("Database is empty, auto-seeding demo data...")
             from src.scripts.seed_pipeline_demo import seed_pipeline_demo
+
             await seed_pipeline_demo()
             logger.info("Demo data seeded successfully")
     except Exception as e:
@@ -114,6 +119,7 @@ async def lifespan(app: FastAPI):
     # Prewarm LLM engine (non-blocking detection)
     try:
         from src.services.llm_engine import llm_engine
+
         backend = await llm_engine.prewarm()
         logger.info(f"LLM backend: {backend}")
     except Exception as e:
@@ -154,6 +160,7 @@ async def health_llm():
     """检查 LLM (Ollama) 是否在线 — 复用全局单例"""
     try:
         from src.services.llm_engine import llm_engine
+
         await llm_engine._get_backend()
         return {
             "llm_available": llm_engine.backend_type == "ollama",

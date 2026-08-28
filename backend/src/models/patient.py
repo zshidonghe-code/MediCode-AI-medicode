@@ -1,8 +1,16 @@
-from sqlalchemy import String, Integer, Date, DateTime, Text, ForeignKey, Float, Boolean, JSON, Enum as SAEnum
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from datetime import date, datetime, timezone
 import enum
+from datetime import UTC, date, datetime
+from typing import TYPE_CHECKING
+
+from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Enum as SAEnum
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from src.models.database import Base
+
+if TYPE_CHECKING:
+    from src.models.icd import CodingResult
+    from src.models.qc import QCResult
 
 
 class Gender(str, enum.Enum):
@@ -19,26 +27,28 @@ class Patient(Base):
     gender: Mapped[Gender] = mapped_column(SAEnum(Gender))
     age: Mapped[int] = mapped_column(Integer)
     birth_year: Mapped[int] = mapped_column(Integer)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
 
     records: Mapped[list["MedicalRecord"]] = relationship(back_populates="patient")
 
 
 class RecordType(str, enum.Enum):
-    ADMISSION = "admission"          # 入院记录
-    COURSE = "course"                 # 病程记录
-    SURGERY = "surgery"              # 手术记录
-    DISCHARGE = "discharge"          # 出院小结
-    CONSULTATION = "consultation"    # 会诊记录
-    EXAM = "exam"                    # 检查报告
-    LAB = "lab"                      # 检验报告
+    ADMISSION = "admission"  # 入院记录
+    COURSE = "course"  # 病程记录
+    SURGERY = "surgery"  # 手术记录
+    DISCHARGE = "discharge"  # 出院小结
+    CONSULTATION = "consultation"  # 会诊记录
+    EXAM = "exam"  # 检查报告
+    LAB = "lab"  # 检验报告
 
 
 class MedicalRecord(Base):
     __tablename__ = "medical_records"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    patient_id: Mapped[int] = mapped_column(ForeignKey("patients.id", ondelete="CASCADE"), index=True)
+    patient_id: Mapped[int] = mapped_column(
+        ForeignKey("patients.id", ondelete="CASCADE"), index=True
+    )
     record_type: Mapped[RecordType] = mapped_column(SAEnum(RecordType))
     title: Mapped[str] = mapped_column(String(256))
     content: Mapped[str] = mapped_column(Text)
@@ -46,7 +56,7 @@ class MedicalRecord(Base):
     doctor_hash: Mapped[str] = mapped_column(String(128))
     admission_date: Mapped[date] = mapped_column(Date, nullable=True, index=True)
     discharge_date: Mapped[date] = mapped_column(Date, nullable=True, index=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
 
     patient: Mapped[Patient] = relationship(back_populates="records")
     coding_results: Mapped[list["CodingResult"]] = relationship(back_populates="record")

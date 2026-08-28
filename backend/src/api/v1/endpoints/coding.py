@@ -1,12 +1,14 @@
-import time
 import logging
-from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
+import time
+from typing import Literal as LiteralType
+
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from pydantic import BaseModel, Field
-from typing import Optional, Literal as LiteralType
-from src.services.nlp_engine.engine import nlp_parser
-from src.services.icd_coder.coder import icd_coder, ICDCandidate
-from src.services.icd_coder.scoring import primary_score, conflicts
+
 from src.api.v1.endpoints.auth import get_current_user
+from src.services.icd_coder.coder import ICDCandidate, icd_coder
+from src.services.icd_coder.scoring import conflicts, primary_score
+from src.services.nlp_engine.engine import nlp_parser
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +33,7 @@ class ICDCodeItem(BaseModel):
 
 class CodingResponse(BaseModel):
     record_id: int
-    primary_diagnosis: Optional[ICDCodeItem] = None
+    primary_diagnosis: ICDCodeItem | None = None
     secondary_diagnoses: list[ICDCodeItem] = []
     procedures: list[ICDCodeItem] = []
     suggestions: list[ICDCodeItem] = []
@@ -41,8 +43,11 @@ class CodingResponse(BaseModel):
 
 def _to_item(c: ICDCandidate) -> ICDCodeItem:
     return ICDCodeItem(
-        code=c.code, name=c.name, category=c.category,
-        is_primary=False, confidence=round(c.score, 2),
+        code=c.code,
+        name=c.name,
+        category=c.category,
+        is_primary=False,
+        confidence=round(c.score, 2),
     )
 
 
@@ -64,52 +69,58 @@ async def auto_code(request: CodingRequest, user: dict = Depends(get_current_use
     t0 = time.time()
     record = nlp_parser.parse(request.record_type, request.content)
 
-    diag_items = []
+    diag_items: list[ICDCodeItem] = []
     for entity in record.diagnoses:
         candidates = await icd_coder.recommend(entity.text, use_llm=request.use_llm)
         if candidates:
             diag_items.extend(_to_item(c) for c in candidates)
         else:
-            diag_items.append(ICDCodeItem(
-                code=icd_coder.lookup_code(entity.text),
-                name=entity.text,
-                category="诊断",
-                confidence=entity.confidence,
-            ))
+            diag_items.append(
+                ICDCodeItem(
+                    code=icd_coder.lookup_code(entity.text),
+                    name=entity.text,
+                    category="诊断",
+                    confidence=entity.confidence,
+                )
+            )
 
-    proc_items = []
+    proc_items: list[ICDCodeItem] = []
     for entity in record.surgeries:
         candidates = await icd_coder.recommend(entity.text, use_llm=request.use_llm)
         if candidates:
             proc_items.extend(_to_item(c) for c in candidates)
         else:
-            proc_items.append(ICDCodeItem(
-                code=icd_coder.lookup_code(entity.text),
-                name=entity.text,
-                category="手术操作",
-                confidence=entity.confidence,
-            ))
+            proc_items.append(
+                ICDCodeItem(
+                    code=icd_coder.lookup_code(entity.text),
+                    name=entity.text,
+                    category="手术操作",
+                    confidence=entity.confidence,
+                )
+            )
 
     diag_items = _dedup(diag_items)
     proc_items = _dedup(proc_items)
 
     # Select primary diagnosis with medical logic
-    primary = None
-    secondaries = []
+    primary: ICDCodeItem | None = None
+    secondaries: list[ICDCodeItem] = []
     if diag_items:
         # Detect procedure context for boosting related diagnoses
-        has_cardiac_proc = any(
-            p.code.startswith(("36.", "37.", "00.6")) for p in proc_items
-        )
-        has_ortho_proc = any(
-            p.code.startswith(("81.", "80.", "79.", "78.")) for p in proc_items
-        )
-        has_neuro_proc = any(
-            p.code.startswith(("01.", "02.", "03.")) for p in proc_items
-        )
+        has_cardiac_proc = any(p.code.startswith(("36.", "37.", "00.6")) for p in proc_items)
+        has_ortho_proc = any(p.code.startswith(("81.", "80.", "79.", "78.")) for p in proc_items)
+        has_neuro_proc = any(p.code.startswith(("01.", "02.", "03.")) for p in proc_items)
 
-        diag_items.sort(key=lambda item: primary_score(
-            item.code, item.confidence, cardiac=has_cardiac_proc, ortho=has_ortho_proc, neuro=has_neuro_proc), reverse=True)
+        diag_items.sort(
+            key=lambda item: primary_score(
+                item.code,
+                item.confidence,
+                cardiac=has_cardiac_proc,
+                ortho=has_ortho_proc,
+                neuro=has_neuro_proc,
+            ),
+            reverse=True,
+        )
         primary = diag_items[0]
         primary.is_primary = True
 
@@ -174,11 +185,15 @@ async def auto_code_upload(file: UploadFile = File(...), user: dict = Depends(ge
 
     try:
         from src.services.file_parser import parse_file
+
         result = await parse_file(raw, filename)
         content = result.text
     except ValueError:
-        return {"filename": filename, "status": "unsupported_format",
-                "supported": [".txt", ".docx", ".pdf"]}
+        return {
+            "filename": filename,
+            "status": "unsupported_format",
+            "supported": [".txt", ".docx", ".pdf"],
+        }
     except Exception as e:
         logger.warning(f"File parse failed for '{filename}': {e}")
         return {"filename": filename, "status": "parse_error", "error": str(e)}
@@ -200,7 +215,6 @@ async def auto_code_upload(file: UploadFile = File(...), user: dict = Depends(ge
     }
 
 
-
 class ValidateRequest(BaseModel):
     coding: CodingResponse
     patient_gender: LiteralType["male", "female"] = "male"
@@ -209,7 +223,6 @@ class ValidateRequest(BaseModel):
 
 @router.post("/validate")
 async def validate_coding(request: ValidateRequest, user: dict = Depends(get_current_user)):
-    patient_info = {"gender": request.patient_gender, "age": request.patient_age}
     errors: list[str] = []
     warnings: list[str] = []
     if request.coding.primary_diagnosis:
@@ -219,8 +232,22 @@ async def validate_coding(request: ValidateRequest, user: dict = Depends(get_cur
             errors.append(f"编码 {code} 不适用于男性患者（女性特有诊断）")
         if gender == "female" and code.startswith("N40"):
             errors.append(f"编码 {code} 不适用于女性患者（男性特有诊断）")
-        for prefix in ["R00", "R05", "R06", "R07", "R09", "R10", "R11",
-                       "R50", "R51", "R52", "R53", "R54", "R55", "R56"]:
+        for prefix in [
+            "R00",
+            "R05",
+            "R06",
+            "R07",
+            "R09",
+            "R10",
+            "R11",
+            "R50",
+            "R51",
+            "R52",
+            "R53",
+            "R54",
+            "R55",
+            "R56",
+        ]:
             if code.startswith(prefix):
                 warnings.append(f"编码 {code} 为症状编码，不宜作为主要诊断")
         if code.startswith("Z"):
@@ -231,4 +258,7 @@ async def validate_coding(request: ValidateRequest, user: dict = Depends(get_cur
 @router.get("/search")
 async def search_icd(keyword: str, limit: int = 20, user: dict = Depends(get_current_user)):
     results = await icd_coder.search_by_keyword(keyword, limit)
-    return {"keyword": keyword, "results": [{"code": r.code, "name": r.name, "score": r.score} for r in results]}
+    return {
+        "keyword": keyword,
+        "results": [{"code": r.code, "name": r.name, "score": r.score} for r in results],
+    }

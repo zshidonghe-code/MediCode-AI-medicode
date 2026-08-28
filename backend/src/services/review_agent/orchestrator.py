@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from hashlib import sha256
 from uuid import uuid4
 
 from .contracts import (
     CreateReviewRequest,
+    RedactionReceipt,
     ReviewDecisionRequest,
     ReviewDocument,
     ReviewEventOut,
@@ -57,8 +58,8 @@ class ReviewAgent:
             analysis={},
             pending_actions=[],
             operator_hash=sha256(operator_name.encode("utf-8")).hexdigest(),
-            created_at=datetime.now(timezone.utc),
-            updated_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
+            updated_at=datetime.now(UTC),
         )
         created = await self.store.create(
             review,
@@ -76,7 +77,9 @@ class ReviewAgent:
         self._assert_operator(review, operator)
         return self._snapshot(review)
 
-    async def advance(self, review_id: str, expected_version: int, operator: dict) -> ReviewSnapshot:
+    async def advance(
+        self, review_id: str, expected_version: int, operator: dict
+    ) -> ReviewSnapshot:
         review = await self.store.get(review_id)
         self._assert_operator(review, operator)
         self._assert_version(review, expected_version)
@@ -94,9 +97,7 @@ class ReviewAgent:
             )
 
         if review.status in {"extracted", "recalculate"}:
-            coding = await self.tools.code(
-                analysis.get("extraction", {}), review.preferred_mode
-            )
+            coding = await self.tools.code(analysis.get("extraction", {}), review.preferred_mode)
             analysis["coding"] = coding
             is_recalculation = review.status == "recalculate"
             return await self._transition(
@@ -142,7 +143,9 @@ class ReviewAgent:
                 status="waiting_for_human" if requires_confirmation else "ready_for_confirmation",
                 analysis=analysis,
                 pending_actions=pending_actions,
-                event_type="human_confirmation_required" if requires_confirmation else "evidence_verified",
+                event_type="human_confirmation_required"
+                if requires_confirmation
+                else "evidence_verified",
                 phase="evidence",
                 payload={"conflict_count": len(pending_actions)},
             )
@@ -224,7 +227,9 @@ class ReviewAgent:
     ) -> ReviewSnapshot:
         if review.status != "ready_for_confirmation":
             raise ReviewInvalidStateError("review is not ready for final confirmation")
-        has_pending = any(action.get("status") == "pending_evidence" for action in review.pending_actions)
+        has_pending = any(
+            action.get("status") == "pending_evidence" for action in review.pending_actions
+        )
         return await self._transition(
             review,
             status="completed_with_pending" if has_pending else "completed",
@@ -291,7 +296,7 @@ class ReviewAgent:
             mode=review.mode,
             version=review.version,
             documents=[ReviewDocument.model_validate(item) for item in review.documents],
-            redaction_receipt=review.redaction_receipt,
+            redaction_receipt=RedactionReceipt.model_validate(review.redaction_receipt),
             analysis=review.analysis,
             pending_actions=review.pending_actions,
             created_at=review.created_at.isoformat(),

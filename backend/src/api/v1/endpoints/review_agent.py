@@ -35,7 +35,9 @@ def _raise_review_error(error: Exception) -> None:
     if isinstance(error, ReviewAccessDeniedError):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(error)) from error
     if isinstance(error, (ReviewInvalidStateError, RedactionViolationError)):
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(error)) from error
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(error)
+        ) from error
     raise error
 
 
@@ -72,7 +74,12 @@ async def advance_review(
 ):
     try:
         return await agent.advance(review_id, request.expected_version, user)
-    except (ReviewNotFoundError, ReviewVersionConflictError, ReviewInvalidStateError, ReviewAccessDeniedError) as error:
+    except (
+        ReviewNotFoundError,
+        ReviewVersionConflictError,
+        ReviewInvalidStateError,
+        ReviewAccessDeniedError,
+    ) as error:
         _raise_review_error(error)
 
 
@@ -85,7 +92,12 @@ async def decide_review(
 ):
     try:
         return await agent.decide(review_id, request, user)
-    except (ReviewNotFoundError, ReviewVersionConflictError, ReviewInvalidStateError, ReviewAccessDeniedError) as error:
+    except (
+        ReviewNotFoundError,
+        ReviewVersionConflictError,
+        ReviewInvalidStateError,
+        ReviewAccessDeniedError,
+    ) as error:
         _raise_review_error(error)
 
 

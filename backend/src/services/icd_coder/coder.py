@@ -7,12 +7,13 @@
 4. 编码校验（性别/年龄约束、主次诊断逻辑、排除规则）
 """
 
+import json
 import logging
 from dataclasses import dataclass
-from functools import lru_cache
-import json
 from pathlib import Path
-from sqlalchemy import select, or_
+
+from sqlalchemy import or_, select
+
 from src.models.database import async_session
 from src.models.icd import ICDCode, ICDVersion
 
@@ -32,7 +33,7 @@ def _load_icd_map(filename: str) -> dict[str, tuple[str, str]]:
         logger.warning(f"ICD data file not found: {data_path}")
         return {}
     try:
-        with open(data_path, "r", encoding="utf-8") as f:
+        with open(data_path, encoding="utf-8") as f:
             entries = json.load(f)
     except (json.JSONDecodeError, OSError) as e:
         logger.warning(f"Failed to load ICD data file {filename}: {e}")
@@ -85,6 +86,7 @@ def _get_pinyin_initials(text: str) -> str:
     """获取文本的拼音首字母"""
     try:
         from pypinyin import lazy_pinyin
+
         return "".join(w[0] for w in lazy_pinyin(text) if w)
     except Exception as e:
         logger.debug(f"pypinyin unavailable, falling back to ascii filter: {e}")
@@ -130,15 +132,16 @@ class ICDCoder:
             return
         try:
             from src.services.vector_search import vector_search_engine
+
             # 构建文档列表：诊断 + 手术
             docs = []
             seen = set()
-            for name, (code, full_name) in _DIAGNOSIS_MAP.items():
+            for _name, (code, full_name) in _DIAGNOSIS_MAP.items():
                 key = code
                 if key not in seen:
                     seen.add(key)
                     docs.append({"code": code, "name": full_name, "category": "诊断"})
-            for name, (code, full_name) in _PROCEDURE_MAP.items():
+            for _name, (code, full_name) in _PROCEDURE_MAP.items():
                 key = code
                 if key not in seen:
                     seen.add(key)
@@ -149,7 +152,9 @@ class ICDCoder:
         except Exception as e:
             logger.warning(f"Vector index build failed, semantic search disabled: {e}")
 
-    async def recommend(self, diagnosis_text: str, context: dict | None = None, use_llm: bool = True) -> list[ICDCandidate]:
+    async def recommend(
+        self, diagnosis_text: str, context: dict | None = None, use_llm: bool = True
+    ) -> list[ICDCandidate]:
         """根据诊断文本推荐ICD编码（DB → 本地映射 → 语义搜索 → LLM）"""
         text = diagnosis_text.strip()
         if not text:
@@ -180,10 +185,15 @@ class ICDCoder:
             try:
                 vec_results = self._vector_engine.hybrid_search(text, top_k=5)
                 if vec_results:
-                    return [ICDCandidate(
-                        code=r.code, name=r.name, category=r.category,
-                        score=r.score,
-                    ) for r in vec_results]
+                    return [
+                        ICDCandidate(
+                            code=r.code,
+                            name=r.name,
+                            category=r.category,
+                            score=r.score,
+                        )
+                        for r in vec_results
+                    ]
             except Exception as e:
                 logger.warning(f"Vector search failed for '{text}': {e}")
 
@@ -191,14 +201,18 @@ class ICDCoder:
 
         return []
 
-    async def _llm_rerank(self, text: str, candidates: list, context: dict | None, use_llm: bool) -> list[ICDCandidate]:
+    async def _llm_rerank(
+        self, text: str, candidates: list, context: dict | None, use_llm: bool
+    ) -> list[ICDCandidate]:
         """使用LLM对候选编码重排序"""
         if not use_llm or len(candidates) <= 1:
             return candidates
 
         try:
-            from src.services.llm_engine import llm_engine
             import json as _json
+
+            from src.services.llm_engine import llm_engine
+
             ctx_str = _json.dumps(context, ensure_ascii=False)[:1000] if context else ""
             suggestion = await llm_engine.code_recommend(text, candidates, ctx_str)
             if suggestion:
@@ -232,7 +246,7 @@ class ICDCoder:
                 rows = result.scalars().all()
 
                 # Base condition → complication subcode mapping (for penalty)
-                _BASE_TO_COMPLICATION: dict[str, list[str]] = {
+                base_to_complication: dict[str, list[str]] = {
                     "E11": ["E11.2", "E11.3", "E11.4", "E11.5", "E11.6", "E11.7"],
                     "E10": ["E10.2", "E10.3", "E10.4", "E10.5", "E10.6", "E10.7"],
                 }
@@ -240,7 +254,11 @@ class ICDCoder:
                 candidates = []
                 for row in rows:
                     # Check if text matches an alias (stored in search_terms)
-                    aliases = row.search_terms.get("alias", []) if isinstance(row.search_terms, dict) else []
+                    aliases = (
+                        row.search_terms.get("alias", [])
+                        if isinstance(row.search_terms, dict)
+                        else []
+                    )
                     # Score: exact match > alias exact match > partial match > generic LIKE
                     if row.name == text:
                         score = 1.0
@@ -250,30 +268,59 @@ class ICDCoder:
                         # Penalize if the matched text is only part of a longer word
                         # e.g. "糖尿病" matching "糖尿病肾病" should get lower score
                         idx = row.name.find(text)
-                        after = row.name[idx + len(text):] if idx + len(text) < len(row.name) else ""
+                        after = (
+                            row.name[idx + len(text) :] if idx + len(text) < len(row.name) else ""
+                        )
                         if after and after[0] not in "，,、()）)） " and not after.startswith("伴"):
-                            score = 0.58  # Sub-word match, likely noise (e.g. 糖尿病变 → 糖尿病肾病)
+                            score = (
+                                0.58  # Sub-word match, likely noise (e.g. 糖尿病变 → 糖尿病肾病)
+                            )
                         else:
                             score = 0.78
                     else:
                         score = 0.50
 
                     # Penalize pregnancy/obstetric codes when search text is unrelated
-                    if row.code and row.code[0] == "O" and not any(kw in text for kw in
-                            ("妊娠", "孕", "产", "流产", "分娩", "剖宫", "胎", "羊水", "产后", "宫缩")):
+                    if (
+                        row.code
+                        and row.code[0] == "O"
+                        and not any(
+                            kw in text
+                            for kw in (
+                                "妊娠",
+                                "孕",
+                                "产",
+                                "流产",
+                                "分娩",
+                                "剖宫",
+                                "胎",
+                                "羊水",
+                                "产后",
+                                "宫缩",
+                            )
+                        )
+                    ):
                         score -= 0.8
                         score = max(score, 0.0)
                     # Penalize complication subcodes when search text only matches base condition
-                    for base_prefix, comp_prefixes in _BASE_TO_COMPLICATION.items():
+                    for _base_prefix, comp_prefixes in base_to_complication.items():
                         if any(row.code.startswith(cp) for cp in comp_prefixes):
-                            if text in row.name and not any(kw in text for kw in ("肾病", "视网膜", "神经", "足", "眼", "肾")):
+                            if text in row.name and not any(
+                                kw in text for kw in ("肾病", "视网膜", "神经", "足", "眼", "肾")
+                            ):
                                 score = max(0.0, score - 0.30)
                             break
                     cat = "手术操作" if row.version == ICDVersion.ICD9_CM3 else "诊断"
-                    candidates.append(ICDCandidate(
-                        code=row.code, name=row.name, category=cat,
-                        score=score, semantic_score=score, freq_score=0.7,
-                    ))
+                    candidates.append(
+                        ICDCandidate(
+                            code=row.code,
+                            name=row.name,
+                            category=cat,
+                            score=score,
+                            semantic_score=score,
+                            freq_score=0.7,
+                        )
+                    )
                 return sorted(candidates, key=lambda c: c.score, reverse=True)
         except Exception as e:
             logger.warning(f"DB search failed for '{text}': {e}")
@@ -293,7 +340,7 @@ class ICDCoder:
         # Prefix-indexed search: only scan entries sharing the first 2 chars
         prefix = text[:2]
         if prefix in self._prefix_index:
-            for keyword, code, name, cat in self._prefix_index[prefix]:
+            for keyword, code, _name, _cat in self._prefix_index[prefix]:
                 if code in seen:
                     continue
                 if keyword != text and (keyword in text or text in keyword):
@@ -305,7 +352,7 @@ class ICDCoder:
         # check if any known keyword (length >= 2) is a substring of the query
         if not candidates and len(text) >= 3:
             for n in range(2, min(len(text), 6)):
-                sub_prefix = text[n:n+2]
+                sub_prefix = text[n : n + 2]
                 if sub_prefix in self._prefix_index:
                     for keyword, code, name, cat in self._prefix_index[sub_prefix]:
                         if code in seen:
@@ -313,7 +360,9 @@ class ICDCoder:
                         if len(keyword) >= 2 and keyword in text:
                             score = 0.68
                             seen.add(code)
-                            candidates.append(ICDCandidate(code=code, name=name, category=cat, score=score))
+                            candidates.append(
+                                ICDCandidate(code=code, name=name, category=cat, score=score)
+                            )
 
         return sorted(candidates, key=lambda c: c.score, reverse=True)
 
@@ -324,7 +373,7 @@ class ICDCoder:
         # Fallback: prefix-based lookup
         prefix = diagnosis_text[:2]
         if prefix in self._prefix_index:
-            for keyword, code, name, cat in self._prefix_index[prefix]:
+            for keyword, code, _name, _cat in self._prefix_index[prefix]:
                 if keyword in diagnosis_text:
                     return code
         return "R69.900"
@@ -355,7 +404,7 @@ class ICDCoder:
 
     def validate(self, coding_result: CodingResult, patient_info: dict) -> ValidationResult:
         errors = []
-        warnings = []
+        warnings: list[str] = []
         gender = patient_info.get("gender")
         if coding_result.primary_diagnosis:
             code = coding_result.primary_diagnosis.code
@@ -382,13 +431,17 @@ class ICDCoder:
         # 1. Database search
         try:
             async with async_session() as session:
-                query = select(ICDCode).where(
-                    or_(
-                        ICDCode.name.ilike(f"%{keyword}%"),
-                        ICDCode.code.ilike(f"%{keyword}%"),
-                        ICDCode.py_code.ilike(f"%{keyword}%"),
+                query = (
+                    select(ICDCode)
+                    .where(
+                        or_(
+                            ICDCode.name.ilike(f"%{keyword}%"),
+                            ICDCode.code.ilike(f"%{keyword}%"),
+                            ICDCode.py_code.ilike(f"%{keyword}%"),
+                        )
                     )
-                ).limit(limit * 2)
+                    .limit(limit * 2)
+                )
                 result = await session.execute(query)
                 for row in result.scalars().all():
                     cat = "手术操作" if row.version == ICDVersion.ICD9_CM3 else "诊断"
@@ -410,7 +463,9 @@ class ICDCoder:
             try:
                 vec_results = self._vector_engine.hybrid_search(keyword, top_k=limit)
                 for r in vec_results:
-                    add([ICDCandidate(code=r.code, name=r.name, category=r.category, score=r.score)])
+                    add(
+                        [ICDCandidate(code=r.code, name=r.name, category=r.category, score=r.score)]
+                    )
             except Exception as e:
                 logger.warning(f"Vector search_by_keyword failed for '{keyword}': {e}")
 

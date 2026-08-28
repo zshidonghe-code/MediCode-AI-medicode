@@ -1,18 +1,29 @@
 """仪表盘数据接口 — 从数据库查询真实运营数据"""
 
-from datetime import datetime, timedelta, date
+from datetime import date, datetime, timedelta
+from typing import NotRequired, TypedDict
+
 from fastapi import APIRouter, Depends
-from sqlalchemy import select, func
+from sqlalchemy import func, select
+
 from src.api.v1.endpoints.auth import get_current_user
-from src.models.database import async_session
-from src.models.patient import MedicalRecord
-from src.models.icd import CodingResult
-from src.models.qc import QCResult
 from src.config.settings import get_settings
+from src.models.database import async_session
+from src.models.icd import CodingResult
+from src.models.patient import MedicalRecord
+from src.models.qc import QCResult
 
 router = APIRouter()
 
 settings = get_settings()
+
+
+class QCTrendPoint(TypedDict):
+    date: str
+    avg_score: float
+    total_checks: int
+    defect_rate: float
+    cmi: NotRequired[float | None]
 
 
 def _days_ago(days: int) -> date:
@@ -29,9 +40,14 @@ async def get_overview(user: dict = Depends(get_current_user)):
 
         # Average stay days
         avg_stay_r = await db.execute(
-            select(func.avg(
-                func.julianday(MedicalRecord.discharge_date) - func.julianday(MedicalRecord.admission_date)
-            )).where(MedicalRecord.discharge_date.isnot(None), MedicalRecord.admission_date.isnot(None))
+            select(
+                func.avg(
+                    func.julianday(MedicalRecord.discharge_date)
+                    - func.julianday(MedicalRecord.admission_date)
+                )
+            ).where(
+                MedicalRecord.discharge_date.isnot(None), MedicalRecord.admission_date.isnot(None)
+            )
         )
         avg_stay_days = round(avg_stay_r.scalar() or 0.0, 1)
 
@@ -53,7 +69,7 @@ async def get_overview(user: dict = Depends(get_current_user)):
         drg_stats_r = await db.execute(
             select(
                 func.count(),
-                func.sum(func.json_extract(CodingResult.codes, '$.drg_weight')),
+                func.sum(func.json_extract(CodingResult.codes, "$.drg_weight")),
             ).where(CodingResult.codes.isnot(None))
         )
         drg_count, total_weight = drg_stats_r.one()
@@ -62,8 +78,11 @@ async def get_overview(user: dict = Depends(get_current_user)):
 
         # Cost/time consumption indices (benchmark vs. expected)
         cost_idx_r = await db.execute(
-            select(func.avg(func.json_extract(CodingResult.codes, '$.drg_weight') * settings.drg_base_rate))
-            .where(CodingResult.codes.isnot(None))
+            select(
+                func.avg(
+                    func.json_extract(CodingResult.codes, "$.drg_weight") * settings.drg_base_rate
+                )
+            ).where(CodingResult.codes.isnot(None))
         )
         avg_cost = round(cost_idx_r.scalar() or 0.0, 0)
 
@@ -71,10 +90,15 @@ async def get_overview(user: dict = Depends(get_current_user)):
         time_idx_r = await db.execute(
             select(
                 func.avg(
-                    (func.julianday(MedicalRecord.discharge_date) - func.julianday(MedicalRecord.admission_date))
-                    / func.nullif(func.json_extract(CodingResult.codes, '$.drg_weight') * 3.5, 0)
+                    (
+                        func.julianday(MedicalRecord.discharge_date)
+                        - func.julianday(MedicalRecord.admission_date)
+                    )
+                    / func.nullif(func.json_extract(CodingResult.codes, "$.drg_weight") * 3.5, 0)
                 )
-            ).select_from(MedicalRecord).join(CodingResult, CodingResult.record_id == MedicalRecord.id)
+            )
+            .select_from(MedicalRecord)
+            .join(CodingResult, CodingResult.record_id == MedicalRecord.id)
             .where(
                 MedicalRecord.discharge_date.isnot(None),
                 MedicalRecord.admission_date.isnot(None),
@@ -92,7 +116,9 @@ async def get_overview(user: dict = Depends(get_current_user)):
         "cmi": cmi,
         "avg_cost": avg_cost,
         "avg_stay_days": avg_stay_days,
-        "cost_consumption_index": round(avg_cost / max(settings.drg_base_rate, 1.0) / max(cmi, 0.1), 2),
+        "cost_consumption_index": round(
+            avg_cost / max(settings.drg_base_rate, 1.0) / max(cmi, 0.1), 2
+        ),
         "time_consumption_index": time_consumption_index,
         "low_risk_mortality_rate": low_risk_mortality_rate,
         "ai_coding_rate": ai_coding_rate,
@@ -101,8 +127,7 @@ async def get_overview(user: dict = Depends(get_current_user)):
 
 
 @router.get("/department-ranking")
-async def get_department_ranking(limit: int = 10,
-                                 user: dict = Depends(get_current_user)):
+async def get_department_ranking(limit: int = 10, user: dict = Depends(get_current_user)):
     """科室排名 — 按CMI降序"""
     async with async_session() as db:
         # Join MedicalRecord → CodingResult to get DRG weight per record, then group by department
@@ -110,9 +135,10 @@ async def get_department_ranking(limit: int = 10,
             select(
                 MedicalRecord.department,
                 func.count().label("cases"),
-                func.avg(func.json_extract(CodingResult.codes, '$.drg_weight')).label("avg_weight"),
+                func.avg(func.json_extract(CodingResult.codes, "$.drg_weight")).label("avg_weight"),
                 func.avg(
-                    func.julianday(MedicalRecord.discharge_date) - func.julianday(MedicalRecord.admission_date)
+                    func.julianday(MedicalRecord.discharge_date)
+                    - func.julianday(MedicalRecord.admission_date)
                 ).label("avg_stay"),
             )
             .join(CodingResult, CodingResult.record_id == MedicalRecord.id)
@@ -122,21 +148,23 @@ async def get_department_ranking(limit: int = 10,
                 CodingResult.codes.isnot(None),
             )
             .group_by(MedicalRecord.department)
-            .order_by(func.avg(func.json_extract(CodingResult.codes, '$.drg_weight')).desc())
+            .order_by(func.avg(func.json_extract(CodingResult.codes, "$.drg_weight")).desc())
         )
 
         rankings = []
         for i, (dept, cases, avg_weight, avg_stay) in enumerate(dept_r.all()):
             if dept is None:
                 continue
-            rankings.append({
-                "rank": i + 1,
-                "dept": dept,
-                "cases": cases,
-                "cmi": round(avg_weight or 0.0, 2),
-                "cost_index": round((avg_weight or 1.0) * settings.drg_base_rate / 18560, 2),
-                "avg_days": round(avg_stay or 0.0, 1),
-            })
+            rankings.append(
+                {
+                    "rank": i + 1,
+                    "dept": dept,
+                    "cases": cases,
+                    "cmi": round(avg_weight or 0.0, 2),
+                    "cost_index": round((avg_weight or 1.0) * settings.drg_base_rate / 18560, 2),
+                    "avg_days": round(avg_stay or 0.0, 1),
+                }
+            )
 
         # Apply limit and optional metric sort
         rankings = rankings[:limit]
@@ -176,7 +204,7 @@ async def get_qc_trend(days: int = 90, user: dict = Depends(get_current_user)):
         daily_issues = {row[0]: row[1] for row in daily_issues_r.all()}
 
         # Aggregate into weekly buckets
-        weeks: dict[str, list] = {}
+        weeks: dict[str, dict[str, int]] = {}
         for dt_str in sorted(set(daily_totals.keys()) | set(daily_issues.keys())):
             total = daily_totals.get(dt_str, 0)
             issues = daily_issues.get(dt_str, 0)
@@ -188,50 +216,62 @@ async def get_qc_trend(days: int = 90, user: dict = Depends(get_current_user)):
             weeks[week_start]["issues"] += issues
 
         # Build weekly trend
-        raw_trend = []
+        raw_trend: list[QCTrendPoint] = []
         for wk in sorted(weeks.keys()):
             w = weeks[wk]
             defect_rate = round(w["issues"] / max(w["total"], 1), 3)
             score = round(100.0 - defect_rate * 100, 1)
-            raw_trend.append({
-                "date": wk,
-                "avg_score": score,
-                "total_checks": w["total"],
-                "defect_rate": defect_rate,
-            })
+            raw_trend.append(
+                {
+                    "date": wk,
+                    "avg_score": score,
+                    "total_checks": w["total"],
+                    "defect_rate": defect_rate,
+                }
+            )
 
         # 3-week moving average for smoothness (if >= 3 weeks of data)
-        trend = raw_trend
+        trend: list[QCTrendPoint] = raw_trend
         if len(raw_trend) >= 3:
             trend = []
             for i in range(len(raw_trend)):
-                window = raw_trend[max(0, i - 2):i + 1]
+                window = raw_trend[max(0, i - 2) : i + 1]
                 w_size = len(window)
-                trend.append({
-                    "date": raw_trend[i]["date"],
-                    "avg_score": round(sum(w["avg_score"] for w in window) / w_size, 1),
-                    "total_checks": sum(w["total_checks"] for w in window),
-                    "defect_rate": round(sum(w["defect_rate"] for w in window) / w_size, 2),
-                })
+                trend.append(
+                    {
+                        "date": raw_trend[i]["date"],
+                        "avg_score": round(sum(w["avg_score"] for w in window) / w_size, 1),
+                        "total_checks": sum(w["total_checks"] for w in window),
+                        "defect_rate": round(sum(w["defect_rate"] for w in window) / w_size, 2),
+                    }
+                )
 
         # Daily CMI for the trend chart
         daily_cmi_r = await db.execute(
             select(
                 func.date(MedicalRecord.admission_date).label("dt"),
-                func.avg(func.json_extract(CodingResult.codes, '$.drg_weight')).label("avg_cmi"),
+                func.avg(func.json_extract(CodingResult.codes, "$.drg_weight")).label("avg_cmi"),
             )
             .join(CodingResult, CodingResult.record_id == MedicalRecord.id)
             .where(MedicalRecord.admission_date >= cutoff, CodingResult.codes.isnot(None))
             .group_by(func.date(MedicalRecord.admission_date))
             .order_by("dt")
         )
-        daily_cmi = {row[0]: row[1] for row in daily_cmi_r.all()}
+        daily_cmi = {
+            str(row[0]): float(row[1] or 0.0) for row in daily_cmi_r.all() if row[0] is not None
+        }
 
         # Attach cmi to each trend week
         for t in trend:
-            wk_d = datetime.strptime(t["date"], "%Y-%m-%d").date()
-            week_cmis = [round(cmi, 2) for dt_str, cmi in daily_cmi.items()
-                         if (datetime.strptime(dt_str, "%Y-%m-%d").date() - timedelta(days=datetime.strptime(dt_str, "%Y-%m-%d").date().weekday())).strftime("%Y-%m-%d") == t["date"]]
+            week_cmis = [
+                round(cmi, 2)
+                for dt_str, cmi in daily_cmi.items()
+                if (
+                    datetime.strptime(dt_str, "%Y-%m-%d").date()
+                    - timedelta(days=datetime.strptime(dt_str, "%Y-%m-%d").date().weekday())
+                ).strftime("%Y-%m-%d")
+                == t["date"]
+            ]
             t["cmi"] = round(sum(week_cmis) / len(week_cmis), 2) if week_cmis else None
 
     return {"trend": trend}
@@ -247,9 +287,9 @@ async def get_coding_accuracy(days: int = 90, user: dict = Depends(get_current_u
         daily_r = await db.execute(
             select(
                 func.date(MedicalRecord.admission_date).label("dt"),
-                func.avg(
-                    func.json_extract(CodingResult.confidence_scores, '$.total')
-                ).label("ai_acc"),
+                func.avg(func.json_extract(CodingResult.confidence_scores, "$.total")).label(
+                    "ai_acc"
+                ),
                 func.count(CodingResult.id).label("cnt"),
             )
             .select_from(MedicalRecord)
@@ -264,16 +304,19 @@ async def get_coding_accuracy(days: int = 90, user: dict = Depends(get_current_u
         )
 
         trend = []
-        for dt, ai_acc, cnt in daily_r.all():
-            trend.append({
-                "date": str(dt),
-                "ai_accuracy": round(ai_acc or 0.0, 3),
-            })
+        for dt, ai_acc, _cnt in daily_r.all():
+            trend.append(
+                {
+                    "date": str(dt),
+                    "ai_accuracy": round(ai_acc or 0.0, 3),
+                }
+            )
 
         # Overall accuracy
         overall_r = await db.execute(
-            select(func.avg(func.json_extract(CodingResult.confidence_scores, '$.total')))
-            .where(CodingResult.coder_type == "ai", CodingResult.confidence_scores.isnot(None))
+            select(func.avg(func.json_extract(CodingResult.confidence_scores, "$.total"))).where(
+                CodingResult.coder_type == "ai", CodingResult.confidence_scores.isnot(None)
+            )
         )
         overall_accuracy = round(overall_r.scalar() or 0.0, 3)
 
@@ -284,8 +327,9 @@ async def get_coding_accuracy(days: int = 90, user: dict = Depends(get_current_u
 
 
 @router.get("/high-frequency-issues")
-async def get_high_frequency_issues(days: int = 90, limit: int = 10,
-                                     user: dict = Depends(get_current_user)):
+async def get_high_frequency_issues(
+    days: int = 90, limit: int = 10, user: dict = Depends(get_current_user)
+):
     """高频质控缺陷 — 按QC问题描述聚合"""
     async with async_session() as db:
         cutoff = _days_ago(min(days, 180))
@@ -311,11 +355,13 @@ async def get_high_frequency_issues(days: int = 90, limit: int = 10,
 
         issues = []
         for snippet, cnt in issues_r.all():
-            issues.append({
-                "issue": snippet or "未知问题",
-                "count": cnt,
-                "rate": f"{round(cnt / total_qc * 100, 1)}%",
-            })
+            issues.append(
+                {
+                    "issue": snippet or "未知问题",
+                    "count": cnt,
+                    "rate": f"{round(cnt / total_qc * 100, 1)}%",
+                }
+            )
 
     return {"issues": issues}
 
@@ -330,7 +376,9 @@ async def get_revenue_analysis(days: int = 90, user: dict = Depends(get_current_
         monthly_r = await db.execute(
             select(
                 func.strftime("%Y-%m", MedicalRecord.admission_date).label("month"),
-                func.sum(func.json_extract(CodingResult.codes, '$.drg_weight') * settings.drg_base_rate).label("expected"),
+                func.sum(
+                    func.json_extract(CodingResult.codes, "$.drg_weight") * settings.drg_base_rate
+                ).label("expected"),
                 func.count(MedicalRecord.id).label("cnt"),
             )
             .join(CodingResult, CodingResult.record_id == MedicalRecord.id)
@@ -347,15 +395,15 @@ async def get_revenue_analysis(days: int = 90, user: dict = Depends(get_current_
 
         trend = []
         for month_str, exp, cnt in months_data:
-            trend.append({
-                "month": month_str,
-                "expected": round(exp or 0, 0),
-                "cases": cnt,
-            })
+            trend.append(
+                {
+                    "month": month_str,
+                    "expected": round(exp or 0, 0),
+                    "cases": cnt,
+                }
+            )
 
     return {
         "expected_total": int(expected_total),
         "trend": trend,
     }
-
-

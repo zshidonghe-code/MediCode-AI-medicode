@@ -1,7 +1,8 @@
 import os
-from pydantic_settings import BaseSettings
-from pydantic import model_validator
 from functools import lru_cache
+
+from pydantic import model_validator
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -47,6 +48,7 @@ class Settings(BaseSettings):
         if not self.secret_key:
             if self.debug:
                 import secrets
+
                 self.secret_key = secrets.token_urlsafe(32)
             else:
                 raise ValueError("SECRET_KEY must be set in production (non-debug mode)")

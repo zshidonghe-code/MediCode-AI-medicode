@@ -4,7 +4,6 @@ import re
 
 from src.services.review_agent.contracts import ReviewDocument
 
-
 _SIDE = r"(?:\u5de6|\u53f3)"
 _TERM = r"(?:\u80a1\u9aa8\u9888\u9aa8\u6298|\u4eba\u5de5\u5168\u9acb\u5173\u8282\u7f6e\u6362\u672f|\u5168\u9acb\u5173\u8282\u7f6e\u6362\u672f|\u9acb\u5173\u8282\u7f6e\u6362\u672f|\u9acb\u5173\u8282)"
 _TARGET_PATTERN = re.compile(
@@ -14,7 +13,7 @@ _TARGET_PATTERN = re.compile(
 
 
 def _snippet(content: str, start: int, end: int) -> str:
-    return content[max(0, start - 24):min(len(content), end + 24)]
+    return content[max(0, start - 24) : min(len(content), end + 24)]
 
 
 def extract_laterality_evidence(documents: list[ReviewDocument]) -> list[dict]:

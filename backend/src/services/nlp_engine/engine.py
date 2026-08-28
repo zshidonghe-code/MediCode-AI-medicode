@@ -6,14 +6,15 @@
 3. 关键信息提取（入院时间、出院时间、科别、医生）
 """
 
-from dataclasses import dataclass, field
-import re
 import logging
+import re
+from dataclasses import dataclass, field
 
 logger = logging.getLogger(__name__)
 
 try:
     import jieba
+
     _JIEBA_AVAILABLE = True
 except ImportError:
     _JIEBA_AVAILABLE = False
@@ -22,8 +23,8 @@ except ImportError:
 @dataclass
 class MedicalEntity:
     text: str
-    entity_type: str           # diagnosis / symptom / surgery / drug / lab / imaging
-    normalized: str            # 标准化后的名称
+    entity_type: str  # diagnosis / symptom / surgery / drug / lab / imaging
+    normalized: str  # 标准化后的名称
     start_pos: int = 0
     end_pos: int = 0
     confidence: float = 0.0
@@ -31,10 +32,10 @@ class MedicalEntity:
 
 @dataclass
 class SOAPSections:
-    subjective: str = ""       # 主观资料：主诉、现病史、既往史
-    objective: str = ""        # 客观资料：体格检查、辅助检查
-    assessment: str = ""       # 评估：诊断、鉴别诊断
-    plan: str = ""             # 计划：治疗方案、用药、随访
+    subjective: str = ""  # 主观资料：主诉、现病史、既往史
+    objective: str = ""  # 客观资料：体格检查、辅助检查
+    assessment: str = ""  # 评估：诊断、鉴别诊断
+    plan: str = ""  # 计划：治疗方案、用药、随访
 
     def to_dict(self) -> dict:
         return {
@@ -71,11 +72,12 @@ class MedicalTokenizer:
     def _load_medical_dict(self):
         """Load ICD diagnosis names as custom jieba dictionary"""
         try:
-            from pathlib import Path
             import json
+            from pathlib import Path
+
             data_path = Path(__file__).parent.parent.parent / "data" / "icd_diagnoses.json"
             if data_path.exists():
-                with open(data_path, "r", encoding="utf-8") as f:
+                with open(data_path, encoding="utf-8") as f:
                     entries = json.load(f)
                 for entry in entries:
                     name = entry.get("name", "")
@@ -86,7 +88,7 @@ class MedicalTokenizer:
                             jieba.add_word(alias, freq=8, tag="dz")
             proc_path = Path(__file__).parent.parent.parent / "data" / "icd_procedures.json"
             if proc_path.exists():
-                with open(proc_path, "r", encoding="utf-8") as f:
+                with open(proc_path, encoding="utf-8") as f:
                     entries = json.load(f)
                 for entry in entries:
                     name = entry.get("name", "")
@@ -105,13 +107,30 @@ class MedicalTokenizer:
         if not self._ready:
             return []
         import jieba.posseg as pseg
+
         tag = "dz" if entity_type == "diagnosis" else "ss"
         words = pseg.cut(text)
-        return [w.word for w in words if len(w.word) >= 2 and w.flag == tag and w.word not in _STOP_ENTITIES]
+        return [
+            w.word
+            for w in words
+            if len(w.word) >= 2 and w.flag == tag and w.word not in _STOP_ENTITIES
+        ]
 
 
 # Shared stop-words for entity extraction
-_STOP_ENTITIES = {"现病", "入院", "出院", "既往", "个人", "家属", "体格", "辅助", "诊疗", "治疗", "医师"}
+_STOP_ENTITIES = {
+    "现病",
+    "入院",
+    "出院",
+    "既往",
+    "个人",
+    "家属",
+    "体格",
+    "辅助",
+    "诊疗",
+    "治疗",
+    "医师",
+}
 
 # Singleton tokenizer
 _medical_tokenizer = MedicalTokenizer()
@@ -131,14 +150,41 @@ class NLPParser:
 
     # Known diagnosis keywords without standard suffixes (高血压, 糖尿病 don't end with 病/症/炎/...)
     KNOWN_DIAGNOSES = [
-        "高血压", "糖尿病", "冠心病", "心绞痛", "心肌梗死",
-        "心房颤动", "房颤", "高脂血症", "脂肪肝", "脑卒中",
-        "骨质疏松", "慢性阻塞性肺疾病", "慢阻肺", "支气管哮喘",
-        "哮喘", "前列腺增生", "肝硬化", "贫血", "肥胖",
+        "高血压",
+        "糖尿病",
+        "冠心病",
+        "心绞痛",
+        "心肌梗死",
+        "心房颤动",
+        "房颤",
+        "高脂血症",
+        "脂肪肝",
+        "脑卒中",
+        "骨质疏松",
+        "慢性阻塞性肺疾病",
+        "慢阻肺",
+        "支气管哮喘",
+        "哮喘",
+        "前列腺增生",
+        "肝硬化",
+        "贫血",
+        "肥胖",
     ]
 
     # False positive filter
-    STOP_WORDS = {"现病", "入院", "出院", "既往", "个人", "家属", "体格", "辅助", "诊疗", "治疗", "医师"}
+    STOP_WORDS = {
+        "现病",
+        "入院",
+        "出院",
+        "既往",
+        "个人",
+        "家属",
+        "体格",
+        "辅助",
+        "诊疗",
+        "治疗",
+        "医师",
+    }
 
     # Key medical entities regex (suffix-based)
     DIAGNOSIS_PATTERNS = [
@@ -197,17 +243,36 @@ class NLPParser:
 
     # Common context prefixes to strip (longer first to match greedily)
     _ENTITY_PREFIXES = [
-        "否认有", "否认", "排除", "未见明显", "未见", "无明显",
-        "既往有", "曾有", "既往", "有", "行", "拟行", "已行", "术后",
-        "入院", "出院", "诊断为", "诊断", "再发", "新发", "未及",
-        "无", "不伴",
+        "否认有",
+        "否认",
+        "排除",
+        "未见明显",
+        "未见",
+        "无明显",
+        "既往有",
+        "曾有",
+        "既往",
+        "有",
+        "行",
+        "拟行",
+        "已行",
+        "术后",
+        "入院",
+        "出院",
+        "诊断为",
+        "诊断",
+        "再发",
+        "新发",
+        "未及",
+        "无",
+        "不伴",
     ]
 
     def _clean_entity(self, word: str) -> str:
         """Strip common context prefixes from extracted entities"""
         for p in self._ENTITY_PREFIXES:
             if word.startswith(p) and len(word) > len(p) + 1:
-                word = word[len(p):]
+                word = word[len(p) :]
                 break
         return word
 
@@ -215,7 +280,7 @@ class NLPParser:
         """Check if an extracted entity appears in a negated context"""
         # Check the prefix context window (up to 20 chars before entity)
         start = max(0, entity.start_pos - 20)
-        prefix_context = text[start:entity.start_pos]
+        prefix_context = text[start : entity.start_pos]
         if _JIEBA_AVAILABLE:
             tokens = [w for w in jieba.cut(prefix_context) if len(w) >= 1]
             for kw in ("否认", "排除", "未见", "未及", "不伴"):
@@ -240,8 +305,12 @@ class NLPParser:
                 word = self._clean_entity(word)
                 if word not in seen and len(word) >= 2:
                     entity = MedicalEntity(
-                        text=word, entity_type="diagnosis", normalized=word,
-                        start_pos=match.start(), end_pos=match.end(), confidence=0.8,
+                        text=word,
+                        entity_type="diagnosis",
+                        normalized=word,
+                        start_pos=match.start(),
+                        end_pos=match.end(),
+                        confidence=0.8,
                     )
                     if not self._is_negated(entity, text):
                         seen.add(word)
@@ -256,8 +325,12 @@ class NLPParser:
                     idx = text.find(word)
                     if idx >= 0:
                         entity = MedicalEntity(
-                            text=word, entity_type="diagnosis", normalized=word,
-                            start_pos=idx, end_pos=idx + len(word), confidence=0.82,
+                            text=word,
+                            entity_type="diagnosis",
+                            normalized=word,
+                            start_pos=idx,
+                            end_pos=idx + len(word),
+                            confidence=0.82,
                         )
                         if not self._is_negated(entity, text):
                             entities.append(entity)
@@ -268,8 +341,12 @@ class NLPParser:
                 for match in re.finditer(re.escape(kw), text):
                     if kw not in seen:
                         entity = MedicalEntity(
-                            text=kw, entity_type="diagnosis", normalized=kw,
-                            start_pos=match.start(), end_pos=match.end(), confidence=0.85,
+                            text=kw,
+                            entity_type="diagnosis",
+                            normalized=kw,
+                            start_pos=match.start(),
+                            end_pos=match.end(),
+                            confidence=0.85,
                         )
                         if not self._is_negated(entity, text):
                             seen.add(kw)
@@ -288,10 +365,16 @@ class NLPParser:
                 word = self._clean_entity(word)
                 if word not in seen and len(word) >= 2:
                     seen.add(word)
-                    entities.append(MedicalEntity(
-                        text=word, entity_type="surgery", normalized=word,
-                        start_pos=match.start(), end_pos=match.end(), confidence=0.85,
-                    ))
+                    entities.append(
+                        MedicalEntity(
+                            text=word,
+                            entity_type="surgery",
+                            normalized=word,
+                            start_pos=match.start(),
+                            end_pos=match.end(),
+                            confidence=0.85,
+                        )
+                    )
         return entities
 
     def parse(self, record_type: str, content: str) -> StructuredRecord:

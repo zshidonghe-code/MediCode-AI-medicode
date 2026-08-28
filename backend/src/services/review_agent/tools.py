@@ -4,7 +4,10 @@ from src.services.llm_engine import llm_engine
 from src.services.nlp_engine.engine import nlp_parser
 from src.services.qc_engine.engine import qc_engine
 from src.services.review_agent.contracts import ReviewDocument
-from src.services.review_agent.evidence import extract_laterality_evidence, find_laterality_conflicts
+from src.services.review_agent.evidence import (
+    extract_laterality_evidence,
+    find_laterality_conflicts,
+)
 
 
 def _combine_documents(documents: list[ReviewDocument]) -> str:
@@ -45,15 +48,23 @@ class ReviewTools:
         procedures: dict[str, ICDCandidate] = {}
         for text in extracted.get("diagnoses", []):
             for candidate in await icd_coder.recommend(text, use_llm=use_llm):
-                if candidate.code not in diagnoses or candidate.score > diagnoses[candidate.code].score:
+                if (
+                    candidate.code not in diagnoses
+                    or candidate.score > diagnoses[candidate.code].score
+                ):
                     diagnoses[candidate.code] = candidate
         for text in extracted.get("surgeries", []):
             for candidate in await icd_coder.recommend(text, use_llm=use_llm):
-                if candidate.code not in procedures or candidate.score > procedures[candidate.code].score:
+                if (
+                    candidate.code not in procedures
+                    or candidate.score > procedures[candidate.code].score
+                ):
                     procedures[candidate.code] = candidate
 
         ranked_diagnoses = sorted(
-            diagnoses.values(), key=lambda candidate: primary_score(candidate.code, candidate.score), reverse=True
+            diagnoses.values(),
+            key=lambda candidate: primary_score(candidate.code, candidate.score),
+            reverse=True,
         )
         primary = _item(ranked_diagnoses[0], is_primary=True) if ranked_diagnoses else None
         secondaries = [_item(candidate) for candidate in ranked_diagnoses[1:10]]
@@ -86,8 +97,12 @@ class ReviewTools:
                 {
                     "rule_id": issue.rule_id,
                     "rule_name": issue.rule_name,
-                    "rule_type": issue.rule_type.value if hasattr(issue.rule_type, "value") else issue.rule_type,
-                    "severity": issue.severity.value if hasattr(issue.severity, "value") else issue.severity,
+                    "rule_type": issue.rule_type.value
+                    if hasattr(issue.rule_type, "value")
+                    else issue.rule_type,
+                    "severity": issue.severity.value
+                    if hasattr(issue.severity, "value")
+                    else issue.severity,
                     "description": issue.description,
                     "line_snippet": issue.line_snippet,
                     "suggestion": issue.suggestion,

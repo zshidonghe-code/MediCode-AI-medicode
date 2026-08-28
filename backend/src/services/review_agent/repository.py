@@ -43,7 +43,9 @@ class StoredEvent:
 
 
 class ReviewStore(Protocol):
-    async def create(self, review: StoredReview, event_type: str, phase: str, payload: dict) -> StoredReview: ...
+    async def create(
+        self, review: StoredReview, event_type: str, phase: str, payload: dict
+    ) -> StoredReview: ...
 
     async def get(self, review_id: str) -> StoredReview: ...
 
@@ -83,7 +85,9 @@ def _stored_review(row: ReviewSession) -> StoredReview:
 
 
 class SqlReviewStore:
-    async def create(self, review: StoredReview, event_type: str, phase: str, payload: dict) -> StoredReview:
+    async def create(
+        self, review: StoredReview, event_type: str, phase: str, payload: dict
+    ) -> StoredReview:
         async with async_session() as db:
             row = ReviewSession(
                 id=review.id,
@@ -99,22 +103,24 @@ class SqlReviewStore:
                 version=review.version,
             )
             db.add(row)
-            db.add(ReviewEvent(
-                review_id=review.id,
-                sequence=1,
-                event_type=event_type,
-                phase=phase,
-                payload=payload,
-            ))
+            db.add(
+                ReviewEvent(
+                    review_id=review.id,
+                    sequence=1,
+                    event_type=event_type,
+                    phase=phase,
+                    payload=payload,
+                )
+            )
             await db.commit()
             await db.refresh(row)
             return _stored_review(row)
 
     async def get(self, review_id: str) -> StoredReview:
         async with async_session() as db:
-            row = (await db.execute(
-                select(ReviewSession).where(ReviewSession.id == review_id)
-            )).scalar_one_or_none()
+            row = (
+                await db.execute(select(ReviewSession).where(ReviewSession.id == review_id))
+            ).scalar_one_or_none()
             if row is None:
                 raise ReviewNotFoundError(review_id)
             return _stored_review(row)
@@ -133,41 +139,54 @@ class SqlReviewStore:
         payload: dict,
     ) -> StoredReview:
         async with async_session() as db:
-            row = (await db.execute(
-                select(ReviewSession).where(ReviewSession.id == review_id)
-            )).scalar_one_or_none()
+            row = (
+                await db.execute(select(ReviewSession).where(ReviewSession.id == review_id))
+            ).scalar_one_or_none()
             if row is None:
                 raise ReviewNotFoundError(review_id)
             if row.version != expected_version:
                 raise ReviewVersionConflictError(review_id)
-            next_sequence = (await db.execute(
-                select(func.coalesce(func.max(ReviewEvent.sequence), 0)).where(
-                    ReviewEvent.review_id == review_id
+            next_sequence = (
+                await db.execute(
+                    select(func.coalesce(func.max(ReviewEvent.sequence), 0)).where(
+                        ReviewEvent.review_id == review_id
+                    )
                 )
-            )).scalar_one() + 1
+            ).scalar_one() + 1
             row.status = status
             row.mode = mode
             row.analysis = analysis
             row.pending_actions = pending_actions
             row.version += 1
-            db.add(ReviewEvent(
-                review_id=review_id,
-                sequence=next_sequence,
-                event_type=event_type,
-                phase=phase,
-                payload=payload,
-            ))
+            db.add(
+                ReviewEvent(
+                    review_id=review_id,
+                    sequence=next_sequence,
+                    event_type=event_type,
+                    phase=phase,
+                    payload=payload,
+                )
+            )
             await db.commit()
             await db.refresh(row)
             return _stored_review(row)
 
     async def events(self, review_id: str, after_sequence: int = 0) -> list[StoredEvent]:
         async with async_session() as db:
-            rows = (await db.execute(
-                select(ReviewEvent)
-                .where(ReviewEvent.review_id == review_id, ReviewEvent.sequence > after_sequence)
-                .order_by(ReviewEvent.sequence)
-            )).scalars().all()
+            rows = (
+                (
+                    await db.execute(
+                        select(ReviewEvent)
+                        .where(
+                            ReviewEvent.review_id == review_id,
+                            ReviewEvent.sequence > after_sequence,
+                        )
+                        .order_by(ReviewEvent.sequence)
+                    )
+                )
+                .scalars()
+                .all()
+            )
             return [
                 StoredEvent(
                     sequence=row.sequence,

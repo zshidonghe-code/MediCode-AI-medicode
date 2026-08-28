@@ -4,7 +4,6 @@ import re
 
 from src.services.review_agent.contracts import ReviewDocument
 
-
 _SENSITIVE_PATTERNS = {
     "phone": re.compile(r"(?<!\d)1[3-9]\d{9}(?!\d)"),
     "id_card": re.compile(r"(?<!\d)\d{17}[\dXx](?!\d)"),
@@ -20,7 +19,9 @@ class RedactionViolationError(ValueError):
 
 
 def find_sensitive_values(content: str) -> list[str]:
-    return [category for category, pattern in _SENSITIVE_PATTERNS.items() if pattern.search(content)]
+    return [
+        category for category, pattern in _SENSITIVE_PATTERNS.items() if pattern.search(content)
+    ]
 
 
 def ensure_documents_are_redacted(documents: list[ReviewDocument]) -> None:

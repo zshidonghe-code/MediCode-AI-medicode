@@ -2,7 +2,6 @@
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
-from typing import Optional
 
 from src.api.v1.endpoints.auth import get_current_user
 from src.services.rejection_risk import RiskLevel, rejection_engine
@@ -34,11 +33,11 @@ class PatientInfo(BaseModel):
 
 
 class RejectionRequest(BaseModel):
-    primary_diagnosis: Optional[DiagItem] = None
+    primary_diagnosis: DiagItem | None = None
     secondary_diagnoses: list[DiagItem] = []
     procedures: list[ProcItem] = []
-    drg_result: Optional[DRGInfo] = None
-    patient_info: Optional[PatientInfo] = None
+    drg_result: DRGInfo | None = None
+    patient_info: PatientInfo | None = None
     content: str = ""
     hospital_cost: float = 0.0
 

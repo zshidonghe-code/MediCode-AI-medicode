@@ -1,10 +1,10 @@
 import asyncio
 import time
 from collections import defaultdict
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import jwt
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jwt.exceptions import InvalidTokenError as JWTError
 from passlib.context import CryptContext
@@ -26,6 +26,7 @@ _login_attempts: dict[str, list[float]] = defaultdict(list)
 _login_lock = asyncio.Lock()
 _LOGIN_RATE_LIMIT = 50  # max attempts (generous for test suites)
 _LOGIN_RATE_WINDOW = 60  # seconds
+
 
 def _load_demo_users() -> dict:
     return {
@@ -49,29 +50,38 @@ def _load_demo_users() -> dict:
         },
     }
 
+
 DEMO_USERS = _load_demo_users()
 
 
 def create_token(data: dict) -> str:
     to_encode = data.copy()
-    expire = datetime.now(timezone.utc) + timedelta(minutes=settings.access_token_expire_minutes)
-    to_encode.update({
-        "exp": expire,
-        "iss": "medicode",
-        "aud": "medicode-api",
-    })
+    expire = datetime.now(UTC) + timedelta(minutes=settings.access_token_expire_minutes)
+    to_encode.update(
+        {
+            "exp": expire,
+            "iss": "medicode",
+            "aud": "medicode-api",
+        }
+    )
     return jwt.encode(to_encode, settings.secret_key, algorithm="HS256")
 
 
 def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
-        payload = jwt.decode(token, settings.secret_key, algorithms=["HS256"], audience="medicode-api", issuer="medicode")
+        payload = jwt.decode(
+            token,
+            settings.secret_key,
+            algorithms=["HS256"],
+            audience="medicode-api",
+            issuer="medicode",
+        )
         username = payload.get("sub")
         if username is None or username not in DEMO_USERS:
             raise HTTPException(status_code=401, detail="无效的认证令牌")
         return DEMO_USERS[username]
     except JWTError:
-        raise HTTPException(status_code=401, detail="无效的认证令牌")
+        raise HTTPException(status_code=401, detail="无效的认证令牌") from None
 
 
 def require_admin(user: dict = Depends(get_current_user)):
@@ -95,7 +105,9 @@ async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends
     client_ip = request.client.host if request.client else "unknown"
     now = time.time()
     async with _login_lock:
-        _login_attempts[client_ip] = [t for t in _login_attempts[client_ip] if now - t < _LOGIN_RATE_WINDOW]
+        _login_attempts[client_ip] = [
+            t for t in _login_attempts[client_ip] if now - t < _LOGIN_RATE_WINDOW
+        ]
         if len(_login_attempts[client_ip]) >= _LOGIN_RATE_LIMIT:
             raise HTTPException(status_code=429, detail="登录尝试过多，请稍后再试")
         _login_attempts[client_ip].append(now)

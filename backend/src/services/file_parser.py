@@ -4,8 +4,14 @@ import io
 
 
 class FileParseResult:
-    def __init__(self, text: str, filename: str, file_type: str, page_count: int = 1,
-                 parse_time_ms: float = 0.0):
+    def __init__(
+        self,
+        text: str,
+        filename: str,
+        file_type: str,
+        page_count: int = 1,
+        parse_time_ms: float = 0.0,
+    ):
         self.text = text
         self.filename = filename
         self.file_type = file_type
@@ -16,6 +22,7 @@ class FileParseResult:
 async def parse_file(content: bytes, filename: str) -> FileParseResult:
     """根据文件扩展名自动选择解析器"""
     import time
+
     t0 = time.time()
 
     lower = filename.lower()
@@ -34,8 +41,11 @@ async def parse_file(content: bytes, filename: str) -> FileParseResult:
 
     elapsed = (time.time() - t0) * 1000
     return FileParseResult(
-        text=text, filename=filename, file_type=file_type,
-        page_count=pages, parse_time_ms=elapsed,
+        text=text,
+        filename=filename,
+        file_type=file_type,
+        page_count=pages,
+        parse_time_ms=elapsed,
     )
 
 
@@ -62,7 +72,9 @@ def _parse_docx(content: bytes) -> tuple[str, int]:
 
 def _parse_pdf(content: bytes) -> tuple[str, int]:
     """解析PDF文件，返回(文本内容, 页数)"""
-    from pypdf import PdfReader  # pypdf is the actively-maintained successor to PyPDF2 (drop-in compatible API)
+    from pypdf import (
+        PdfReader,  # pypdf is the actively-maintained successor to PyPDF2 (drop-in compatible API)
+    )
 
     reader = PdfReader(io.BytesIO(content))
     pages = []

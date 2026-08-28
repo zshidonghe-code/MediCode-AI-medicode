@@ -1,14 +1,15 @@
 import re
 from typing import Literal
+
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field, field_validator
-from typing import Optional
-from src.services.drg_grouper.grouper import drg_grouper
+from sqlalchemy import select
+
+from src.api.v1.endpoints.auth import get_current_user
+from src.config.settings import get_settings
 from src.models.database import async_session
 from src.models.icd import DRGGroup
-from src.config.settings import get_settings
-from src.api.v1.endpoints.auth import get_current_user
-from sqlalchemy import select
+from src.services.drg_grouper.grouper import drg_grouper
 
 router = APIRouter()
 settings = get_settings()
@@ -23,8 +24,8 @@ class DRGRequest(BaseModel):
     secondary_diagnosis_codes: list[str] = Field(default=[], max_length=30)
     procedure_codes: list[str] = Field(default=[], max_length=30)
     days_of_stay: int = Field(default=0, ge=0, le=365)
-    newborn_weight: Optional[int] = Field(default=None, ge=0, le=10000)
-    ventilation_hours: Optional[int] = Field(default=None, ge=0, le=10000)
+    newborn_weight: int | None = Field(default=None, ge=0, le=10000)
+    ventilation_hours: int | None = Field(default=None, ge=0, le=10000)
 
     @field_validator("primary_diagnosis_code")
     @classmethod
@@ -90,9 +91,9 @@ async def group_drg(request: DRGRequest, user: dict = Depends(get_current_user))
 async def get_drg_detail(drg_code: str, user: dict = Depends(get_current_user)):
     """查询DRG详情（优先查数据库，fallback到分组器）"""
     async with async_session() as db:
-        result = (await db.execute(
-            select(DRGGroup).where(DRGGroup.code == drg_code)
-        )).scalar_one_or_none()
+        result = (
+            await db.execute(select(DRGGroup).where(DRGGroup.code == drg_code))
+        ).scalar_one_or_none()
         if result:
             return {
                 "drg_code": result.code,
@@ -107,20 +108,21 @@ async def get_drg_detail(drg_code: str, user: dict = Depends(get_current_user)):
 
 
 @router.get("/compare")
-async def compare_drg(record_id: int, ai_drg: str = "", manual_drg: str = "",
-                       user: dict = Depends(get_current_user)):
+async def compare_drg(
+    record_id: int, ai_drg: str = "", manual_drg: str = "", user: dict = Depends(get_current_user)
+):
     """对比AI与人工分组差异，自动计算费用差额"""
     ai_weight = 1.0
     manual_weight = 1.0
     async with async_session() as db:
-        ai_row = (await db.execute(
-            select(DRGGroup.weight).where(DRGGroup.code == ai_drg)
-        )).scalar_one_or_none()
+        ai_row = (
+            await db.execute(select(DRGGroup.weight).where(DRGGroup.code == ai_drg))
+        ).scalar_one_or_none()
         if ai_row:
             ai_weight = ai_row
-        manual_row = (await db.execute(
-            select(DRGGroup.weight).where(DRGGroup.code == manual_drg)
-        )).scalar_one_or_none()
+        manual_row = (
+            await db.execute(select(DRGGroup.weight).where(DRGGroup.code == manual_drg))
+        ).scalar_one_or_none()
         if manual_row:
             manual_weight = manual_row
 

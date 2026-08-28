@@ -1,13 +1,13 @@
 import time
+
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from typing import Optional
 from sqlalchemy import select
 
-from src.services.qc_engine.engine import qc_engine, Severity, RuleType
 from src.api.v1.endpoints.auth import get_current_user
 from src.models.database import async_session
 from src.models.qc import QCResult
+from src.services.qc_engine.engine import RuleType, Severity, qc_engine
 
 router = APIRouter()
 
@@ -16,8 +16,8 @@ class QCRequest(BaseModel):
     record_id: int
     record_type: str
     content: str
-    coding_result: Optional[dict] = None
-    patient_info: Optional[dict] = None
+    coding_result: dict | None = None
+    patient_info: dict | None = None
     use_llm: bool = False  # 默认关闭LLM，用规则引擎保证快速响应
 
 
@@ -29,7 +29,7 @@ class QCIssueOut(BaseModel):
     description: str = ""
     line_snippet: str
     suggestion: str
-    line_number: Optional[int] = None
+    line_number: int | None = None
 
 
 class QCResponse(BaseModel):
@@ -81,7 +81,9 @@ async def run_qc_check(request: QCRequest, user: dict = Depends(get_current_user
 
 
 @router.get("/rules")
-async def list_qc_rules(rule_type: str = "", severity: str = "", user: dict = Depends(get_current_user)):
+async def list_qc_rules(
+    rule_type: str = "", severity: str = "", user: dict = Depends(get_current_user)
+):
     rules = []
     for r in qc_engine.rules:
         rt = r["type"].value if isinstance(r["type"], RuleType) else str(r["type"])
@@ -90,19 +92,23 @@ async def list_qc_rules(rule_type: str = "", severity: str = "", user: dict = De
             continue
         if severity and sv != severity:
             continue
-        rules.append({
-            "id": r["id"],
-            "name": r["name"],
-            "type": rt,
-            "severity": sv,
-            "suggestion": r.get("suggestion", ""),
-        })
+        rules.append(
+            {
+                "id": r["id"],
+                "name": r["name"],
+                "type": rt,
+                "severity": sv,
+                "suggestion": r.get("suggestion", ""),
+            }
+        )
     return {"rules": rules, "total": len(rules)}
 
 
 async def _update_qc_acceptance(result_id: int, accepted: bool) -> dict:
     async with async_session() as db:
-        r = (await db.execute(select(QCResult).where(QCResult.id == result_id))).scalar_one_or_none()
+        r = (
+            await db.execute(select(QCResult).where(QCResult.id == result_id))
+        ).scalar_one_or_none()
         if not r:
             raise HTTPException(status_code=404, detail="质控结果不存在")
         r.is_accepted = accepted

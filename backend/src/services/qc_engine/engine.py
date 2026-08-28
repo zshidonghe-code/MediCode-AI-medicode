@@ -6,34 +6,38 @@
 语义层：LLM驱动的深度语义一致性检查
 """
 
-import logging
-from dataclasses import dataclass, field
-from enum import Enum
-import re
 import asyncio
+import logging
+import re
+from dataclasses import dataclass
+from enum import Enum
 
 from src.services.llm_engine.medical_rules import (
-    PROC_DIAG_MAP, FEMALE_ONLY, MALE_ONLY, SYMPTOM_KEYWORDS, INFORMAL_TERMS,
     COMMON_MISSED,
+    FEMALE_ONLY,
+    INFORMAL_TERMS,
+    MALE_ONLY,
+    PROC_DIAG_MAP,
+    SYMPTOM_KEYWORDS,
 )
 
 logger = logging.getLogger(__name__)
 
 
 class Severity(str, Enum):
-    CRITICAL = "critical"   # 严重缺陷(医保拒付风险)
-    MAJOR = "major"         # 重要缺陷(影响DRG分组)
-    MINOR = "minor"         # 一般缺陷
-    INFO = "info"           # 提示
+    CRITICAL = "critical"  # 严重缺陷(医保拒付风险)
+    MAJOR = "major"  # 重要缺陷(影响DRG分组)
+    MINOR = "minor"  # 一般缺陷
+    INFO = "info"  # 提示
 
 
 class RuleType(str, Enum):
-    COMPLETENESS = "completeness"       # 完整性
-    LOGIC = "logic"                     # 逻辑一致性
-    CODING = "coding"                   # 编码一致性
-    TIMELINESS = "timeliness"          # 时效性
-    NORMALIZATION = "normalization"     # 规范表达
-    SEMANTIC = "semantic"              # 语义质量
+    COMPLETENESS = "completeness"  # 完整性
+    LOGIC = "logic"  # 逻辑一致性
+    CODING = "coding"  # 编码一致性
+    TIMELINESS = "timeliness"  # 时效性
+    NORMALIZATION = "normalization"  # 规范表达
+    SEMANTIC = "semantic"  # 语义质量
 
 
 @dataclass
@@ -66,8 +70,12 @@ class QCResult:
         self.minor_count = sum(1 for i in self.issues if i.severity == Severity.MINOR)
         self.info_count = sum(1 for i in self.issues if i.severity == Severity.INFO)
         # 扣分：严重-10, 重要-5, 一般-2, 提示-0.5
-        deductions = (self.critical_count * 10 + self.major_count * 5 +
-                      self.minor_count * 2 + self.info_count * 0.5)
+        deductions = (
+            self.critical_count * 10
+            + self.major_count * 5
+            + self.minor_count * 2
+            + self.info_count * 0.5
+        )
         self.score = max(0.0, 100.0 - deductions)
 
 
@@ -143,7 +151,13 @@ class QCEngine:
                 "check_fn": self._check_surgery_record_completeness,
                 "params": {
                     "required_fields": ["手术名称", "手术日期"],
-                    "recommended_fields": ["手术者", "麻醉方式", "手术经过", "术前诊断", "术后诊断"],
+                    "recommended_fields": [
+                        "手术者",
+                        "麻醉方式",
+                        "手术经过",
+                        "术前诊断",
+                        "术后诊断",
+                    ],
                 },
                 "suggestion": "手术记录关键字段缺失，将直接影响手术编码准确率和DRG分组",
             },
@@ -243,8 +257,14 @@ class QCEngine:
             },
         ]
 
-    async def check(self, record_type: str, content: str, coding_result: dict | None = None,
-              patient_info: dict | None = None, use_llm: bool = False) -> QCResult:
+    async def check(
+        self,
+        record_type: str,
+        content: str,
+        coding_result: dict | None = None,
+        patient_info: dict | None = None,
+        use_llm: bool = False,
+    ) -> QCResult:
         """执行全部质控规则"""
         issues = []
 
@@ -272,10 +292,11 @@ class QCEngine:
 
         return QCResult(record_id=0, issues=issues)
 
-    async def _run_llm_checks(self, content: str, coding_result: dict | None,
-                               patient_info: dict | None) -> list[QCIssue]:
+    async def _run_llm_checks(
+        self, content: str, coding_result: dict | None, patient_info: dict | None
+    ) -> list[QCIssue]:
         """执行LLM驱动的深度质控检查 — 并行执行独立检查"""
-        all_issues = []
+        all_issues: list[QCIssue] = []
         try:
             from src.services.llm_engine import llm_engine
         except Exception:
@@ -300,23 +321,41 @@ class QCEngine:
         if coding_result:
             pri = coding_result.get("primary_diagnosis")
             if pri:
-                coded_pairs.append({"code": pri.get("code", ""), "name": pri.get("name", ""), "text": content[:500]})
+                coded_pairs.append(
+                    {
+                        "code": pri.get("code", ""),
+                        "name": pri.get("name", ""),
+                        "text": content[:500],
+                    }
+                )
             for d in coding_result.get("secondary_diagnoses", [])[:3]:
-                coded_pairs.append({"code": d.get("code", ""), "name": d.get("name", ""), "text": content[:500]})
+                coded_pairs.append(
+                    {"code": d.get("code", ""), "name": d.get("name", ""), "text": content[:500]}
+                )
 
         # Phase 1: Run independent checks in parallel (QC-102 + QC-103)
         phase1_tasks = []
         if surgeries:
-            phase1_tasks.append(llm_engine.qc_check("QC-102", diagnoses=diagnoses, surgeries=surgeries))
+            phase1_tasks.append(
+                llm_engine.qc_check("QC-102", diagnoses=diagnoses, surgeries=surgeries)
+            )
         if primary_diag_text:
-            phase1_tasks.append(llm_engine.qc_check("QC-103", content=content,
-                primary_diagnosis=primary_diag_text, all_diagnoses=diagnoses))
+            phase1_tasks.append(
+                llm_engine.qc_check(
+                    "QC-103",
+                    content=content,
+                    primary_diagnosis=primary_diag_text,
+                    all_diagnoses=diagnoses,
+                )
+            )
 
         # Phase 2: Run independent checks in parallel (QC-201 + QC-202)
         phase2_tasks = []
         if coded_pairs:
             phase2_tasks.append(llm_engine.qc_check("QC-201", coded_pairs=coded_pairs))
-        phase2_tasks.append(llm_engine.qc_check("QC-202", content=content, coded_diagnoses=[d for d in diagnoses]))
+        phase2_tasks.append(
+            llm_engine.qc_check("QC-202", content=content, coded_diagnoses=diagnoses)
+        )
 
         # Execute both phases — phase2 can run concurrently with phase1
         all_tasks = phase1_tasks + phase2_tasks
@@ -331,12 +370,15 @@ class QCEngine:
 
     def _to_qc_issue(self, llm_result) -> QCIssue:
         """将LLMQCResult转换为QCIssue"""
-        from src.services.llm_engine import LLMQCResult
         return QCIssue(
             rule_id=llm_result.rule_id,
             rule_name=llm_result.rule_name,
-            rule_type=RuleType.LOGIC if llm_result.rule_id in ("QC-102", "QC-103") else RuleType.CODING,
-            severity=Severity(llm_result.severity.lower()) if llm_result.severity.lower() in ["critical", "major", "minor", "info"] else Severity.MAJOR,
+            rule_type=RuleType.LOGIC
+            if llm_result.rule_id in ("QC-102", "QC-103")
+            else RuleType.CODING,
+            severity=Severity(llm_result.severity.lower())
+            if llm_result.severity.lower() in ["critical", "major", "minor", "info"]
+            else Severity.MAJOR,
             description=llm_result.description,
             line_snippet=llm_result.line_snippet,
             suggestion=llm_result.suggestion,
@@ -344,9 +386,12 @@ class QCEngine:
 
     # Rules that only apply to specific record types
     _RULE_RECORD_TYPE_MAP: dict[str, set[str]] = {
-        "QC-001": {"discharge"}, "QC-002": {"discharge"},
-        "QC-003": {"discharge"}, "QC-004": {"discharge"},
-        "QC-005": {"surgery"}, "QC-006": {"surgery"},
+        "QC-001": {"discharge"},
+        "QC-002": {"discharge"},
+        "QC-003": {"discharge"},
+        "QC-004": {"discharge"},
+        "QC-005": {"surgery"},
+        "QC-006": {"surgery"},
         "QC-007": {"surgery"},
         "QC-102": {"surgery", "discharge"},  # surgery-diag consistency: needs procedure data
         "QC-301": {"admission"},
@@ -362,7 +407,9 @@ class QCEngine:
 
     # ========== 规则检查函数 ==========
 
-    def _check_section_exists(self, content: str, coding_result, patient_info, rule) -> QCIssue | None:
+    def _check_section_exists(
+        self, content: str, coding_result, patient_info, rule
+    ) -> QCIssue | None:
         section = rule["params"].get("section", "")
         patterns = {
             "出院诊断": r"出院\s*诊\s*断[：:]",
@@ -410,7 +457,9 @@ class QCEngine:
             )
         return None
 
-    def _check_surgery_record_completeness(self, content, coding_result, patient_info, rule) -> list[QCIssue] | None:
+    def _check_surgery_record_completeness(
+        self, content, coding_result, patient_info, rule
+    ) -> list[QCIssue] | None:
         """检查手术记录关键字段完整性 —— 编码前置质量门。
 
         如果手术记录缺失关键字段（手术名称/日期/入路/麻醉等），编码员无法准确编码，
@@ -433,26 +482,30 @@ class QCEngine:
             "术后诊断": (r"术后\s*诊\s*断[：:]", Severity.MAJOR),
         }
 
-        issues = []
+        issues: list[QCIssue] = []
         for field in required_fields + recommended_fields:
             if field in field_patterns:
                 pattern, severity = field_patterns[field]
                 if not re.search(pattern, content):
                     is_required = field in required_fields
                     level = severity if is_required else Severity.MINOR
-                    issues.append(QCIssue(
-                        rule_id=rule["id"],
-                        rule_name=rule["name"],
-                        rule_type=rule["type"],
-                        severity=level,
-                        description=f"手术记录缺少{'必须' if is_required else '建议'}字段「{field}」"
-                                    f"{'，将影响手术编码准确性' if is_required else ''}",
-                        suggestion=rule["suggestion"],
-                    ))
+                    issues.append(
+                        QCIssue(
+                            rule_id=rule["id"],
+                            rule_name=rule["name"],
+                            rule_type=rule["type"],
+                            severity=level,
+                            description=f"手术记录缺少{'必须' if is_required else '建议'}字段「{field}」"
+                            f"{'，将影响手术编码准确性' if is_required else ''}",
+                            suggestion=rule["suggestion"],
+                        )
+                    )
 
         return issues if issues else None
 
-    def _check_diagnosis_gender_consistency(self, content, coding_result, patient_info, rule) -> QCIssue | None:
+    def _check_diagnosis_gender_consistency(
+        self, content, coding_result, patient_info, rule
+    ) -> QCIssue | None:
         if not patient_info or not coding_result:
             return None
         gender = patient_info.get("gender", "")
@@ -480,7 +533,9 @@ class QCEngine:
                     )
         return None
 
-    def _check_surgery_diagnosis_consistency(self, content, coding_result, patient_info, rule) -> QCIssue | None:
+    def _check_surgery_diagnosis_consistency(
+        self, content, coding_result, patient_info, rule
+    ) -> QCIssue | None:
         """检查手术部位与诊断部位的一致性"""
         if not coding_result:
             return None
@@ -498,17 +553,22 @@ class QCEngine:
         for proc in procedures:
             proc_code = proc.get("code", "").replace(".", "")
             for proc_prefix, diag_prefix in PROC_DIAG_MAP:
-                if proc_code.startswith(proc_prefix):
-                    if not any(d.startswith(diag_prefix) for d in diag_codes):
-                        return QCIssue(
-                            rule_id=rule["id"], rule_name=rule["name"],
-                            rule_type=rule["type"], severity=rule["severity"],
-                            description=f"手术'{proc.get('name', proc_code)}'缺少对应系统({diag_prefix})的诊断",
-                            suggestion=rule["suggestion"],
-                        )
+                if proc_code.startswith(proc_prefix) and not any(
+                    d.startswith(diag_prefix) for d in diag_codes
+                ):
+                    return QCIssue(
+                        rule_id=rule["id"],
+                        rule_name=rule["name"],
+                        rule_type=rule["type"],
+                        severity=rule["severity"],
+                        description=f"手术'{proc.get('name', proc_code)}'缺少对应系统({diag_prefix})的诊断",
+                        suggestion=rule["suggestion"],
+                    )
         return None
 
-    def _check_primary_diagnosis_validity(self, content, coding_result, patient_info, rule) -> QCIssue | None:
+    def _check_primary_diagnosis_validity(
+        self, content, coding_result, patient_info, rule
+    ) -> QCIssue | None:
         """检查主要诊断选择的合理性"""
         if not coding_result:
             return None
@@ -520,8 +580,10 @@ class QCEngine:
         # Z-codes are rehab/follow-up — rarely appropriate as primary
         if code.startswith("Z"):
             return QCIssue(
-                rule_id=rule["id"], rule_name=rule["name"],
-                rule_type=rule["type"], severity=rule["severity"],
+                rule_id=rule["id"],
+                rule_name=rule["name"],
+                rule_type=rule["type"],
+                severity=rule["severity"],
                 description=f"主要诊断为Z编码'{name}'，Z编码通常不应用于主要诊断，除非有特殊说明",
                 suggestion=rule["suggestion"],
             )
@@ -530,8 +592,10 @@ class QCEngine:
             secondary_count = len(coding_result.get("secondary_diagnoses", []))
             if secondary_count > 0:
                 return QCIssue(
-                    rule_id=rule["id"], rule_name=rule["name"],
-                    rule_type=rule["type"], severity=rule["severity"],
+                    rule_id=rule["id"],
+                    rule_name=rule["name"],
+                    rule_type=rule["type"],
+                    severity=rule["severity"],
                     description=f"主要诊断为症状编码'{name}'，存在其他诊断时症状不应作为主要诊断",
                     suggestion=rule["suggestion"],
                 )
@@ -554,31 +618,40 @@ class QCEngine:
             )
         return None
 
-    def _check_code_text_consistency(self, content, coding_result, patient_info, rule) -> QCIssue | None:
+    def _check_code_text_consistency(
+        self, content, coding_result, patient_info, rule
+    ) -> QCIssue | None:
         """检查ICD编码名称与病历文本的关键词匹配"""
         if not coding_result:
             return None
-        issues = []
         # Check primary diagnosis
         primary = coding_result.get("primary_diagnosis")
         if primary:
             name = primary.get("name", "")
             code = primary.get("code", "")
             # Extract key clinical terms (2+ chars) from the diagnosis name
-            terms = [t for t in re.findall(r"[\w一-鿿]{2,}", name) if t not in ("性", "型", "急性", "慢性", "原发性", "继发性", "先天性")]
+            terms = [
+                t
+                for t in re.findall(r"[\w一-鿿]{2,}", name)
+                if t not in ("性", "型", "急性", "慢性", "原发性", "继发性", "先天性")
+            ]
             if terms and len(terms) >= 2:
                 # At least one major clinical term should appear in the content
                 found = any(term in content for term in terms[:3])
                 if not found:
                     return QCIssue(
-                        rule_id=rule["id"], rule_name=rule["name"],
-                        rule_type=rule["type"], severity=rule["severity"],
+                        rule_id=rule["id"],
+                        rule_name=rule["name"],
+                        rule_type=rule["type"],
+                        severity=rule["severity"],
                         description=f"诊断编码'{code} {name}'中的关键临床术语在病历文本中未找到，请核实编码准确性",
                         suggestion=rule["suggestion"],
                     )
         return None
 
-    def _check_missing_secondary_diagnosis(self, content, coding_result, patient_info, rule) -> list[QCIssue] | None:
+    def _check_missing_secondary_diagnosis(
+        self, content, coding_result, patient_info, rule
+    ) -> list[QCIssue] | None:
         """检查病历中提及的常见慢性病是否已编码，返回所有漏编项"""
         if not coding_result:
             return None
@@ -597,48 +670,67 @@ class QCEngine:
                     continue
                 already_coded = any(keyword in name for name in coded_names)
                 if not already_coded:
-                    issues.append(QCIssue(
-                        rule_id=rule["id"], rule_name=rule["name"],
-                        rule_type=rule["type"], severity=rule["severity"],
-                        description=f"病历中提及'{keyword}'但未在诊断编码中找到，可能存在漏编",
-                        suggestion=f"{rule['suggestion']}（建议编码{expected_code}）",
-                    ))
+                    issues.append(
+                        QCIssue(
+                            rule_id=rule["id"],
+                            rule_name=rule["name"],
+                            rule_type=rule["type"],
+                            severity=rule["severity"],
+                            description=f"病历中提及'{keyword}'但未在诊断编码中找到，可能存在漏编",
+                            suggestion=f"{rule['suggestion']}（建议编码{expected_code}）",
+                        )
+                    )
         return issues if issues else None
 
-    def _check_admission_record_timeliness(self, content, coding_result, patient_info, rule) -> QCIssue | None:
+    def _check_admission_record_timeliness(
+        self, content, coding_result, patient_info, rule
+    ) -> QCIssue | None:
         if "入院" not in content[:200]:
             return None
-        dates = re.findall(r'(\d{4}[-/年]\d{1,2}[-/月]\d{1,2})', content)
+        dates = re.findall(r"(\d{4}[-/年]\d{1,2}[-/月]\d{1,2})", content)
         if len(dates) >= 2:
             from datetime import datetime
+
             try:
+
                 def ps(s):
-                    return datetime.strptime(s.replace('年','-').replace('月','-').replace('/','-')[:10], '%Y-%m-%d')
+                    return datetime.strptime(
+                        s.replace("年", "-").replace("月", "-").replace("/", "-")[:10], "%Y-%m-%d"
+                    )
+
                 d1, d2 = ps(dates[0]), ps(dates[1])
                 if abs((d2 - d1).days) > 1:
                     return QCIssue(
-                        rule_id=rule["id"], rule_name=rule["name"],
-                        rule_type=rule["type"], severity=rule["severity"],
-                        description=f"入院日期与记录日期相差{abs((d2-d1).days)}天，超过24h要求",
+                        rule_id=rule["id"],
+                        rule_name=rule["name"],
+                        rule_type=rule["type"],
+                        severity=rule["severity"],
+                        description=f"入院日期与记录日期相差{abs((d2 - d1).days)}天，超过24h要求",
                         suggestion=rule["suggestion"],
                     )
             except ValueError:
                 pass
         return None
 
-    def _check_surgery_record_timeliness(self, content, coding_result, patient_info, rule) -> QCIssue | None:
+    def _check_surgery_record_timeliness(
+        self, content, coding_result, patient_info, rule
+    ) -> QCIssue | None:
         if "手术" not in content:
             return None
-        if re.search(r'(\d{4}[-/年]\d{1,2}[-/月]\d{1,2}).*?手术', content):
+        if re.search(r"(\d{4}[-/年]\d{1,2}[-/月]\d{1,2}).*?手术", content):
             return None
         return QCIssue(
-            rule_id=rule["id"], rule_name=rule["name"],
-            rule_type=rule["type"], severity=rule["severity"],
+            rule_id=rule["id"],
+            rule_name=rule["name"],
+            rule_type=rule["type"],
+            severity=rule["severity"],
             description="手术记录中缺少明确的手术日期，无法判断记录时效性",
             suggestion=rule["suggestion"],
         )
 
-    def _check_primary_is_etiology(self, content, coding_result, patient_info, rule) -> QCIssue | None:
+    def _check_primary_is_etiology(
+        self, content, coding_result, patient_info, rule
+    ) -> QCIssue | None:
         """检查主要诊断是否为病因诊断而非症状"""
         primary = coding_result.get("primary_diagnosis") if coding_result else None
         if primary:
@@ -662,8 +754,10 @@ class QCEngine:
         for slang, formal in INFORMAL_TERMS:
             if slang in content:
                 return QCIssue(
-                    rule_id=rule["id"], rule_name=rule["name"],
-                    rule_type=rule["type"], severity=rule["severity"],
+                    rule_id=rule["id"],
+                    rule_name=rule["name"],
+                    rule_type=rule["type"],
+                    severity=rule["severity"],
                     description=f"诊断中使用了口语化表达'{slang}'，建议使用'{formal}'",
                     suggestion=rule["suggestion"],
                 )
