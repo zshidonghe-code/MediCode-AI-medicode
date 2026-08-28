@@ -1,16 +1,18 @@
 import logging
 import time
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from sqlalchemy import func, select, text
 from starlette.middleware.base import BaseHTTPMiddleware
-from sqlalchemy import select, func, text
+
+from src.api.router import api_router
 from src.config.settings import get_settings
 from src.models import init_db  # registers all models on Base.metadata
 from src.models.database import async_session, engine
 from src.models.patient import Patient
-from src.api.router import api_router
 
 logger = logging.getLogger(__name__)
 settings = get_settings()

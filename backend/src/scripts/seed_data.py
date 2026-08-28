@@ -6,19 +6,19 @@ Usage:
 
 import asyncio
 import json
-import sys
 import os
+import sys
+from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
-from src.models.database import async_session, engine, Base
-from src.models.icd import ICDCode, ICDVersion, DRGGroup
-from src.models.patient import Patient, MedicalRecord, Gender, RecordType
-from src.models.qc import QCRule, QCSeverity, QCRuleType
-from sqlalchemy import delete, func, select
-from datetime import date
+from sqlalchemy import func, select
 
+from src.models.database import Base, async_session, engine
+from src.models.icd import DRGGroup, ICDCode, ICDVersion
+from src.models.patient import Gender, MedicalRecord, Patient, RecordType
+from src.models.qc import QCRule, QCRuleType, QCSeverity
 
 # 从统一的 JSON 数据文件加载 ICD 编码
 _DATA_DIR = Path(__file__).parent.parent / "data"
@@ -51,7 +51,7 @@ def _load_icd_json(filename: str) -> list[dict]:
     if not path.exists():
         print(f"WARNING: ICD data file not found: {path}")
         return []
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         return json.load(f)
 
 
