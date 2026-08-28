@@ -4,7 +4,7 @@
 
 - **执行日期**：2026-08-29
 - **仓库**：`C:\Users\Donghe\Desktop\04_MediCode码医\MediCode`
-- **代码版本**：`de39fc2`
+- **代码版本**：`8e8ecd4`
 - **测试命令**：`backend/.venv/Scripts/python.exe -m pytest -q --cov=src --cov-report=term-missing`
 - **服务依赖**：启动本地 SQLite 数据库服务于 `127.0.0.1:8001`
 - **LLM**：未启用，测试覆盖规则模式和接口降级路径
