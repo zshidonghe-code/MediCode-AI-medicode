@@ -134,7 +134,7 @@ table.alignment = WD_TABLE_ALIGNMENT.CENTER
 table.style = 'Table Grid'
 
 metrics = [
-    ('AI编码准确率', '94.1%', '超越人工\n15个百分点'),
+    ('规则模式验证', '2/4', '主诊断匹配\n4例工程回归'),
     ('质控规则覆盖', '47条', '完整性/逻辑/编码\n6大维度'),
     ('DRG分组', 'CHS-DRG 1.2', '26 MDC\n800+ ADRG'),
     ('响应速度', '<2秒', 'NLP+检索\n无需LLM也可用'),

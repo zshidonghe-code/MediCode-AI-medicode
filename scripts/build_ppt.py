@@ -293,7 +293,7 @@ for i, step in enumerate(steps):
         arrow.line.fill.background()
 
 # Bottom differentiation
-points = ['编码 + 分组 + 质控 三合一', 'CHS-DRG 1.2 国家标准', '准确率 95%+，秒级响应']
+points = ['编码 + 分组 + 质控 + 风险评估', 'CHS-DRG 1.2 国家标准', '规则模式可验证，响应以实测为准']
 for i, p in enumerate(points):
     x = Inches(2.5 + i * 3.2)
     add_multi_text(slide3, x, Inches(4.2), Inches(2.8), Inches(1.5), [
@@ -418,14 +418,14 @@ for title, desc, x, y in highlights:
 
 slide6 = prs.slides.add_slide(prs.slide_layouts[6])
 light_slide(slide6)
-add_slide_title(slide6, '编码准确率达 94.1%，超越人工平均水平',
-                '基于203份真实病历(8科室)的AI vs 人工编码对比测试', dark=False)
+add_slide_title(slide6, '编码验证结果：4 例规则模式测试',
+                '基于4例合成病历的工程回归，不代表临床准确率或人工对比结论', dark=False)
 
 # Big numbers - left side
 metrics = [
-    ('94.1%', 'AI 编码准确率', BRAND_BLUE),
-    ('82.7%', '人工编码准确率', LIGHT_GRAY),
-    ('12.5pp', '准确率提升', BRAND_GREEN),
+    ('2/4', '主诊断匹配', BRAND_BLUE),
+    ('2/4', '手术编码匹配', LIGHT_GRAY),
+    ('669.6ms', '基准平均响应', BRAND_GREEN),
 ]
 for i, (num, label, color) in enumerate(metrics):
     y = Inches(2.0 + i * 1.6)
@@ -435,7 +435,7 @@ for i, (num, label, color) in enumerate(metrics):
                  label, 14, DARK_TEXT)
 
 # Chart area - right side (simplified bar chart)
-chart_bars = [95.2, 82.7, 90.5, 78.3, 93.1, 80.0, 91.8, 76.5, 94.0, 79.2]
+chart_bars = [50.0, 50.0, 25.0, 50.0]
 for i, val in enumerate(chart_bars[:3]):
     x = Inches(6.5 + i * 0.5)
     h = Inches(val / 100 * 3.5)
@@ -447,7 +447,7 @@ for i, val in enumerate(chart_bars[:3]):
     bar.line.fill.background()
 
 add_text_box(slide6, Inches(6.5), Inches(5.5), Inches(5), Inches(0.3),
-             '基于203份真实病历测试数据(8科室)', 11, LIGHT_GRAY)
+             '基于4例合成病历的规则模式运行记录', 11, LIGHT_GRAY)
 
 # ─── SLIDE 7 - QC Capability ─────────────────────────────────────────────────
 
@@ -519,7 +519,7 @@ add_slide_title(slide9, '竞争格局 — 我们在哪里？',
 # Competitive comparison table headers
 headers = ['功能', '码医', '东软望海', '国新健康', '森亿智能']
 rows_data = [
-    ['NLP智能编码', '✓ 95%+', '✓', '✗', '△'],
+    ['NLP智能编码', '✓ 规则模式', '✓', '✗', '△'],
     ['DRG分组', '✓ CHS1.2', '✓', '✓', '✗'],
     ['AI质控', '✓ 双模', '✗', '✗', '△'],
     ['一体化', '✓', '✗', '✗', '✗'],

@@ -181,7 +181,7 @@ for i, step in enumerate(steps):
         a.fill.solid(); a.fill.fore_color.rgb = BLUE; a.line.fill.background()
 
 # Key differentiators
-diffs = ['CHS-DRG 1.2 国家标准', 'Docker一键私有化部署', '准确率94.1% 秒级响应', 'NLP+LLM双引擎架构']
+diffs = ['CHS-DRG 1.2 国家标准', 'Docker一键私有化部署', '规则模式可验证，响应以实测为准', 'NLP+LLM双引擎架构']
 for i, d in enumerate(diffs):
     x = Inches(1.5 + i * 2.8)
     TB(s5, x, Inches(4.3), Inches(2.5), Inches(0.4), d, 15, GREEN, bold=True, align=PP_ALIGN.CENTER)
@@ -242,7 +242,7 @@ s7 = prs.slides.add_slide(prs.slide_layouts[6]); light_slide(s7)
 SECTION_TAG(s7, '03  答案', '数字不说谎', dark=False)
 
 metrics = [
-    ('94.1%', '诊断编码 Top-1 准确率', '203份真实病历，8个科室\n超越人工平均水平(85-90%)', BLUE),
+    ('2/4', '主诊断匹配', '4例合成病历规则模式验证\n不代表临床准确率', BLUE),
     ('47条', '质控规则，6大维度', '完整性·逻辑·编码·时效\n规范表达·语义质量', GREEN),
     ('<2秒', '全流程秒级响应', '规则引擎<1秒\nLLM增强2-5秒', PURPLE),
     ('Docker', '一键私有化部署', '2核4G即可运行\n病历数据不出院内网', ORANGE),
@@ -255,7 +255,7 @@ for i, (num, label, desc, color) in enumerate(metrics):
     TB(s7, x+Inches(0.2), y+Inches(1.8), Inches(2.5), Inches(1.8), desc, 11, GRAY, align=PP_ALIGN.CENTER)
 
 TB(s7, Inches(1), Inches(6.4), Inches(11), Inches(0.3),
-   '准确率从94.1%到97%的路线图已制定：同义词库扩编 -> LLM升级 -> LoRA微调 -> 数据飞轮。详见商业计划书。', 10, GRAY, align=PP_ALIGN.CENTER)
+   '后续路线：扩展经专家复核的病例集，分别评估规则模式和LLM模式。', 10, GRAY, align=PP_ALIGN.CENTER)
 
 # ═══════════════════════════════════════════════════════════════
 # SLIDE 8 — MARKET POSITIONING
@@ -322,7 +322,7 @@ CARD(s10, Inches(1.5), Inches(2.0), Inches(5.5), Inches(3.8))
 TB(s10, Inches(2.0), Inches(2.2), Inches(4.5), Inches(0.4), '项目负责人 & 全栈开发', 18, BLUE, bold=True)
 TB(s10, Inches(2.0), Inches(2.7), Inches(4.5), Inches(0.3), '郑诗东和', 14, GRAY)
 TB(s10, Inches(2.0), Inches(3.2), Inches(4.5), Inches(1.5),
-   '人+AI协作模式\n2月内完成90+文件全栈系统\n8页面+7组API+8数据库表\n传统3-5人团队需3-6月\n203例测试准确率94.1%', 13, WHITE)
+   '人+AI协作模式\n已完成可运行的全栈原型\n规则模式全链路已验证\n4例基准结果已归档\n准确率和医院效果尚待验证', 13, WHITE)
 
 # Advisor cards (right, smaller)
 advisors = [
@@ -338,7 +338,7 @@ for i, (role, status, desc) in enumerate(advisors):
 
 # Bottom highlight
 TB(s10, Inches(1.5), Inches(6.2), Inches(10), Inches(0.35),
-   '不是PPT创业：完整可运行全栈系统 + 203例测试数据，评审可现场验证任何功能。', 13, GREEN, bold=True, align=PP_ALIGN.CENTER)
+   '不是PPT创业：完整可运行全栈系统 + 规则模式验证记录，评审可现场验证核心流程。', 13, GREEN, bold=True, align=PP_ALIGN.CENTER)
 
 # ═══════════════════════════════════════════════════════════════
 # SLIDE 11 — MILESTONES (compact timeline)
@@ -347,7 +347,7 @@ s11 = prs.slides.add_slide(prs.slide_layouts[6]); dark_slide(s11)
 SECTION_TAG(s11, '05  我们', '从 MVP 到国赛——清晰的发展路径')
 
 ms = [
-    ('2026.05', '产品完成', '全栈系统开发完成\n94.1%准确率验证', GREEN),
+    ('2026.08', '可行性验证', '规则模式全链路运行\n4例结果已归档', GREEN),
     ('2026.06', '校赛路演', 'BP+PPT定稿\n联系试点意向', BLUE),
     ('2026.07-09', '省赛+试点', '1-2家医院免费试点\n收集真实使用数据', PURPLE),
     ('2026.10', '国赛冲刺', '目标全国第一\n真实试点数据佐证', ORANGE),

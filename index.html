@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>码医 MediCode · AI 医疗 DRG 编码与病历质控系统 | 准确率 95%+ | 2026</title>
-<meta name="description" content="码医 MediCode 是 AI 驱动的医疗编码 + DRG 智能分组 + 病历质控 + 拒付预测一体化平台。ICD-10 编码准确率 95%+，CHS-DRG 1.2 全自动分组，100+ 质控规则。目标全国 3000+ 二级以上医院，可及市场 45 亿/年。互联网+ 大学生创新创业大赛参赛项目。">
+<title>码医 MediCode · AI 医疗 DRG 编码与病历质控系统 | 规则模式可验证</title>
+<meta name="description" content="码医 MediCode 是 AI 辅助的医疗编码、DRG 分组、病历质控与拒付风险评估平台。当前公开验证为 4 例规则模式测试，LLM 增强路径尚未独立评估，最终结果由人工审核确认。">
 <link rel="canonical" href="https://zshidonghe-code.github.io/MediCode-AI-medicode/">
 <style>
 *,*::before,*::after{box-sizing:border-box}
@@ -41,7 +41,7 @@ footer{padding:40px 0;background:#f9fafb;text-align:center;color:#6b7280;font-si
 
 <section class="hero">
 <div class="container">
-<div class="badge">互联网+ 大学生创新创业大赛 · 目标全国第一</div>
+<div class="badge">互联网+ 大学生创新创业大赛 · 提交前辅助审核</div>
 <h1>码医 <span class="grad">MediCode</span></h1>
 <p class="lead">AI 驱动的医疗编码 + DRG 智能分组 + 病历质控 + 拒付预测<br>帮医院不被医保扣钱，帮医保基金不被浪费</p>
 <div class="cta-row">
@@ -49,8 +49,8 @@ footer{padding:40px 0;background:#f9fafb;text-align:center;color:#6b7280;font-si
 <a class="btn btn-g" href="#features">了解功能</a>
 </div>
 <div class="meta-row">
-<div><strong>95%+</strong>ICD-10 编码准确率</div>
-<div><strong>100+</strong>质控规则</div>
+<div><strong>4</strong>例规则模式验证</div>
+<div><strong>27</strong>条当前质控规则</div>
 <div><strong>500</strong>演示病历</div>
 <div><strong>45 亿</strong>目标市场/年</div>
 </div>
@@ -73,12 +73,12 @@ footer{padding:40px 0;background:#f9fafb;text-align:center;color:#6b7280;font-si
 <section id="features">
 <div class="container">
 <h2>码医 <span class="grad">MediCode</span> · 四合一平台</h2>
-<p class="sub">行业首个"编码 + DRG 分组 + 质控 + 拒付预测"一体化产品，没有同类竞品</p>
+<p class="sub">将编码、DRG 分组、质控与拒付风险评估放在同一审核流程，最终结果由人工确认</p>
 <div class="cards">
-<div class="card"><h3>智能 ICD 编码引擎</h3><p>NLP + 医学知识库 + LLM 语义理解，自动推荐 ICD-10 诊断编码和 ICD-9-CM-3 手术编码，准确率 95%+</p></div>
+<div class="card"><h3>智能 ICD 编码引擎</h3><p>NLP + 医学知识库 + 可选 LLM 语义理解，自动推荐 ICD-10 诊断编码和 ICD-9-CM-3 手术编码；规则模式结果见验证报告</p></div>
 <div class="card"><h3>CHS-DRG 1.2 自动分组</h3><p>基于国家医保局 2024 方案，自动判定 MDC/ADRG/DRG 分组，计算权重和预估支付金额</p></div>
-<div class="card"><h3>病历内涵质控引擎</h3><p>100+ 规则 + AI 语义一致性检查，覆盖完整性、逻辑性、编码规范、时效性</p></div>
-<div class="card"><h3>医保拒付风险预测（独家）</h3><p>基于编码 + DRG + 病历内容，提前预警医保飞检高风险病历</p></div>
+<div class="card"><h3>病历内涵质控引擎</h3><p>内置质控规则 + 可选 AI 语义一致性检查，覆盖完整性、逻辑性、编码规范、时效性</p></div>
+<div class="card"><h3>医保拒付风险预测</h3><p>基于编码 + DRG + 病历内容，提示可能的医保审核风险与可规避金额</p></div>
 <div class="card"><h3>数据驾驶舱</h3><p>全院 DRG 运营概览、CMI 分析、质控趋势、收入分析</p></div>
 <div class="card"><h3>私有化部署</h3><p>Docker Compose 一键启动，数据不出院，Ollama 本地推理</p></div>
 </div>
@@ -94,16 +94,16 @@ footer{padding:40px 0;background:#f9fafb;text-align:center;color:#6b7280;font-si
 <p>适用于二级以上医院（≥300 床位）。目前全国 3,000+ 家二三级医院是目标市场，可及市场约 45 亿/年。</p>
 </div>
 <div class="faq-item">
-<h3>编码准确率 95%+ 怎么测的？</h3>
-<p>基于 920 条 ICD-10 诊断 + 611 条 ICD-9-CM-3 手术的标准测试集，对比人工编码金标准计算 Top-5 推荐准确率。详见 docs/BENCHMARK_REPORT.md。</p>
+<h3>当前验证结果是什么？</h3>
+<p>当前公开验证为 4 例无 LLM 规则模式测试：主诊断匹配 2/4、手术编码匹配 2/4，不能据此宣称生产级准确率。920/611 是编码字典规模，不是测试集规模。详见 docs/BENCHMARK_REPORT.md。</p>
 </div>
 <div class="faq-item">
 <h3>和市面上单独编码、DRG 系统有什么区别？</h3>
-<p>码医 MediCode 是行业首个"编码 + DRG 分组 + 质控 + 拒付预测"四合一平台。一套系统解决 DRG 改革全流程痛点。</p>
+<p>码医 MediCode 将编码、DRG 分组、质控与拒付风险评估串成审核流程；系统提供建议，最终编码仍由人工确认。</p>
 </div>
 <div class="faq-item">
 <h3>数据安全怎么保证？医院内网能跑吗？</h3>
-<p>支持医院内网私有化部署，数据不出院。Docker Compose 一键启动，最低配置 8C16G + 50G 存储，POC 部署 1 周内完成。</p>
+<p>支持医院内网私有化部署，数据不出院。Docker Compose 一键启动，具体资源需求和部署时间需结合医院环境验证。</p>
 </div>
 <div class="faq-item">
 <h3>参赛项目能用于商业化吗？</h3>
@@ -115,7 +115,7 @@ footer{padding:40px 0;background:#f9fafb;text-align:center;color:#6b7280;font-si
 <section class="bg-gray">
 <div class="container" style="text-align:center">
 <h2>现在就 <span class="grad">试用码医</span></h2>
-<p class="sub">30 秒完成全流程分析 · 500 条演示病历 · 演示账号 admin/coder/doctor（密码 123456）</p>
+<p class="sub">全流程可演示 · 500 条演示病历 · 演示账号和密码仅在本地配置中提供</p>
 <div class="cta-row">
 <a class="btn btn-p" href="https://github.com/zshidonghe-code/MediCode-AI-medicode">★ GitHub 仓库</a>
 <a class="btn btn-g" href="docs/PROJECT_PLAN.md">项目计划</a>

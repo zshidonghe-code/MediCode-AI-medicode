@@ -74,7 +74,7 @@ td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.06);font-size:15
   <div class="row" style="margin-top:60px">
     <div class="card"><p class="blue" style="font-size:24px">编码+DRG+质控<br>三合一</p></div>
     <div class="card"><p class="green" style="font-size:24px">CHS-DRG 1.2<br>国家标准</p></div>
-    <div class="card"><p style="font-size:24px;color:#b8860b">准确率95%+<br>秒级响应</p></div>
+    <div class="card"><p style="font-size:24px;color:#b8860b">规则模式可验证<br>全流程可追溯</p></div>
   </div>
 </div>
 
@@ -85,7 +85,7 @@ td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.06);font-size:15
   <div class="row" style="margin-top:40px;gap:80px">
     <div>
       <p class="blue" style="font-size:22px;margin-bottom:16px">🔵 规则引擎层</p>
-      <p class="gray" style="font-size:16px">100+条医学规则</p>
+      <p class="gray" style="font-size:16px">27条当前质控规则</p>
       <p class="gray" style="font-size:16px">完整性检查 · 逻辑校验</p>
       <p class="gray" style="font-size:16px">性别一致性 · 编码匹配</p>
       <p class="gray" style="font-size:16px">时效性 · 规范表达</p>
@@ -103,20 +103,20 @@ td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.06);font-size:15
 
 <!-- Slide 5: Accuracy Data -->
 <div class="slide" style="background:#fff;color:#1e293b">
-  <h2 style="color:#1e293b">编码准确率达 95.2%，超越人工平均水平</h2>
-  <h3 style="color:#94a3b8">基于500份真实出院病历模板数据的对比测试</h3>
+  <h2 style="color:#1e293b">编码验证结果：4 例规则模式测试</h2>
+  <h3 style="color:#94a3b8">基于 4 例合成病历的工程回归，不代表临床准确率</h3>
   <div class="row" style="margin-top:80px">
     <div class="card" style="background:#f0f9ff">
-      <p class="num" style="color:#0ea5e9">95.2%</p>
-      <p>AI 编码准确率</p>
+      <p class="num" style="color:#0ea5e9">2/4</p>
+      <p>主诊断匹配</p>
     </div>
     <div class="card" style="background:#f8fafc">
-      <p class="num" style="color:#94a3b8">82.7%</p>
-      <p>人工编码准确率</p>
+      <p class="num" style="color:#94a3b8">2/4</p>
+      <p>手术编码匹配</p>
     </div>
     <div class="card" style="background:#f0fff0">
-      <p class="num" style="color:#10b981">+12.5pp</p>
-      <p>准确率提升</p>
+      <p class="num" style="color:#10b981">669.6ms</p>
+      <p>基准平均响应</p>
     </div>
   </div>
 </div>
@@ -132,7 +132,7 @@ td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.06);font-size:15
     <div class="card" style="background:#f8fafc"><span class="orange" style="font-size:20px">规范表达</span><br>7条规则</div>
     <div class="card" style="background:#f8fafc"><span class="red" style="font-size:20px">语义质量</span><br>5条规则</div>
   </div>
-  <p style="font-size:24px;margin-top:60px;color:#1e293b">质控缺陷检出率 <span class="green">98.3%</span> vs 人工抽查覆盖率仅 <span class="red">5-10%</span></p>
+  <p style="font-size:24px;margin-top:60px;color:#1e293b">质控结果由规则引擎输出，最终由人工审核确认</p>
 </div>
 
 <!-- Slide 7: DRG Value -->
@@ -146,7 +146,7 @@ td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.06);font-size:15
 
 <!-- Slide 8: Rejection Risk (New!) -->
 <div class="slide" style="background:#0c1929">
-  <h2>🆕 医保拒付风险预测 — 行业独家</h2>
+  <h2>医保拒付风险预测 — 提交前审核提示</h2>
   <h3>11条拒付规则，在编码完成前预见审核风险</h3>
   <div class="row" style="margin-top:40px">
     <div class="card" style="border-color:rgba(255,77,79,0.3)">
@@ -166,10 +166,10 @@ td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.06);font-size:15
   <h2>为什么是码医 — 市场上唯一的三合一方案</h2>
   <table style="margin-top:40px">
     <tr><th>功能</th><th style="color:#0ea5e9">码医</th><th>竞品A</th><th>竞品B</th></tr>
-    <tr><td>NLP智能编码</td><td class="green">✓ 95%</td><td class="gray">✓</td><td class="red">✗</td></tr>
+    <tr><td>NLP智能编码</td><td class="green">✓ 规则模式</td><td class="gray">✓</td><td class="red">✗</td></tr>
     <tr><td>DRG分组(CHS)</td><td class="green">✓ 1.2</td><td class="gray">✓</td><td class="gray">✓</td></tr>
     <tr><td>AI内涵质控</td><td class="green">✓ 双模</td><td class="red">✗</td><td class="red">✗</td></tr>
-    <tr><td>医保拒付预测</td><td class="green">✓ 独家</td><td class="red">✗</td><td class="red">✗</td></tr>
+    <tr><td>医保拒付预测</td><td class="green">✓ 风险提示</td><td class="red">✗</td><td class="red">✗</td></tr>
     <tr><td>一体化平台</td><td class="green">✓ 三合一</td><td class="red">✗</td><td class="red">✗</td></tr>
     <tr><td>离线部署</td><td class="green">✓</td><td class="red">✗</td><td class="gray">✓</td></tr>
   </table>
