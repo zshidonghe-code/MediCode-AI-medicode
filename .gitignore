@@ -54,3 +54,8 @@ htmlcov/
 # Materials/ — local-only competition materials (webm videos, large docs)
 # Synced via cloud drive, not git
 materials/
+# 例外：待办清单需纳入版本控制（2026-08-30）
+# 写法说明：先取消目录忽略让 git 进入该目录，再忽略其全部内容，最后放行这一个文件
+!materials/
+materials/*
+!materials/码医-MediCode-待办清单.md
