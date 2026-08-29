@@ -6,15 +6,33 @@
 // 决议来源: council-reports/2026-07-09-1719-medicode-x-amplify/
 
 import { useState } from 'react'
-import { Card, Button, Upload, Tag, Space, Typography, Spin, Alert, List } from 'antd'
+import { Card, Upload, Tag, Space, Typography, Spin, Alert, List } from 'antd'
 import { InboxOutlined, FileTextOutlined } from '@ant-design/icons'
 import { codingAPI } from '../../services/api'
 
 const { Title, Text, Paragraph } = Typography
 const { Dragger } = Upload
 
+interface CodeName {
+  code: string
+  name: string
+}
+
+interface CodingUploadResult {
+  filename: string
+  status: string
+  text?: string
+  coding_result?: {
+    primary_diagnosis?: CodeName
+    secondary_diagnoses?: CodeName[]
+    procedures?: CodeName[]
+    confidence?: number
+  }
+  supported?: string[]
+}
+
 interface DocUploadCoderProps {
-  onCoded?: (result: any) => void
+  onCoded?: (result: CodingUploadResult) => void
 }
 
 /**
@@ -25,18 +43,7 @@ interface DocUploadCoderProps {
  */
 export function DocUploadCoder({ onCoded }: DocUploadCoderProps) {
   const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState<{
-    filename: string
-    status: string
-    text?: string
-    coding_result?: {
-      primary_diagnosis?: { code: string; name: string }
-      secondary_diagnoses?: Array<{ code: string; name: string }>
-      procedures?: Array<{ code: string; name: string }>
-      confidence?: number
-    }
-    supported?: string[]
-  } | null>(null)
+  const [result, setResult] = useState<CodingUploadResult | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const uploadProps = {
@@ -117,7 +124,7 @@ export function DocUploadCoder({ onCoded }: DocUploadCoderProps) {
                     <List
                       size="small"
                       dataSource={result.coding_result.secondary_diagnoses}
-                      renderItem={(d: any) => (
+                      renderItem={(d: CodeName) => (
                         <List.Item>
                           <Tag color="orange">{d.code}</Tag>
                           <Text>{d.name}</Text>
@@ -133,7 +140,7 @@ export function DocUploadCoder({ onCoded }: DocUploadCoderProps) {
                     <List
                       size="small"
                       dataSource={result.coding_result.procedures}
-                      renderItem={(p: any) => (
+                      renderItem={(p: CodeName) => (
                         <List.Item>
                           <Tag color="purple">{p.code}</Tag>
                           <Text>{p.name}</Text>

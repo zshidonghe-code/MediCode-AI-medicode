@@ -1,7 +1,7 @@
 ﻿import { useState, useCallback, useEffect, useRef } from 'react'
 import {
-  Card, Row, Col, Input, Button, Select, Segmented, Table, Tag, Statistic, Progress, Typography,
-  Divider, Space, message, List, Tooltip, Modal, Descriptions, Empty, Steps,
+  Card, Row, Col, Input, Button, Select, Table, Tag, Progress, Typography,
+  Divider, Space, message, Tooltip, Steps,
 } from 'antd'
 import {
   SafetyCertificateOutlined, WarningOutlined, CheckCircleOutlined,
@@ -23,6 +23,7 @@ interface QCIssue {
   line_snippet: string
   suggestion: string
   line_number: number | null
+  id?: number
 }
 
 const SEVERITY_CONFIG: Record<string, { color: string; label: string; icon: React.ReactNode }> = {
@@ -121,7 +122,7 @@ export default function QCPage() {
         record_type: recordType,
         qc_result: data,
         department: '质控中心',
-      }).catch((e: any) => { console.warn('自动保存失败:', e?.response?.data || e?.message) })
+      }).catch((e: unknown) => { console.warn('自动保存失败:', e instanceof Error ? e.message : '未知错误') })
     } catch {
       message.error('质控检查失败')
     } finally { setLoading(false) }
@@ -193,10 +194,10 @@ export default function QCPage() {
     },
     {
       title: '', key: 'action', width: 100,
-      render: (_: any, record: QCIssue) => (
+      render: (_: unknown, record: QCIssue) => (
         <Space size={4}>
           <Button size="small" type="primary" ghost onClick={async () => {
-            const id = (record as any).id
+            const id = record.id
             if (id) {
               try { await qcAPI.acceptResult(id); message.success('已采纳建议') }
               catch { message.error('操作失败') }
@@ -205,7 +206,7 @@ export default function QCPage() {
             }
           }}>采纳</Button>
           <Button size="small" type="text" danger onClick={async () => {
-            const id = (record as any).id
+            const id = record.id
             if (id) {
               try { await qcAPI.rejectResult(id); message.info('已忽略') }
               catch { message.error('操作失败') }

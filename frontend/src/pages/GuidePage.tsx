@@ -4,7 +4,7 @@ import {
   ReadOutlined, NodeIndexOutlined, FileTextOutlined,
   MedicineBoxOutlined, SafetyCertificateOutlined, DashboardOutlined,
   ThunderboltOutlined, QuestionCircleOutlined, SmileOutlined,
-  RocketOutlined, SearchOutlined, CheckCircleOutlined, DollarOutlined,
+  RocketOutlined, CheckCircleOutlined,
   RightOutlined,
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
@@ -246,7 +246,7 @@ export default function GuidePage() {
               title: <Text strong style={{ fontSize: 16 }}>第一步：登录</Text>,
               description: (
                 <Text type="secondary">
-                  用管理员给的账号密码登录。演示环境用户名 <Text code>admin</Text>，密码 <Text code>medicode2024</Text>
+                  用管理员给的账号密码登录。演示环境用户名 <Text code>admin</Text>，密码 <Text code>123456</Text>
                 </Text>
               ),
               icon: <SmileOutlined />,

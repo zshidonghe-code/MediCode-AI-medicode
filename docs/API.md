@@ -57,15 +57,15 @@ POST /api/v1/auth/login
 
 | 用户名 | 密码 | 角色 | 权限 |
 | --- | --- | --- | --- |
-| `admin` | `medicode2024` | 管理员 | 全部权限，含数据重置与导出 |
-| `coder` | `code123` | 编码员 | 编码、DRG、质控操作 |
-| `doctor` | `doc123` | 医生 | 编码、DRG、质控操作 |
+| `admin` | `123456` | 管理员 | 全部权限，含数据重置与导出 |
+| `coder` | `123456` | 编码员 | 编码、DRG、质控操作 |
+| `doctor` | `123456` | 医生 | 编码、DRG、质控操作 |
 
 **curl 示例**：
 
 ```bash
 curl -X POST http://localhost:8000/api/v1/auth/login \
-  -d "username=admin&password=medicode2024"
+  -d "username=admin&password=123456"
 ```
 
 **JavaScript (Axios) 示例**：
@@ -75,7 +75,7 @@ import axios from 'axios';
 
 const formData = new FormData();
 formData.append('username', 'admin');
-formData.append('password', 'medicode2024');
+formData.append('password', '123456');
 
 const { data } = await axios.post('/api/v1/auth/login', formData);
 // 保存 token
@@ -944,7 +944,7 @@ async function qcCheck(content, codingResult) {
 // 使用示例
 (async () => {
   // 1. 登录
-  await login('coder', 'code123');
+  await login('coder', '123456');
   console.log('登录成功');
 
   // 2. 编码
@@ -992,7 +992,7 @@ async def main():
         # 1. 登录
         r = await client.post("/auth/login", data={
             "username": "admin",
-            "password": "medicode2024",
+            "password": "123456",
         })
         token = r.json()["access_token"]
         headers = {"Authorization": f"Bearer {token}"}
@@ -1039,7 +1039,7 @@ BASE="http://localhost:8000/api/v1"
 
 # 1. 登录
 TOKEN=$(curl -s -X POST "$BASE/auth/login" \
-  -d "username=admin&password=medicode2024" | jq -r '.access_token')
+  -d "username=admin&password=123456" | jq -r '.access_token')
 
 AUTH="Authorization: Bearer $TOKEN"
 

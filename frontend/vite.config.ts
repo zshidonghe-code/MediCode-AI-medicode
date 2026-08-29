@@ -1,9 +1,14 @@
 import { defineConfig } from 'vite'
+import { loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
 
-export default defineConfig({
-  plugins: [react()],
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '')
+  const apiTarget = env.VITE_API_TARGET || 'http://localhost:8000'
+
+  return {
+    plugins: [react()],
 
   // ---- Path Aliases ----
   resolve: {
@@ -17,15 +22,15 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:8001',
+        target: apiTarget,
         changeOrigin: true,
       },
       '/health': {
-        target: 'http://localhost:8001',
+        target: apiTarget,
         changeOrigin: true,
       },
       '/docs': {
-        target: 'http://localhost:8001',
+        target: apiTarget,
         changeOrigin: true,
       },
     },
@@ -109,4 +114,5 @@ export default defineConfig({
       },
     },
   },
+  }
 })

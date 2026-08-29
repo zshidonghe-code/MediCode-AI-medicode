@@ -8,6 +8,15 @@ const api = axios.create({
 
 export { api }
 
+export function getApiErrorMessage(error: unknown, fallback: string): string {
+  if (axios.isAxiosError(error)) {
+    const detail = error.response?.data?.detail
+    if (typeof detail === 'string') return detail
+    if (error.message) return error.message
+  }
+  return fallback
+}
+
 export function setApiAuth(token: string | null) {
   if (token) {
     api.defaults.headers.common['Authorization'] = `Bearer ${token}`
@@ -39,7 +48,7 @@ export const codingAPI = {
     return api.post('/coding/auto-code/upload', formData)
   },
 
-  validate: (coding: any) => api.post('/coding/validate', coding),
+  validate: (coding: unknown) => api.post('/coding/validate', coding),
 
   searchICD: (keyword: string, limit = 20) =>
     api.get('/coding/search', { params: { keyword, limit } }),
@@ -47,7 +56,7 @@ export const codingAPI = {
 
 // === DRG API ===
 export const drgAPI = {
-  group: (data: any) => api.post('/drg/group', data),
+  group: (data: unknown) => api.post('/drg/group', data),
 
   getDetail: (code: string) => api.get(`/drg/group/${code}`),
 
@@ -57,7 +66,7 @@ export const drgAPI = {
 
 // === QC API ===
 export const qcAPI = {
-  check: (data: { record_id: number; record_type: string; content: string; coding_result?: any }) =>
+  check: (data: { record_id: number; record_type: string; content: string; coding_result?: unknown }) =>
     api.post('/qc/check', data),
 
   getRules: (ruleType = '', severity = '') =>
@@ -70,7 +79,7 @@ export const qcAPI = {
 
 // === Dashboard API ===
 export const dashboardAPI = {
-  getOverview: (params: any) => api.get('/dashboard/overview', { params }),
+  getOverview: (params: unknown) => api.get('/dashboard/overview', { params }),
   getDepartmentRanking: (metric = 'cmi', limit = 10) =>
     api.get('/dashboard/department-ranking', { params: { metric, limit } }),
   getQCTrend: (days = 30) => api.get('/dashboard/qc-trend', { params: { days } }),
@@ -85,9 +94,9 @@ export const pipelineAPI = {
   save: (data: {
     content?: string
     record_type: string
-    coding_result?: any
-    qc_result?: any
-    drg_result?: any
+    coding_result?: unknown
+    qc_result?: unknown
+    drg_result?: unknown
     department?: string
     patient_info?: { age?: number; gender?: string }
     primary_diagnosis_code?: string

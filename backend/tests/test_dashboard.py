@@ -1,5 +1,8 @@
 """Dashboard API integration tests."""
+import httpx
 import pytest
+
+from .conftest import BASE_URL
 
 
 @pytest.mark.asyncio
@@ -81,9 +84,8 @@ async def test_dashboard_numeric_fields_are_valid(client):
 
 
 @pytest.mark.asyncio
-async def test_dashboard_unauthenticated(client):
+async def test_dashboard_unauthenticated():
     """Dashboard endpoints should require authentication."""
-    import httpx
-    async with httpx.AsyncClient(base_url="http://localhost:8001", timeout=10) as c:
+    async with httpx.AsyncClient(base_url=BASE_URL, timeout=10) as c:
         r = await c.get("/api/v1/dashboard/overview")
         assert r.status_code == 401

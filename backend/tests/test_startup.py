@@ -47,6 +47,7 @@ async def test_lifespan_does_not_reseed_demo_data_on_second_start(monkeypatch):
     monkeypatch.setattr(main, "init_db", init_db)
     monkeypatch.setattr(main, "async_session", lambda: _StartupSession(state))
     monkeypatch.setattr(main, "engine", engine)
+    monkeypatch.setattr(main.settings, "auto_seed_demo_data", True)
     monkeypatch.setattr(
         "src.scripts.seed_data.seed_reference_data_if_needed",
         seed_reference_data,
@@ -63,3 +64,29 @@ async def test_lifespan_does_not_reseed_demo_data_on_second_start(monkeypatch):
     assert seed_reference_data.await_count == 2
     seed_pipeline_demo.assert_awaited_once_with()
     assert engine.dispose.await_count == 2
+
+
+@pytest.mark.asyncio
+async def test_lifespan_does_not_seed_demo_data_when_disabled(monkeypatch):
+    state = {"patient_count": 0}
+    init_db = AsyncMock()
+    seed_reference_data = AsyncMock(return_value=False)
+    seed_pipeline_demo = AsyncMock()
+    engine = _StartupEngine()
+
+    monkeypatch.setattr(main, "init_db", init_db)
+    monkeypatch.setattr(main, "async_session", lambda: _StartupSession(state))
+    monkeypatch.setattr(main, "engine", engine)
+    monkeypatch.setattr(main.settings, "auto_seed_demo_data", False)
+    monkeypatch.setattr(
+        "src.scripts.seed_data.seed_reference_data_if_needed",
+        seed_reference_data,
+    )
+    monkeypatch.setattr("src.scripts.seed_pipeline_demo.seed_pipeline_demo", seed_pipeline_demo)
+    monkeypatch.setattr(llm_engine, "prewarm", AsyncMock(return_value="rule"))
+
+    async with main.lifespan(main.app):
+        pass
+
+    seed_pipeline_demo.assert_not_awaited()
+    assert engine.dispose.await_count == 1

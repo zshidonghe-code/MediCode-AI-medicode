@@ -2,8 +2,8 @@
 # MediCode Full-Stack Docker Compose (Development)
 # =============================================================================
 # Usage:
-#   docker compose up -d                  # backend + frontend only (Ollama external)
-#   docker compose --profile llm up -d    # include Ollama sidecar
+#   docker compose up -d                  # backend + frontend (set LLM_BASE_URL for external Ollama)
+#   docker compose --profile llm up -d    # include Ollama sidecar (uses ollama:11434)
 #   docker compose --profile full up -d   # full stack: postgres + ollama + app
 #   docker compose down -v                # tear down and remove volumes
 # =============================================================================
@@ -25,7 +25,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-medicode} -d ${POSTGRES_DB:-medicode}"]
       interval: 5s
@@ -44,7 +44,7 @@ services:
     volumes:
       - ollama_data:/root/.ollama
     ports:
-      - "11434:11434"
+      - "127.0.0.1:11434:11434"
     environment:
       - OLLAMA_KEEP_ALIVE=24h
       - OLLAMA_HOST=0.0.0.0
@@ -90,10 +90,11 @@ services:
       - DATABASE_URL=${DATABASE_URL:-sqlite+aiosqlite:///./data/medicode.db}
       - DATABASE_SYNC_URL=${DATABASE_SYNC_URL:-sqlite:///./data/medicode.db}
       - DEBUG=${DEBUG:-true}
-      - SECRET_KEY=${SECRET_KEY}
+      - SECRET_KEY=${SECRET_KEY:-}
       - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES:-60}
       - LLM_MODEL=${LLM_MODEL:-qwen2.5:3b}
-      - LLM_BASE_URL=${LLM_BASE_URL:-http://localhost:11434}
+      - LLM_BASE_URL=${LLM_BASE_URL:-http://ollama:11434}
+      - AUTO_SEED_DEMO_DATA=${AUTO_SEED_DEMO_DATA:-true}
       - DRG_BASE_RATE=${DRG_BASE_RATE:-12000.0}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
       - DEMO_ADMIN_PASSWORD=${DEMO_ADMIN_PASSWORD:-MediCode@2025Demo#Admin}
@@ -101,6 +102,9 @@ services:
       - DEMO_DOCTOR_PASSWORD=${DEMO_DOCTOR_PASSWORD:-MediCode@2025Demo#Doctor}
     depends_on:
       postgres:
+        condition: service_healthy
+        required: false
+      ollama:
         condition: service_healthy
         required: false
     healthcheck:

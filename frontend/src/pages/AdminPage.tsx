@@ -7,7 +7,7 @@ import {
   SettingOutlined, DeleteOutlined, DownloadOutlined,
   ExclamationCircleOutlined, ReloadOutlined,
 } from '@ant-design/icons'
-import { adminAPI } from '../services/api'
+import { adminAPI, getApiErrorMessage } from '../services/api'
 
 const { Title, Text, Paragraph } = Typography
 
@@ -27,8 +27,8 @@ export default function AdminPage() {
     try {
       const res = await adminAPI.reset(false)
       setCounts(res.data.counts || {})
-    } catch (e: any) {
-      setError(e.response?.data?.detail || '无法获取数据预览')
+    } catch (e: unknown) {
+      setError(getApiErrorMessage(e, '无法获取数据预览'))
     } finally {
       setLoading(false)
     }
@@ -47,8 +47,8 @@ export default function AdminPage() {
       setResetConfirmText('')
       // Refresh preview
       await fetchPreview()
-    } catch (e: any) {
-      message.error(e.response?.data?.detail || '重置失败')
+    } catch (e: unknown) {
+      message.error(getApiErrorMessage(e, '重置失败'))
     } finally {
       setResetting(false)
     }
@@ -80,9 +80,10 @@ export default function AdminPage() {
         : `medicode_${type}.${ext}`
       downloadFile(res.data as Blob, filename)
       message.success(`${label}导出成功`)
-    } catch (e: any) {
+    } catch (e: unknown) {
       let detail = '导出失败'
-      if (e.response?.data instanceof Blob) {
+      if (e instanceof Error) detail = e.message
+      if (e && typeof e === 'object' && 'response' in e && e.response && typeof e.response === 'object' && 'data' in e.response && e.response.data instanceof Blob) {
         try {
           const text = await e.response.data.text()
           detail = JSON.parse(text).detail || detail

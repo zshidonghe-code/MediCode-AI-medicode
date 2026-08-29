@@ -1,4 +1,4 @@
-import { Card, Row, Col, Table, Descriptions, Tag, Typography, Space, Divider, Tooltip } from 'antd'
+import { Table, Descriptions, Tag, Typography, Space, Divider } from 'antd'
 import { CheckCircleOutlined, CopyOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 
@@ -49,7 +49,7 @@ interface Props {
   highlightColor?: string
 }
 
-export default function IcdCodingResult({ result, headerExtra, highlightColor = '#52c41a' }: Props) {
+export default function IcdCodingResult({ result, highlightColor = '#52c41a' }: Props) {
   return (
     <>
       {/* Primary diagnosis */}

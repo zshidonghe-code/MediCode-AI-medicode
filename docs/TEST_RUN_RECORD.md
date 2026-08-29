@@ -6,7 +6,7 @@
 - **仓库**：`C:\Users\Donghe\Desktop\04_MediCode码医\MediCode`
 - **代码版本**：`master` 静态治理提交后
 - **测试命令**：`backend/.venv/Scripts/python.exe -m pytest tests -q`
-- **服务依赖**：启动本地 SQLite 数据库服务于 `127.0.0.1:8001`
+- **服务依赖**：启动本地 SQLite 数据库服务于 `127.0.0.1:8000`
 - **LLM**：未启用，测试覆盖规则模式和接口降级路径
 
 ## 结果

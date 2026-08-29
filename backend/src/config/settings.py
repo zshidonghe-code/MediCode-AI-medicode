@@ -32,6 +32,13 @@ class Settings(BaseSettings):
     demo_admin_password: str = os.getenv("DEMO_ADMIN_PASSWORD", "")
     demo_coder_password: str = os.getenv("DEMO_CODER_PASSWORD", "")
     demo_doctor_password: str = os.getenv("DEMO_DOCTOR_PASSWORD", "")
+    auto_seed_demo_data: bool = (
+        os.getenv(
+            "AUTO_SEED_DEMO_DATA",
+            os.getenv("DEBUG", "false"),
+        ).lower()
+        == "true"
+    )
 
     # DRG
     drg_base_rate: float = float(os.getenv("DRG_BASE_RATE", "12000.0"))
@@ -52,10 +59,22 @@ class Settings(BaseSettings):
                 self.secret_key = secrets.token_urlsafe(32)
             else:
                 raise ValueError("SECRET_KEY must be set in production (non-debug mode)")
-        if not self.demo_admin_password and self.debug:
-            self.demo_admin_password = "123456"
-            self.demo_coder_password = "123456"
-            self.demo_doctor_password = "123456"
+        elif not self.debug and len(self.secret_key) < 32:
+            raise ValueError("SECRET_KEY must be at least 32 characters in production")
+        demo_passwords = (
+            self.demo_admin_password,
+            self.demo_coder_password,
+            self.demo_doctor_password,
+        )
+        if self.debug:
+            self.demo_admin_password = self.demo_admin_password or "123456"
+            self.demo_coder_password = self.demo_coder_password or "123456"
+            self.demo_doctor_password = self.demo_doctor_password or "123456"
+        elif any(len(password) < 12 for password in demo_passwords):
+            raise ValueError(
+                "DEMO_ADMIN_PASSWORD, DEMO_CODER_PASSWORD, and DEMO_DOCTOR_PASSWORD "
+                "must each be at least 12 characters in production"
+            )
         return self
 
     model_config = {"env_file": ".env"}

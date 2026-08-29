@@ -92,7 +92,7 @@ async def lifespan(app: FastAPI):
     # Startup
     await init_db()
 
-    # Auto-seed reference data + demo data if database is empty (competition demo safety)
+    # Reference data is safe to initialize; demo data requires an explicit opt-in.
     try:
         async with async_session() as db:
             patient_count = (
@@ -107,12 +107,14 @@ async def lifespan(app: FastAPI):
                 await db.commit()
             logger.info("Reference data seeded")
 
-        if patient_count == 0:
+        if settings.auto_seed_demo_data and patient_count == 0:
             logger.info("Database is empty, auto-seeding demo data...")
             from src.scripts.seed_pipeline_demo import seed_pipeline_demo
 
             await seed_pipeline_demo()
             logger.info("Demo data seeded successfully")
+        elif patient_count == 0:
+            logger.info("Demo data seeding disabled; database remains empty")
     except Exception as e:
         logger.warning(f"Auto-seed skipped: {e}")
 

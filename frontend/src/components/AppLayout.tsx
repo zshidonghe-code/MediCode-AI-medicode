@@ -6,7 +6,6 @@ import {
   SafetyCertificateOutlined,
   DashboardOutlined,
   LogoutOutlined,
-  UserOutlined,
   NodeIndexOutlined,
   SettingOutlined,
   AlertOutlined,

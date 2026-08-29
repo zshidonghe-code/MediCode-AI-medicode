@@ -1,7 +1,7 @@
 ﻿import { useState, useCallback, useEffect, useRef } from 'react'
 import {
-  Card, Row, Col, Input, Button, Select, Segmented, Space, Tag, Table, Descriptions, Statistic,
-  Divider, Typography, message, Spin, Upload, Modal, List, Tooltip, Empty, Steps,
+  Card, Row, Col, Input, Button, Select, Space, Tag, Table, Statistic,
+  Divider, Typography, message, Spin, Upload, Modal, List, Tooltip, Steps,
 } from 'antd'
 import {
   ThunderboltOutlined, UploadOutlined, SearchOutlined,
@@ -109,7 +109,7 @@ export default function CodingPage() {
         record_type: recordType,
         coding_result: data,
         department: '智能编码',
-      }).catch((e: any) => { console.warn('自动保存失败:', e?.response?.data || e?.message) })
+      }).catch((e: unknown) => { console.warn('自动保存失败:', e instanceof Error ? e.message : '未知错误') })
     } catch {
       message.error('编码失败，请重试')
     } finally { setLoading(false) }
@@ -435,7 +435,7 @@ export default function CodingPage() {
             },
             {
               title: '', key: 'action', width: 60,
-              render: (_: any, r: SearchResult) => (
+              render: (_: unknown, r: SearchResult) => (
                 <Button size="small" type="link" onClick={() => copyCode(r.code)}>复制</Button>
               ),
             },

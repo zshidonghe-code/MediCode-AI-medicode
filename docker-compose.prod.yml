@@ -6,15 +6,28 @@
 # =============================================================================
 
 services:
+  postgres:
+    ports: !reset []
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in production}
+
+  ollama:
+    ports: !reset []
+
   backend:
     restart: always
     volumes:
       # No source-code mount in production (use the baked-in image)
       - medicode_data:/app/data
     environment:
-      - ENVIRONMENT=production
-      - DEBUG=false
-      - LOG_LEVEL=WARNING
+      ENVIRONMENT: production
+      DEBUG: "false"
+      LOG_LEVEL: WARNING
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY must be set in production}
+      DEMO_ADMIN_PASSWORD: ${DEMO_ADMIN_PASSWORD:?DEMO_ADMIN_PASSWORD must be set in production}
+      DEMO_CODER_PASSWORD: ${DEMO_CODER_PASSWORD:?DEMO_CODER_PASSWORD must be set in production}
+      DEMO_DOCTOR_PASSWORD: ${DEMO_DOCTOR_PASSWORD:?DEMO_DOCTOR_PASSWORD must be set in production}
+      AUTO_SEED_DEMO_DATA: "false"
     # Production: gunicorn with multiple uvicorn workers
     command:
       - gunicorn

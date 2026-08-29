@@ -145,13 +145,14 @@ SECRET_KEY=your-production-secret-key-here
 ACCESS_TOKEN_EXPIRE_MINUTES=60
 
 # 演示账号密码（仅在 DEBUG=true 时生效，生产环境通过环境变量覆盖）
-DEMO_ADMIN_PASSWORD=medicode2024
-DEMO_CODER_PASSWORD=code123
-DEMO_DOCTOR_PASSWORD=doc123
+DEMO_ADMIN_PASSWORD=<至少 12 位演示密码>
+DEMO_CODER_PASSWORD=<至少 12 位演示密码>
+DEMO_DOCTOR_PASSWORD=<至少 12 位演示密码>
 
 # LLM 配置
 LLM_MODEL=qwen2.5:3b
 LLM_BASE_URL=http://localhost:11434
+# Docker Compose sidecar: use http://ollama:11434 instead
 
 # DRG 基础费率（元），根据当地医保政策调整
 DRG_BASE_RATE=12000.0
@@ -174,7 +175,7 @@ alembic upgrade head
 
 ### 第六步：种子数据（可选）
 
-首次启动时，如果数据库为空，系统会自动植入演示数据（3 份模拟病历 + 编码结果 + DRG 分组 + 质控结果）。也可以手动执行：
+开发演示环境设置 `AUTO_SEED_DEMO_DATA=true` 后，首次启动时如果数据库为空，系统会植入演示数据（3 份模拟病历 + 编码结果 + DRG 分组 + 质控结果）。生产环境保持 `AUTO_SEED_DEMO_DATA=false`，需要时手动执行受控种子脚本：
 
 ```bash
 python -m src.scripts.seed_pipeline_demo

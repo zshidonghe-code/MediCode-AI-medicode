@@ -6,7 +6,7 @@
 // 决议来源: council-reports/2026-07-09-1719-medicode-x-amplify/
 
 import { useState } from 'react'
-import { Card, Button, Input, Tag, Space, Typography, Spin, Alert, Statistic, Row, Col } from 'antd'
+import { Card, Button, Input, Tag, Space, Typography, Alert, Statistic, Row, Col } from 'antd'
 import { SwapOutlined } from '@ant-design/icons'
 import { drgAPI } from '../../services/api'
 

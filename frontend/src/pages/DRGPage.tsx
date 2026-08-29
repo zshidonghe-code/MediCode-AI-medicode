@@ -1,5 +1,5 @@
 ﻿import { useState, useCallback, useEffect, useRef } from 'react'
-import { Card, Row, Col, Descriptions, Statistic, Tag, Divider, Typography, Button, Segmented, Space, Input, InputNumber, Select, message, Steps } from 'antd'
+import { Card, Row, Col, Descriptions, Statistic, Tag, Divider, Typography, Button, Space, Input, InputNumber, Select, message, Steps } from 'antd'
 import {
   MedicineBoxOutlined, CalculatorOutlined, ThunderboltOutlined,
   PlayCircleOutlined, PauseCircleOutlined, ReloadOutlined,
@@ -106,7 +106,7 @@ export default function DRGPage() {
         primary_diagnosis_code: primaryCode.trim(),
         secondary_diagnosis_codes: secCodes,
         procedure_codes: procCodes,
-      }).catch((e: any) => { console.warn('自动保存失败:', e?.response?.data || e?.message) })
+      }).catch((e: unknown) => { console.warn('自动保存失败:', e instanceof Error ? e.message : '未知错误') })
     } catch {
       message.error('分组失败，请检查编码格式')
     } finally {
@@ -175,7 +175,7 @@ export default function DRGPage() {
           primary_diagnosis_code: c.primary,
           secondary_diagnosis_codes: secCodes,
           procedure_codes: procCodes,
-        }).catch((e: any) => { console.warn('自动保存失败:', e?.response?.data || e?.message) })
+        }).catch((e: unknown) => { console.warn('自动保存失败:', e instanceof Error ? e.message : '未知错误') })
       } catch {
         message.error('分组失败，请检查编码格式')
       } finally {

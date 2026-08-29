@@ -1,8 +1,10 @@
 """Shared fixtures for API integration tests."""
-import pytest
-import httpx
+import os
 
-BASE_URL = "http://localhost:8001"
+import httpx
+import pytest
+
+BASE_URL = os.getenv("TEST_API_BASE_URL", "http://localhost:8000")
 
 # Cache token to avoid hitting the login rate limiter (5 req/60s per IP)
 _cached_token: str | None = None

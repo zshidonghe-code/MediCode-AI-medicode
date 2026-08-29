@@ -1,14 +1,14 @@
 ﻿import { useState, useEffect, useRef, useCallback } from 'react'
 import {
   Card, Row, Col, Input, Button, Select, Tag, Table, Statistic, Typography,
-  Divider, Space, message, Spin, Steps, Progress, Descriptions, Upload, Tooltip,
+  Divider, Space, message, Spin, Steps, Progress, Descriptions, Upload,
   Segmented, InputNumber
 } from 'antd'
 import {
   ThunderboltOutlined, UploadOutlined, SafetyCertificateOutlined,
   MedicineBoxOutlined, DollarOutlined, FileTextOutlined,
   CheckCircleOutlined, LoadingOutlined, PlayCircleOutlined,
-  PauseCircleOutlined, ReloadOutlined, TrophyOutlined,
+  PauseCircleOutlined, ReloadOutlined,
 } from '@ant-design/icons'
 import { codingAPI, qcAPI, drgAPI, pipelineAPI, rejectionAPI } from '../services/api'
 import IcdCodingResult from '../components/IcdCodingResult'
@@ -69,7 +69,6 @@ const SAMPLE_CASES = [
 ]
 
 const SPEED_MAP: Record<string, number> = { fast: 12, normal: 28, slow: 55 }
-const SPEED_LABELS: Record<string, string> = { fast: '快速', normal: '标准', slow: '慢速' }
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -218,8 +217,8 @@ export default function PipelinePage() {
           drg_result: drg,
         })
         setQcResultIds(saved.qc_result_ids || [])
-      } catch (e: any) {
-        console.warn('自动保存失败:', e?.response?.data || e?.message)
+      } catch (e: unknown) {
+        console.warn('自动保存失败:', e instanceof Error ? e.message : '未知错误')
       }
 
       if (!demoRunning) message.success('全流程分析完成')
@@ -299,6 +298,7 @@ export default function PipelinePage() {
     const timeout = setTimeout(() => {
       handleStart(text)
     }, 500)
+    return () => clearTimeout(timeout)
   }, [typingDone, demoRunning, caseIdx, handleStart])
 
   const demoRunningRef = useRef(demoRunning)
@@ -600,7 +600,7 @@ export default function PipelinePage() {
                       },
                       {
                         title: '', key: 'action', width: 100,
-                        render: (_: any, _record: QCIssue, index: number) => {
+                        render: (_: unknown, _record: QCIssue, index: number) => {
                           const qcId = qcResultIds[index]?.id
                           if (!qcId) return null
                           return (

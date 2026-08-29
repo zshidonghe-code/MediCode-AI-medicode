@@ -72,8 +72,8 @@ export default function RejectionPage() {
         },
       })
       setResult(data)
-    } catch (e: any) {
-      setError(e?.response?.data?.detail || e?.message || '评估失败，请检查后端服务')
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : '评估失败，请检查后端服务')
     } finally {
       setLoading(false)
     }
