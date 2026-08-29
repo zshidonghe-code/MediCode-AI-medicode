@@ -4,9 +4,28 @@ import {
   RiseOutlined, FallOutlined, TrophyOutlined, ReloadOutlined,
   ThunderboltOutlined, CheckCircleOutlined, LoadingOutlined,
 } from '@ant-design/icons'
-import ReactECharts from 'echarts-for-react'
+import * as echarts from 'echarts/core'
+import { BarChart, LineChart } from 'echarts/charts'
+import {
+  AriaComponent,
+  GridComponent,
+  LegendComponent,
+  TooltipComponent,
+} from 'echarts/components'
+import { CanvasRenderer } from 'echarts/renderers'
+import ReactEChartsCore from 'echarts-for-react/lib/core'
 import { dashboardAPI } from '../services/api'
 import type { OverviewData, DepartmentRanking, QcTrendItem, AccuracyTrendItem, HighFrequencyIssue, RevenueData } from '../types/dashboard'
+
+echarts.use([
+  AriaComponent,
+  BarChart,
+  CanvasRenderer,
+  GridComponent,
+  LegendComponent,
+  LineChart,
+  TooltipComponent,
+])
 
 const { Title, Text } = Typography
 
@@ -268,7 +287,7 @@ export default function DashboardPage() {
           <Col span={12}>
             <Card title="质控评分 & CMI 趋势">
               {qcTrend.length > 0 ? (
-                <ReactECharts option={cmiOvernightOption} style={{ height: 300 }} />
+                <ReactEChartsCore echarts={echarts} option={cmiOvernightOption} style={{ height: 300 }} />
               ) : (
                 <div style={{ height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ccc' }}>加载中...</div>
               )}
@@ -277,7 +296,7 @@ export default function DashboardPage() {
           <Col span={12}>
             <Card title="AI vs 人工编码准确率">
               {accuracyTrend.length > 0 ? (
-                <ReactECharts option={accuracyOption} style={{ height: 300 }} />
+                <ReactEChartsCore echarts={echarts} option={accuracyOption} style={{ height: 300 }} />
               ) : (
                 <div style={{ height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ccc' }}>加载中...</div>
               )}
@@ -313,7 +332,7 @@ export default function DashboardPage() {
           <Row gutter={16}>
             <Col span={14}>
               <Card title="月度DRG预期收入">
-                <ReactECharts option={revenueOption} style={{ height: 280 }} />
+                <ReactEChartsCore echarts={echarts} option={revenueOption} style={{ height: 280 }} />
               </Card>
             </Col>
             <Col span={10}>

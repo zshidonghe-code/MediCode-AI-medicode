@@ -147,7 +147,7 @@ export default function RejectionPage() {
       <Row gutter={16} style={{ marginBottom: 24 }}>
         <Col span={8}>
           <Card
-            bordered={false}
+            variant="borderless"
             style={{
               background: meta?.bg || '#fafafa',
               borderRadius: 12,
@@ -173,7 +173,7 @@ export default function RejectionPage() {
         </Col>
         <Col span={8}>
           <Card
-            bordered={false}
+            variant="borderless"
             style={{ borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}
           >
             <Statistic
@@ -197,7 +197,7 @@ export default function RejectionPage() {
         </Col>
         <Col span={8}>
           <Card
-            bordered={false}
+            variant="borderless"
             style={{
               background: result && result.preventable_amount > 0
                 ? 'linear-gradient(135deg, #fff1f0 0%, #ffccc7 100%)'
@@ -311,7 +311,8 @@ export default function RejectionPage() {
       {/* Loading */}
       {loading && (
         <Card style={{ borderRadius: 12, textAlign: 'center', padding: '40px 0' }}>
-          <Spin size="large" tip="AI 正在扫描医保审核规则..." />
+          <Spin size="large" />
+          <div style={{ marginTop: 8 }}>AI 正在扫描医保审核规则...</div>
         </Card>
       )}
 

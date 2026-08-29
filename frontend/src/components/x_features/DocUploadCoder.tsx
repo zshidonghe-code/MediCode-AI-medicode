@@ -90,7 +90,8 @@ export function DocUploadCoder({ onCoded }: DocUploadCoderProps) {
 
         {loading && (
           <div style={{ textAlign: 'center', padding: 24 }}>
-            <Spin tip="AI 解析中..." />
+            <Spin />
+            <div style={{ marginTop: 8 }}>AI 解析中...</div>
           </div>
         )}
 

@@ -70,7 +70,8 @@ export function RejectionPredictor({ defaultContent = '' }: RejectionPredictorPr
 
         {loading && (
           <div style={{ textAlign: 'center', padding: 24 }}>
-            <Spin tip="AI 评估中..." />
+            <Spin />
+            <div style={{ marginTop: 8 }}>AI 评估中...</div>
           </div>
         )}
 

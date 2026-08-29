@@ -74,17 +74,9 @@ export default defineConfig(({ mode }) => {
           if (id.includes('node_modules/zustand')) {
             return 'vendor-state'
           }
-          if (id.includes('node_modules/react-quill') ||
-              id.includes('node_modules/quill')) {
-            return 'vendor-editor'
-          }
           if (id.includes('node_modules/dayjs') ||
               id.includes('node_modules/classnames')) {
             return 'vendor-utils'
-          }
-          // All other node_modules
-          if (id.includes('node_modules')) {
-            return 'vendor-common'
           }
         },
 
