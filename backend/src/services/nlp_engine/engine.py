@@ -215,6 +215,12 @@ class NLPParser:
         "生物可吸收支架",
     ]
 
+    # Sentence fragments that the suffix regex turns into fake surgery
+    # entities, e.g. "在全身麻醉下接受手术" or "按标准术" (from 按标准术式操作).
+    # Real procedure names never start with these function words or contain
+    # 接受/标准, so matching ones are dropped before they reach the coder.
+    SURGERY_NOISE_RE = re.compile(r"^在|^按|^予|接受|标准")
+
     def parse_soap(self, text: str) -> SOAPSections:
         """拆解病历为SOAP结构"""
         sections = SOAPSections()
@@ -279,6 +285,24 @@ class NLPParser:
         "入院",
         "出院",
         "诊断为",
+        # Exam-report prefixes: the greedy suffix regex swallows them into the
+        # term (e.g. "X线示右股骨颈骨折"), which then fails dictionary lookup
+        # and loses to unrelated candidates in primary selection.
+        "心电图示",
+        "心电图提示",
+        "X线示",
+        "CT示",
+        "CT提示",
+        "MRI示",
+        "MRI提示",
+        "MR示",
+        "B超示",
+        "超声示",
+        "超声提示",
+        "彩超示",
+        "造影示",
+        "提示",
+        "考虑",
         "诊断",
         "再发",
         "新发",
@@ -332,16 +356,20 @@ class NLPParser:
         # Regex-based extraction (preserved for coverage)
         for pattern in self.DIAGNOSIS_PATTERNS:
             for match in re.finditer(pattern, text):
-                word = match.group(1).strip()
-                if word in self.STOP_WORDS or len(word) < 3:
+                raw = match.group(1).strip()
+                if raw in self.STOP_WORDS or len(raw) < 3:
                     continue
-                word = self._clean_entity(word)
+                word = self._clean_entity(raw)
                 if word not in seen and len(word) >= 2:
                     entity = MedicalEntity(
                         text=word,
                         entity_type="diagnosis",
                         normalized=word,
-                        start_pos=match.start(),
+                        # Keep the window aligned with the cleaned term:
+                        # start_pos must advance past the stripped prefix,
+                        # otherwise negation detection looks at the wrong
+                        # slice of text.
+                        start_pos=match.start() + (len(raw) - len(word)),
                         end_pos=match.end(),
                         confidence=0.8,
                     )
@@ -397,6 +425,8 @@ class NLPParser:
                     continue
                 word = self._clean_entity(word)
                 if word not in seen and len(word) >= 2:
+                    if self.SURGERY_NOISE_RE.search(word):
+                        continue
                     seen.add(word)
                     entities.append(
                         MedicalEntity(

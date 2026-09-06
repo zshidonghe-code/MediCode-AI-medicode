@@ -71,6 +71,11 @@ def primary_score(
         s += 0.30
     if ortho and code.startswith(("M", "S", "T")):
         s += 0.25
+    # Unspecified-injury chapter codes (T14/T15): when the injured site is
+    # documented, ICD requires the site-specific code (e.g. S72), so the
+    # fallback code must not win a tie against it.
+    if code.startswith(("T14", "T15")):
+        s -= 0.15
     if neuro and code.startswith(("I6", "G")):
         s += 0.25
     return s

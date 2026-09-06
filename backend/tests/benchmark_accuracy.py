@@ -6,24 +6,28 @@ gold-standard test cases, without requiring a running server.
 Usage:
     cd backend && .venv/Scripts/python tests/benchmark_accuracy.py
 """
+
 import asyncio
-import time
 import sys
+import time
 from pathlib import Path
 
 # Ensure backend src is on PYTHONPATH
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_PROJECT_ROOT))
 
-from src.services.nlp_engine.engine import nlp_parser
-from src.services.icd_coder.coder import icd_coder, ICDCandidate
-from src.services.icd_coder.scoring import primary_score
+from src.services.icd_coder.coder import ICDCandidate, icd_coder  # noqa: E402
+from src.services.icd_coder.scoring import PROCEDURE_REFINEMENTS, primary_score  # noqa: E402
+from src.services.nlp_engine.engine import nlp_parser  # noqa: E402
 
 
 def _dedup(candidates: list, key_fn=None):
     """Deduplicate by code, keeping highest-scoring entry."""
     if key_fn is None:
-        key_fn = lambda c: c.code
+
+        def key_fn(c):
+            return c.code
+
     best: dict[str, object] = {}
     for c in candidates:
         k = key_fn(c)
@@ -120,6 +124,7 @@ TEST_CASES = [
 # Pipeline runner — mirrors the /auto-code API endpoint
 # ===========================================================================
 
+
 async def run_case(case: dict) -> dict:
     """Run NLP extraction + ICD coding on one test case. Returns structured result."""
     t0 = time.perf_counter()
@@ -136,10 +141,14 @@ async def run_case(case: dict) -> dict:
         if candidates:
             diag_items.extend(candidates)
         else:
-            diag_items.append(ICDCandidate(
-                code=icd_coder.lookup_code(text),
-                name=text, category="诊断", score=0.50,
-            ))
+            diag_items.append(
+                ICDCandidate(
+                    code=icd_coder.lookup_code(text),
+                    name=text,
+                    category="诊断",
+                    score=0.50,
+                )
+            )
 
     proc_items: list[ICDCandidate] = []
     for text in surg_texts:
@@ -147,14 +156,34 @@ async def run_case(case: dict) -> dict:
         if candidates:
             proc_items.extend(candidates)
         else:
-            proc_items.append(ICDCandidate(
-                code=icd_coder.lookup_code(text),
-                name=text, category="手术操作", score=0.50,
-            ))
+            proc_items.append(
+                ICDCandidate(
+                    code=icd_coder.lookup_code(text),
+                    name=text,
+                    category="手术操作",
+                    score=0.50,
+                )
+            )
 
     # Deduplicate
     diag_items = _dedup(diag_items, key_fn=lambda c: c.code)
     proc_items = _dedup(proc_items, key_fn=lambda c: c.code)
+
+    # Mirror auto_code's procedure post-processing: drop generic codes
+    # superseded by a specific one, then keep one code per subcategory.
+    proc_codes_now = [c.code for c in proc_items]
+    superseded = {
+        generic
+        for specific, generic in PROCEDURE_REFINEMENTS
+        if any(code.startswith(specific) for code in proc_codes_now)
+    }
+    proc_items = [c for c in proc_items if not any(c.code.startswith(g) for g in superseded)]
+    family_best: dict[str, ICDCandidate] = {}
+    for c in proc_items:
+        key = c.code[:4] if len(c.code) >= 4 else c.code
+        if key not in family_best or c.score > family_best[key].score:
+            family_best[key] = c
+    proc_items = list(family_best.values())
 
     # ── Step 3: Primary-diagnosis selection ──
     actual_primary_code = None
@@ -166,7 +195,9 @@ async def run_case(case: dict) -> dict:
         has_neuro = any(p.code.startswith(("01.", "02.", "03.")) for p in proc_items)
 
         diag_items.sort(
-            key=lambda item: primary_score(item.code, item.score, cardiac=has_cardiac, ortho=has_ortho, neuro=has_neuro),
+            key=lambda item: primary_score(
+                item.code, item.score, cardiac=has_cardiac, ortho=has_ortho, neuro=has_neuro
+            ),
             reverse=True,
         )
         actual_primary_code = diag_items[0].code
@@ -194,6 +225,7 @@ async def run_case(case: dict) -> dict:
 # Accuracy check helpers
 # ===========================================================================
 
+
 def check_primary(actual: str | None, case: dict) -> bool:
     """Check if actual primary matches expected (exact, or from acceptable list)."""
     if actual is None:
@@ -215,14 +247,15 @@ def check_procedures(actual: list[str], expected: list[str]) -> bool:
 # Main benchmark runner
 # ===========================================================================
 
+
 async def main():
     print("=" * 78)
     print("  MediCode ICD Coding Engine -- Accuracy Benchmark")
     print("=" * 78)
     print(f"  Test cases          : {len(TEST_CASES)}")
-    print(f"  Mode                : NLP extraction + ICD coding (no LLM)")
-    print(f"  Data source         : Local ICD index (JSON data files)")
-    print(f"  Primary selection   : Acute/chronic-aware scoring (mirrors API)")
+    print("  Mode                : NLP extraction + ICD coding (no LLM)")
+    print("  Data source         : Local ICD index (JSON data files)")
+    print("  Primary selection   : Acute/chronic-aware scoring (mirrors API)")
     print("-" * 78)
 
     results = []
@@ -230,14 +263,15 @@ async def main():
     procedure_correct = 0
     response_times = []
 
-    for i, case in enumerate(TEST_CASES, 1):
+    for case in TEST_CASES:
         result = await run_case(case)
         results.append(result)
         response_times.append(result["response_time_ms"])
 
         p_ok = check_primary(result["actual_primary_code"], case)
-        proc_ok = check_procedures(result["actual_procedure_codes"],
-                                   case["expected_procedure_codes"])
+        proc_ok = check_procedures(
+            result["actual_procedure_codes"], case["expected_procedure_codes"]
+        )
 
         if p_ok:
             primary_correct += 1
@@ -254,10 +288,14 @@ async def main():
         print(f"    Diag candidates: {result['diag_candidates']}")
         print(f"    Proc candidates: {result['proc_candidates']}")
         print(f"    Expected primary  : {case['expected_primary_code']}")
-        print(f"    Actual primary    : {result['actual_primary_code'] or 'NONE'} "
-              f"({result['actual_primary_name'] or ''})  [{status_p}]")
+        print(
+            f"    Actual primary    : {result['actual_primary_code'] or 'NONE'} "
+            f"({result['actual_primary_name'] or ''})  [{status_p}]"
+        )
         print(f"    Expected proc     : {case['expected_procedure_codes'] or '(none)'}")
-        print(f"    Actual proc       : {result['actual_procedure_codes'] or '(none)'}  [{status_proc}]")
+        print(
+            f"    Actual proc       : {result['actual_procedure_codes'] or '(none)'}  [{status_proc}]"
+        )
         print(f"    Response time     : {result['response_time_ms']:.1f} ms")
 
     # ── Aggregate summary ──
@@ -266,10 +304,11 @@ async def main():
     proc_acc = (procedure_correct / total) * 100
 
     overall_correct = 0
-    for result, case in zip(results, TEST_CASES):
+    for result, case in zip(results, TEST_CASES, strict=True):
         p_ok = check_primary(result["actual_primary_code"], case)
-        proc_ok = check_procedures(result["actual_procedure_codes"],
-                                   case["expected_procedure_codes"])
+        proc_ok = check_procedures(
+            result["actual_procedure_codes"], case["expected_procedure_codes"]
+        )
         if p_ok and proc_ok:
             overall_correct += 1
     overall_acc = (overall_correct / total) * 100
@@ -292,7 +331,7 @@ async def main():
 
     # ── Industry comparison ──
     print("\n  Industry Baseline Comparison:")
-    print(f"    Human coder accuracy      : ~85.0%  (industry benchmark)")
+    print("    Human coder accuracy      : ~85.0%  (industry benchmark)")
     print(f"    MediCode engine accuracy  : {overall_acc:.1f}%")
     if overall_acc >= 90:
         print("    Status: EXCEEDS human baseline -- ready for clinical review")

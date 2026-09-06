@@ -1,9 +1,10 @@
 """DRG Grouper unit tests — no server required."""
 import pytest
+
 from src.services.drg_grouper.grouper import (
     ADRG_DEFS,
-    DRGGrouper,
     MDC_NAMES,
+    DRGGrouper,
 )
 
 

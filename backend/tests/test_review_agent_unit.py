@@ -1,6 +1,6 @@
 from copy import deepcopy
 from dataclasses import replace
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 
@@ -10,9 +10,15 @@ from src.services.review_agent.contracts import (
     ReviewDecisionRequest,
     ReviewDocument,
 )
+from src.services.review_agent.evidence import (
+    extract_laterality_evidence,
+    find_laterality_conflicts,
+)
 from src.services.review_agent.orchestrator import ReviewAccessDeniedError, ReviewAgent
-from src.services.review_agent.evidence import extract_laterality_evidence, find_laterality_conflicts
-from src.services.review_agent.redaction import RedactionViolationError, ensure_documents_are_redacted
+from src.services.review_agent.redaction import (
+    RedactionViolationError,
+    ensure_documents_are_redacted,
+)
 from src.services.review_agent.repository import (
     ReviewNotFoundError,
     ReviewVersionConflictError,
@@ -29,7 +35,7 @@ class MemoryReviewStore:
     async def create(self, review, event_type, phase, payload):
         self.reviews[review.id] = review
         self.review_events[review.id] = [
-            StoredEvent(1, event_type, phase, payload, datetime.now(timezone.utc))
+            StoredEvent(1, event_type, phase, payload, datetime.now(UTC))
         ]
         return review
 
@@ -61,7 +67,7 @@ class MemoryReviewStore:
             analysis=deepcopy(analysis),
             pending_actions=deepcopy(pending_actions),
             version=current.version + 1,
-            updated_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(UTC),
         )
         self.reviews[review_id] = updated
         sequence = len(self.review_events[review_id]) + 1

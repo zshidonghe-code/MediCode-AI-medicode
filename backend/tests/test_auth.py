@@ -1,8 +1,8 @@
 """Authentication API integration tests."""
 import os
 
-import pytest
 import httpx
+import pytest
 
 from .conftest import BASE_URL
 

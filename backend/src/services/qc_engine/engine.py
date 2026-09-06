@@ -549,19 +549,27 @@ class QCEngine:
             diag_codes.add(primary.get("code", "").replace(".", ""))
         for d in coding_result.get("secondary_diagnoses", []):
             diag_codes.add(d.get("code", "").replace(".", ""))
+        # Group the mapping: one procedure family may map to several ICD-10
+        # chapters (e.g. joint replacement fits both M degenerative disease
+        # and S/T injury), so all allowed prefixes must be aggregated before
+        # checking — testing them one by one would false-positive whenever
+        # the first listed chapter does not match.
+        allowed: dict[str, set[str]] = {}
+        for proc_prefix, diag_prefix in PROC_DIAG_MAP:
+            allowed.setdefault(proc_prefix, set()).add(diag_prefix)
         # Check against shared anatomical body-system mapping
         for proc in procedures:
             proc_code = proc.get("code", "").replace(".", "")
-            for proc_prefix, diag_prefix in PROC_DIAG_MAP:
+            for proc_prefix, diag_prefixes in allowed.items():
                 if proc_code.startswith(proc_prefix) and not any(
-                    d.startswith(diag_prefix) for d in diag_codes
+                    d.startswith(prefix) for d in diag_codes for prefix in diag_prefixes
                 ):
                     return QCIssue(
                         rule_id=rule["id"],
                         rule_name=rule["name"],
                         rule_type=rule["type"],
                         severity=rule["severity"],
-                        description=f"手术'{proc.get('name', proc_code)}'缺少对应系统({diag_prefix})的诊断",
+                        description=f"手术'{proc.get('name', proc_code)}'缺少对应系统({'/'.join(sorted(diag_prefixes))})的诊断",
                         suggestion=rule["suggestion"],
                     )
         return None

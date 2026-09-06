@@ -1,7 +1,8 @@
 """QC Engine unit tests — no server required."""
+
 import pytest
-import asyncio
-from src.services.qc_engine.engine import QCEngine, Severity, RuleType, QCResult, QCIssue
+
+from src.services.qc_engine.engine import QCEngine, QCIssue, QCResult, RuleType, Severity
 
 
 @pytest.fixture

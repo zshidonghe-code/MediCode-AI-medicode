@@ -186,6 +186,9 @@ class ICDCoder:
             try:
                 vec_results = self._vector_engine.hybrid_search(text, top_k=5)
                 if vec_results:
+                    # Vector search always returns a top-k list; without a
+                    # floor, an unrelated entity would drag in its 5 nearest
+                    # neighbours as candidates (the "procedure explosion").
                     return [
                         ICDCandidate(
                             code=r.code,
@@ -194,6 +197,7 @@ class ICDCoder:
                             score=r.score,
                         )
                         for r in vec_results
+                        if r.score >= 0.55
                     ]
             except Exception as e:
                 logger.warning(f"Vector search failed for '{text}': {e}")
@@ -396,6 +400,20 @@ class ICDCoder:
             return candidates
         return [c for c in candidates if not any(c.code.startswith(g) for g in superseded)]
 
+    def _dedupe_procedure_family(self, candidates: list[ICDCandidate]) -> list[ICDCandidate]:
+        """Keep one code per procedure subcategory (first 4 characters).
+
+        A single recorded procedure cannot occupy several codes of the same
+        ICD-9-CM-3 subcategory (e.g. 81.51 total hip vs 81.54 total knee
+        replacement); the highest-scoring match within the family wins.
+        """
+        best: dict[str, ICDCandidate] = {}
+        for c in candidates:
+            key = c.code[:4] if len(c.code) >= 4 else c.code
+            if key not in best or c.score > best[key].score:
+                best[key] = c
+        return list(best.values())
+
     async def auto_code(self, structured_record) -> CodingResult:
         diagnoses = structured_record.diagnoses
         surgeries = structured_record.surgeries
@@ -407,7 +425,9 @@ class ICDCoder:
         proc_candidates = []
         for s in surgeries:
             proc_candidates.extend(await self.recommend(s.text))
-        proc_candidates = self._drop_superseded_procedures(proc_candidates)
+        proc_candidates = self._dedupe_procedure_family(
+            self._drop_superseded_procedures(proc_candidates)
+        )
 
         primary = diag_candidates[0] if diag_candidates else None
         secondaries = diag_candidates[1:] if len(diag_candidates) > 1 else []
