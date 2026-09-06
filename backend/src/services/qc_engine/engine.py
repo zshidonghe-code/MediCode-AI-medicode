@@ -629,24 +629,31 @@ class QCEngine:
         if primary:
             name = primary.get("name", "")
             code = primary.get("code", "")
-            # Extract key clinical terms (2+ chars) from the diagnosis name
+            if not name:
+                return None
+            if name in content:
+                return None
+            # The greedy pattern above returns the whole Chinese diagnosis
+            # name as a single token, so a term-count threshold can never be
+            # reached. Fall back to 2-character sliding windows: a partial
+            # overlap (e.g. 肺炎 inside 社区获得性肺炎) counts as a match.
+            # Generic modifiers are excluded — 急性 also appears inside
+            # 急性阑尾炎 and would otherwise mask a real mismatch.
+            generic_bigrams = {"急性", "慢性", "原发", "继发", "先天"}
             terms = [
-                t
-                for t in re.findall(r"[\w一-鿿]{2,}", name)
-                if t not in ("性", "型", "急性", "慢性", "原发性", "继发性", "先天性")
+                name[i : i + 2]
+                for i in range(len(name) - 1)
+                if name[i : i + 2] not in generic_bigrams
             ]
-            if terms and len(terms) >= 2:
-                # At least one major clinical term should appear in the content
-                found = any(term in content for term in terms[:3])
-                if not found:
-                    return QCIssue(
-                        rule_id=rule["id"],
-                        rule_name=rule["name"],
-                        rule_type=rule["type"],
-                        severity=rule["severity"],
-                        description=f"诊断编码'{code} {name}'中的关键临床术语在病历文本中未找到，请核实编码准确性",
-                        suggestion=rule["suggestion"],
-                    )
+            if terms and not any(term in content for term in terms):
+                return QCIssue(
+                    rule_id=rule["id"],
+                    rule_name=rule["name"],
+                    rule_type=rule["type"],
+                    severity=rule["severity"],
+                    description=f"诊断编码'{code} {name}'中的关键临床术语在病历文本中未找到，请核实编码准确性",
+                    suggestion=rule["suggestion"],
+                )
         return None
 
     def _check_missing_secondary_diagnosis(

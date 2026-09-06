@@ -341,7 +341,7 @@ class ICDCoder:
         # Prefix-indexed search: only scan entries sharing the first 2 chars
         prefix = text[:2]
         if prefix in self._prefix_index:
-            for keyword, code, _name, _cat in self._prefix_index[prefix]:
+            for keyword, code, name, cat in self._prefix_index[prefix]:
                 if code in seen:
                     continue
                 if keyword != text and (keyword in text or text in keyword):
