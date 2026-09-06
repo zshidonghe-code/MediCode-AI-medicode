@@ -7,8 +7,10 @@ Shared between the API endpoint (coding.py) and the accuracy benchmark.
 CHRONIC_STABLE: dict[str, str] = {
     "I10": "原发性高血压",
     "I15": "继发性高血压",
-    "E11": "2型糖尿病",
     "E10": "1型糖尿病",
+    "E11": "2型糖尿病",
+    "E13": "其他特指糖尿病",
+    "E14": "未特指糖尿病",
     "E78": "高脂血症",
     "E79": "高尿酸血症",
     "E66": "肥胖",
@@ -72,6 +74,15 @@ def primary_score(
     if neuro and code.startswith(("I6", "G")):
         s += 0.25
     return s
+
+
+# Procedure code refinement pairs: (specific code, generic code).
+# When the specific code is present, the generic one is dropped — the same
+# procedure must never be coded twice, and ICD requires the most specific
+# code available (药物洗脱支架 36.07 supersedes unspecified 冠脉支架 36.06).
+PROCEDURE_REFINEMENTS: list[tuple[str, str]] = [
+    ("36.07", "36.06"),
+]
 
 
 def conflicts(code_a: str, code_b: str) -> bool:

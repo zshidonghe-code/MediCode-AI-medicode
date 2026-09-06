@@ -16,6 +16,7 @@ from sqlalchemy import or_, select
 
 from src.models.database import async_session
 from src.models.icd import ICDCode, ICDVersion
+from src.services.icd_coder.scoring import PROCEDURE_REFINEMENTS
 
 logger = logging.getLogger(__name__)
 
@@ -378,6 +379,23 @@ class ICDCoder:
                     return code
         return "R69.900"
 
+    def _drop_superseded_procedures(self, candidates: list[ICDCandidate]) -> list[ICDCandidate]:
+        """Drop generic procedure codes that a more specific code supersedes.
+
+        A single procedure must not produce two codes. For example, when a
+        record states 药物洗脱支架 (36.07), the unspecified 冠脉支架植入术
+        (36.06) matched through the shared "PCI术" alias is redundant.
+        """
+        codes = [c.code for c in candidates]
+        superseded = {
+            generic
+            for specific, generic in PROCEDURE_REFINEMENTS
+            if any(code.startswith(specific) for code in codes)
+        }
+        if not superseded:
+            return candidates
+        return [c for c in candidates if not any(c.code.startswith(g) for g in superseded)]
+
     async def auto_code(self, structured_record) -> CodingResult:
         diagnoses = structured_record.diagnoses
         surgeries = structured_record.surgeries
@@ -389,6 +407,7 @@ class ICDCoder:
         proc_candidates = []
         for s in surgeries:
             proc_candidates.extend(await self.recommend(s.text))
+        proc_candidates = self._drop_superseded_procedures(proc_candidates)
 
         primary = diag_candidates[0] if diag_candidates else None
         secondaries = diag_candidates[1:] if len(diag_candidates) > 1 else []

@@ -20,6 +20,13 @@ except ImportError:
     _JIEBA_AVAILABLE = False
 
 
+# Clause delimiters used to keep negation inside its own clause. "、" is
+# intentionally excluded: "无高血压、糖尿病史" negates every listed item.
+_CLAUSE_SPLIT_RE = re.compile(r"[。；;，,！!？?\n]")
+# Fallback-only matcher for the negation word 无 (no tokenizer available).
+_BARE_WU_RE = re.compile(r"无(?!法|菌|需|痛|偿|效|关|意|条)")
+
+
 @dataclass
 class MedicalEntity:
     text: str
@@ -196,6 +203,18 @@ class NLPParser:
         r"(\bPCI\b术?)",
     ]
 
+    # Stent and implant types. These do not end in 术, so the patterns above
+    # never catch them, yet they decide the specific ICD-9-CM-3 code
+    # (e.g. 药物洗脱支架 -> 36.0700 instead of the unspecified 36.0600).
+    STENT_TYPES: list[str] = [
+        "药物洗脱支架",
+        "药物涂层支架",
+        "裸金属支架",
+        "金属裸支架",
+        "可降解支架",
+        "生物可吸收支架",
+    ]
+
     def parse_soap(self, text: str) -> SOAPSections:
         """拆解病历为SOAP结构"""
         sections = SOAPSections()
@@ -277,19 +296,33 @@ class NLPParser:
         return word
 
     def _is_negated(self, entity: MedicalEntity, text: str) -> bool:
-        """Check if an extracted entity appears in a negated context"""
+        """Check if an extracted entity appears in a negated context.
+
+        Only the clause directly preceding the entity is inspected, so a
+        negation word in an earlier clause cannot suppress a later finding
+        (e.g. "无发热，咳嗽明显" must still keep 咳嗽).
+
+        Note: "、" is deliberately not a delimiter, because in an enumeration
+        such as "无高血压、糖尿病史" the negation applies to every item.
+        """
         # Check the prefix context window (up to 20 chars before entity)
         start = max(0, entity.start_pos - 20)
         prefix_context = text[start : entity.start_pos]
+        clauses = [c for c in _CLAUSE_SPLIT_RE.split(prefix_context) if c.strip()]
+        context = clauses[-1] if clauses else prefix_context
         if _JIEBA_AVAILABLE:
-            tokens = [w for w in jieba.cut(prefix_context) if len(w) >= 1]
-            for kw in ("否认", "排除", "未见", "未及", "不伴"):
+            tokens = [w for w in jieba.cut(context) if len(w) >= 1]
+            for kw in ("否认", "排除", "未见", "未及", "不伴", "无"):
                 if kw in tokens:
                     return True
         else:
             for kw in ("否认", "排除", "未见", "未及", "不伴"):
-                if kw in prefix_context:
+                if kw in context:
                     return True
+            # Without a tokenizer, 无法/无菌/无需/无痛 are not negations of a
+            # finding, so they must not trigger on the bare character 无.
+            if _BARE_WU_RE.search(context):
+                return True
         return False
 
     def _extract_diagnoses(self, text: str) -> list[MedicalEntity]:
@@ -375,6 +408,24 @@ class NLPParser:
                             confidence=0.85,
                         )
                     )
+        # Stent/implant types never end in 术, so the regex patterns above miss
+        # them. They are matched literally to keep the full term intact
+        # (a regex such as ".{2,}支架" would also swallow the leading verb).
+        for stent in self.STENT_TYPES:
+            if stent in seen or stent not in text:
+                continue
+            idx = text.find(stent)
+            entity = MedicalEntity(
+                text=stent,
+                entity_type="surgery",
+                normalized=stent,
+                start_pos=idx,
+                end_pos=idx + len(stent),
+                confidence=0.9,
+            )
+            if not self._is_negated(entity, text):
+                seen.add(stent)
+                entities.append(entity)
         return entities
 
     def parse(self, record_type: str, content: str) -> StructuredRecord:
