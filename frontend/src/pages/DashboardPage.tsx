@@ -294,7 +294,7 @@ export default function DashboardPage() {
             </Card>
           </Col>
           <Col span={12}>
-            <Card title="AI vs 人工编码准确率">
+            <Card title="AI 编码准确率趋势">
               {accuracyTrend.length > 0 ? (
                 <ReactEChartsCore echarts={echarts} option={accuracyOption} style={{ height: 300 }} />
               ) : (

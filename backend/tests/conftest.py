@@ -14,10 +14,12 @@ async def _login() -> str:
     global _cached_token
     if _cached_token is not None:
         return _cached_token
-    async with httpx.AsyncClient(base_url=BASE_URL, timeout=10) as c:
+    # 密码与服务端同源：读同一个环境变量，默认值对齐 settings.py 的 DEBUG 兜底。
+    # 之前硬编码的 MediCode@2025Demo#Admin 是旧密码，导致 2026-09-03 全套集成测试登录失败。
+    async with httpx.AsyncClient(base_url=BASE_URL, timeout=10, trust_env=False) as c:
         r = await c.post("/api/v1/auth/login", data={
             "username": "admin",
-            "password": "MediCode@2025Demo#Admin",
+            "password": os.getenv("DEMO_ADMIN_PASSWORD", "123456"),
         })
         assert r.status_code == 200, f"Login failed: {r.text}"
         _cached_token = r.json()["access_token"]
@@ -33,7 +35,7 @@ async def auth_token():
 @pytest.fixture
 async def client(auth_token):
     """Async HTTP client with auth header pre-configured."""
-    async with httpx.AsyncClient(base_url=BASE_URL, timeout=30) as c:
+    async with httpx.AsyncClient(base_url=BASE_URL, timeout=30, trust_env=False) as c:
         c.headers["Authorization"] = f"Bearer {auth_token}"
         yield c
 

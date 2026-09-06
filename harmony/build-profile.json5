@@ -1,6 +1,20 @@
 {
   "app": {
-    "signingConfigs": [],
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "certpath": "C:\\Users\\Donghe\\.ohos\\config\\default_harmony_RlZBZDsFYQGS8B5Cu4YwrV5EkJYS5PhnVjRsSl89W64=.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B696F8A687B7693E579EAF10187F4CCB3545AFAB6B16697D5012681709A034F925476686C4F24A5",
+          "profile": "C:\\Users\\Donghe\\.ohos\\config\\default_harmony_RlZBZDsFYQGS8B5Cu4YwrV5EkJYS5PhnVjRsSl89W64=.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "C:\\Users\\Donghe\\.ohos\\config\\default_harmony_RlZBZDsFYQGS8B5Cu4YwrV5EkJYS5PhnVjRsSl89W64=.p12",
+          "storePassword": "0000001B475663A80C646A8AFE6429C89E0C2952BD3F818BA8F03266FC584B1ADCB8CDB4E50316774CB578"
+        }
+      }
+    ],
     "products": [
       {
         "name": "default",
@@ -26,7 +40,9 @@
       "targets": [
         {
           "name": "default",
-          "applyToProducts": ["default"]
+          "applyToProducts": [
+            "default"
+          ]
         }
       ]
     }

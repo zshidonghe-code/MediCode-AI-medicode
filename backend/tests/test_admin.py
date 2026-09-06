@@ -1,8 +1,12 @@
 """Admin API integration tests."""
+import os
+
 import pytest
 import httpx
 
 from .conftest import BASE_URL
+
+CODER_PASSWORD = os.getenv("DEMO_CODER_PASSWORD", "123456")
 
 
 @pytest.mark.asyncio
@@ -19,10 +23,10 @@ async def test_admin_reset_preview(client):
 @pytest.mark.asyncio
 async def test_admin_reset_requires_admin():
     """Non-admin user (coder) should receive 403 on admin reset."""
-    async with httpx.AsyncClient(base_url=BASE_URL, timeout=10) as c:
+    async with httpx.AsyncClient(base_url=BASE_URL, timeout=10, trust_env=False) as c:
         login_r = await c.post("/api/v1/auth/login", data={
             "username": "coder",
-            "password": "MediCode@2025Demo#Coder",
+            "password": CODER_PASSWORD,
         })
         assert login_r.status_code == 200
         token = login_r.json()["access_token"]
@@ -52,6 +56,6 @@ async def test_export_patient_summaries_csv(client):
 @pytest.mark.asyncio
 async def test_admin_requires_auth():
     """Unauthenticated access to admin endpoints should return 401."""
-    async with httpx.AsyncClient(base_url=BASE_URL, timeout=10) as c:
+    async with httpx.AsyncClient(base_url=BASE_URL, timeout=10, trust_env=False) as c:
         r = await c.post("/api/v1/admin/reset", json={"confirm": False})
         assert r.status_code == 401

@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>码医 MediCode · AI 医疗 DRG 编码与病历质控系统 | 规则模式可验证</title>
-<meta name="description" content="码医 MediCode 是 AI 辅助的医疗编码、DRG 分组、病历质控与拒付风险评估平台。当前公开验证为 4 例规则模式测试，LLM 增强路径尚未独立评估，最终结果由人工审核确认。">
+<meta name="description" content="码医 MediCode 是 AI 辅助的医疗编码、DRG 分组、病历质控与拒付风险评估平台。已完成 203 份病历基准测试（主诊断 Top-1 准确率 94.1%，纯规则模式），最终结果由人工审核确认。">
 <link rel="canonical" href="https://zshidonghe-code.github.io/MediCode-AI-medicode/">
 <style>
 *,*::before,*::after{box-sizing:border-box}
@@ -95,7 +95,7 @@ footer{padding:40px 0;background:#f9fafb;text-align:center;color:#6b7280;font-si
 </div>
 <div class="faq-item">
 <h3>当前验证结果是什么？</h3>
-<p>当前公开验证为 4 例无 LLM 规则模式测试：主诊断匹配 2/4、手术编码匹配 2/4，不能据此宣称生产级准确率。920/611 是编码字典规模，不是测试集规模。详见 docs/BENCHMARK_REPORT.md。</p>
+<p>已完成 203 份病历基准测试：主要诊断 Top-1 准确率 94.1%、手术编码匹配率 91.6%、双项综合匹配率 88.7%，覆盖循环、呼吸、骨科三大科室；基准为无 LLM 的纯规则模式。920/611 是编码字典规模，不是测试集规模。详见 docs/BENCHMARK_REPORT.md。</p>
 </div>
 <div class="faq-item">
 <h3>和市面上单独编码、DRG 系统有什么区别？</h3>

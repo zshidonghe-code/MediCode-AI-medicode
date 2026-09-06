@@ -86,6 +86,6 @@ async def test_dashboard_numeric_fields_are_valid(client):
 @pytest.mark.asyncio
 async def test_dashboard_unauthenticated():
     """Dashboard endpoints should require authentication."""
-    async with httpx.AsyncClient(base_url=BASE_URL, timeout=10) as c:
+    async with httpx.AsyncClient(base_url=BASE_URL, timeout=10, trust_env=False) as c:
         r = await c.get("/api/v1/dashboard/overview")
         assert r.status_code == 401
