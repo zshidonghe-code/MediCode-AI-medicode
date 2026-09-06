@@ -357,7 +357,7 @@ add_text_box(slide4, Inches(6.2), Inches(3.8), Inches(0.8), Inches(0.5),
              '+', 28, BRAND_BLUE, bold=True, alignment=PP_ALIGN.CENTER)
 
 # ── DATA LAYER (bottom) ──
-data_items = ['病历文本\n(.txt/.docx/.pdf)', 'ICD编码库\n(920诊断+571手术)', 'CHS-DRG分组器\n(26MDC/628ADRG)', '医保费率表\n(权重+支付标准)']
+data_items = ['病历文本\n(.txt/.docx/.pdf)', 'ICD编码库\n(920诊断+571手术)', 'CHS-DRG分组器\n(26MDC/153ADRG)', '医保费率表\n(权重+支付标准)']
 for i, item in enumerate(data_items):
     x = Inches(1.5 + i * 2.8); y = Inches(5.4)
     shape = slide4.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x, y, Inches(2.3), Inches(1.1))

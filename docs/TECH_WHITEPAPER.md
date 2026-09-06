@@ -351,7 +351,7 @@ estimated_payment = adjusted_weight × rate × long_stay_multiplier
 | MDC 诊断大类 | 26 个（A-Y，含 HIV/Z 特殊类） |
 | ICD → MDC 映射规则 | 300+ 条（覆盖 ICD-10 全集） |
 | DRG 组定义 | 73 条当前演示数据（非完整 CHS-DRG 数据集） |
-| CHS-DRG 1.2 全量 | 628 ADRG → 1236 DRG 组 |
+| CHS-DRG 1.2 官方全量（目标） | 628 ADRG → 1236 DRG 组 |
 | MCC 码表 | 50+ 码 |
 | CC 码表 | 80+ 码 |
 | 权重调整系数 | MCC × 1.40, CC × 1.15 |

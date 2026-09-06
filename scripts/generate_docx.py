@@ -204,7 +204,7 @@ add_para('输出：MDC大类 → ADRG核心分组 → DRG细分编码 → 权重
 add_para('核心流程：', bold=True)
 add_bullet('ICD编码 → MDC大类判定（根据主要诊断映射到26个MDC之一）')
 add_bullet('手术/非手术分组判定（是否含手术操作编码）')
-add_bullet('ADRG细分组匹配（CHS-DRG 1.2版628个核心分组）')
+add_bullet('ADRG细分组匹配（已收录153个ADRG定义，官方全量628个分阶段补齐）')
 add_bullet('CC/MCC逻辑判定（次要诊断是否有合并症或严重合并症，影响支付权重）')
 add_bullet('最终DRG确定 + 权重查表 + 支付金额计算 = RW × 费率')
 
