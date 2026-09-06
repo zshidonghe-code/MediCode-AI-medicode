@@ -388,7 +388,7 @@ GLOW(s13, Inches(8), Inches(-2), Inches(8), Inches(8), BLUE)
 TB(s13, Inches(1), Inches(2.0), Inches(11.3), Inches(0.7), '谢谢观看', 42, WHITE, bold=True, align=PP_ALIGN.CENTER)
 TB(s13, Inches(1), Inches(3.0), Inches(11.3), Inches(0.4), '码医 MediCode · 欢迎交流', 20, BLUE, align=PP_ALIGN.CENTER)
 TB(s13, Inches(1), Inches(4.2), Inches(11.3), Inches(0.3), '郑诗东和', 16, WHITE, align=PP_ALIGN.CENTER)
-TB(s13, Inches(1), Inches(4.7), Inches(11.3), Inches(0.3), '邮箱：1975790036@qq.com  |  电话：15800565959', 14, GRAY, align=PP_ALIGN.CENTER)
+TB(s13, Inches(1), Inches(4.7), Inches(11.3), Inches(0.3), '联系方式：郑诗东和（详见参赛申报材料）', 14, GRAY, align=PP_ALIGN.CENTER)
 TB(s13, Inches(1), Inches(5.4), Inches(11.3), Inches(0.3), '上海对外经贸大学', 12, GRAY, align=PP_ALIGN.CENTER)
 
 # ─── SAVE ───

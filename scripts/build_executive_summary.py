@@ -207,7 +207,7 @@ add_run(p, '━' * 60, size=6, color=GRAY)
 p = new_para(doc, alignment=WD_ALIGN_PARAGRAPH.CENTER, spacing_after=0)
 add_run(p, '码医团队 · 上海对外经贸大学 · 2026年5月', size=9, color=GRAY)
 p = new_para(doc, alignment=WD_ALIGN_PARAGRAPH.CENTER)
-add_run(p, '联系方式：郑诗东和 · 邮箱：1975790036@qq.com · 电话：15800565959', size=8, color=GRAY)
+add_run(p, '联系方式：郑诗东和（详见参赛申报材料）', size=8, color=GRAY)
 
 # ─── Save ───────────────────────────────────────────────────────────────────
 

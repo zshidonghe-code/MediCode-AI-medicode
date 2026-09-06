@@ -206,7 +206,7 @@ footer = doc.add_paragraph()
 footer.paragraph_format.space_before = Pt(16)
 run = footer.add_run(
     '附：商业计划书、执行摘要、系统 Demo 录屏。如需当面演示，随时可以。\n'
-    '联系人：郑诗东和 / 15800565959 / 1975790036@qq.com'
+    '联系人：郑诗东和（联系方式详见参赛申报材料）'
 )
 run.font.size = Pt(9)
 run.font.color.rgb = RGBColor(0x8f, 0x8a, 0x80)
